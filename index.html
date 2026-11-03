@@ -3,24 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Игровой центр</title>
+    <title>Мистический Игровой Центр</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        :root {
+            --bg-color: #0f0c29;
+            --card-bg: rgba(255, 255, 255, 0.08);
+            --accent: #9b51e0;
+            --text-main: #ffffff;
+            --text-sub: #b3b3b3;
+            --win-color: #f1c40f; /* Золотой для джекпота */
+            --lose-color: #e74c3c;
+            --return-color: #3498db;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--tg-theme-bg-color, #17212b);
-            color: var(--tg-theme-text-color, #ffffff);
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: var(--text-main);
             margin: 0;
             padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
         }
-        h1 { font-size: 24px; margin-bottom: 20px; }
+
+        .header { text-align: center; margin-bottom: 25px; }
+        .header h1 { font-size: 26px; margin: 0 0 10px 0; text-shadow: 0 0 15px var(--accent); }
+        
+        .balance {
+            font-size: 18px;
+            color: #f1c40f;
+            background: rgba(0,0,0,0.4);
+            padding: 8px 20px;
+            border-radius: 20px;
+            display: inline-block;
+            border: 1px solid rgba(241, 196, 15, 0.4);
+            box-shadow: 0 0 10px rgba(241, 196, 15, 0.1);
+        }
+
         .game-card {
-            background-color: var(--tg-theme-secondary-bg-color, #232e3c);
-            border-radius: 12px;
-            padding: 15px;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 16px;
+            padding: 20px;
             margin-bottom: 15px;
             width: 100%;
             max-width: 400px;
@@ -28,61 +58,184 @@
             align-items: center;
             justify-content: space-between;
             box-sizing: border-box;
+            transition: transform 0.2s;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
         }
+
+        .game-card:active { transform: scale(0.97); }
+
         .game-info { display: flex; flex-direction: column; }
         .game-title { font-size: 18px; font-weight: bold; margin-bottom: 5px; }
-        .game-price { font-size: 14px; color: var(--tg-theme-hint-color, #708499); }
+        .game-price { font-size: 13px; color: var(--text-sub); }
+
         .play-btn {
-            background-color: var(--tg-theme-button-color, #2481cc);
-            color: var(--tg-theme-button-text-color, #ffffff);
+            background: linear-gradient(45deg, #9b51e0, #e056fd);
+            color: white;
             border: none;
-            padding: 10px 15px;
-            border-radius: 8px;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(155, 81, 224, 0.4);
+            transition: opacity 0.2s;
+        }
+
+        /* Модальное окно игры */
+        .overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(10, 10, 20, 0.95);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .game-visual {
+            font-size: 90px;
+            margin-bottom: 20px;
+            transition: transform 2.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        .result-text {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            opacity: 0;
+            transition: opacity 0.5s;
+            padding: 0 20px;
+            line-height: 1.4;
+        }
+
+        .result-win { color: var(--win-color); text-shadow: 0 0 20px var(--win-color); }
+        .result-lose { color: var(--lose-color); }
+        .result-return { color: var(--return-color); }
+
+        .close-overlay-btn {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 14px 40px;
+            border-radius: 12px;
             font-size: 16px;
             cursor: pointer;
+            transition: background 0.2s;
         }
-        .play-btn:active { opacity: 0.8; }
+        .close-overlay-btn:active { background: rgba(255,255,255,0.2); }
     </style>
 </head>
 <body>
-    <h1>🎮 Игровой центр</h1>
-    
-    <div class="game-card">
+
+    <div class="header">
+        <h1>🔮 Зал Оракула</h1>
+        <div class="balance">Баланс: <span id="balance-val">0</span> ⭐</div>
+    </div>
+
+    <div class="game-card" onclick="startGame('wheel', 50)">
         <div class="game-info">
             <div class="game-title">🎡 Колесо Фортуны</div>
             <div class="game-price">50 Stars за попытку</div>
         </div>
-        <button class="play-btn" onclick="playGame('wheel')">Играть</button>
+        <button class="play-btn">Играть</button>
     </div>
 
-    <div class="game-card">
-        <div class="game-info">
-            <div class="game-title">🔢 Угадай число</div>
-            <div class="game-price">50 Stars за попытку</div>
-        </div>
-        <button class="play-btn" onclick="playGame('number')">Играть</button>
-    </div>
-
-    <div class="game-card">
+    <div class="game-card" onclick="startGame('slot', 50)">
         <div class="game-info">
             <div class="game-title">🎰 Мистический слот</div>
             <div class="game-price">50 Stars за попытку</div>
         </div>
-        <button class="play-btn" onclick="playGame('slot')">Играть</button>
+        <button class="play-btn">Играть</button>
+    </div>
+
+    <!-- Оверлей для игры -->
+    <div class="overlay" id="game-overlay">
+        <div class="game-visual" id="game-icon">🎡</div>
+        <div class="result-text" id="result-text"></div>
+        <button class="close-overlay-btn" id="close-btn" onclick="closeGame()" style="display: none;">Забрать и закрыть</button>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
-        tg.expand(); // Разворачиваем на весь экран
+        tg.expand(); 
+        
+        // Тестовый баланс. В реальном проекте запрашивается с сервера (из базы данных).
+        let userBalance = 100; 
+        document.getElementById('balance-val').innerText = userBalance;
 
-        function playGame(gameType) {
-            // Здесь в будущем будет логика оплаты и запуска игры
-            // Пока просто выводим сообщение
-            tg.showAlert(`Вы выбрали игру: ${gameType}. \nСейчас здесь появится логика оплаты.`);
+        function startGame(gameType, cost) {
+            if (userBalance < cost) {
+                tg.showAlert("Недостаточно средств! В реальном боте здесь будет кнопка пополнения.");
+                return;
+            }
+
+            // Блокируем кнопку закрытия на время игры
+            document.getElementById('close-btn').style.display = 'none';
             
-            // Пример того, как отправить данные в бота после игры:
-            // tg.sendData(JSON.stringify({ game: gameType, result: "win" }));
-            // tg.close();
+            const overlay = document.getElementById('game-overlay');
+            const icon = document.getElementById('game-icon');
+            const resultText = document.getElementById('result-text');
+            
+            overlay.style.display = 'flex';
+            resultText.style.opacity = 0;
+            resultText.className = 'result-text';
+            
+            if (gameType === 'wheel') icon.innerText = '🎡';
+            if (gameType === 'slot') icon.innerText = '🎰';
+            
+            icon.style.transform = 'rotate(0deg)';
+            
+            // Списываем ставку
+            userBalance -= cost;
+            document.getElementById('balance-val').innerText = userBalance;
+
+            // Анимация
+            setTimeout(() => {
+                if (gameType === 'wheel') icon.style.transform = 'rotate(1080deg)'; 
+                else icon.style.transform = 'scale(1.5)';
+            }, 50);
+
+            // Результат через 2.5 секунды
+            setTimeout(() => {
+                const chance = Math.random(); 
+                let resultMessage = "";
+                let resultClass = "";
+                
+                if (chance < 0.05) {
+                    // 5% - ДЖЕКПОТ (выплата 75)
+                    userBalance += 75;
+                    resultMessage = "🎉 НЕВЕРОЯТНО! ДЖЕКПОТ!\nВы забрали 75 ⭐";
+                    resultClass = "result-win";
+                    icon.innerText = "💎";
+                } else if (chance < 0.20) {
+                    // 15% - ПОЧТИ ВЫИГРЫШ (выплата 25)
+                    userBalance += 25;
+                    resultMessage = "✨ Почти получилось!\nВозврат 25 ⭐";
+                    resultClass = "result-return";
+                    icon.innerText = "🌟";
+                } else {
+                    // 80% - ПРОИГРЫШ (0)
+                    resultMessage = "💀 Судьба сегодня не на твоей стороне.\nПовезет в следующий раз.";
+                    resultClass = "result-lose";
+                    icon.innerText = "💀";
+                }
+
+                document.getElementById('balance-val').innerText = userBalance;
+                resultText.innerText = resultMessage;
+                resultText.classList.add(resultClass);
+                resultText.style.opacity = 1;
+                
+                // Показываем кнопку закрытия
+                document.getElementById('close-btn').style.display = 'block';
+
+            }, 2500); 
+        }
+
+        function closeGame() {
+            document.getElementById('game-overlay').style.display = 'none';
         }
     </script>
 </body>
