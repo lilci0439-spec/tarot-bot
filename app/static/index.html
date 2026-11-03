@@ -335,3 +335,383 @@
         <div class="nav-item" onclick="tg.showAlert('В разработке')"><div class="nav-icon">💰</div><div>Заработок</div></div>
         <div class="nav-item" onclick="switchPage('profile', this)"><div class="nav-icon">👤</div><div>Профиль</div></div>
     </div>
+   <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand(); 
+        
+        // --- SPLASH SCREEN ---
+        setTimeout(() => {
+            document.getElementById('magicBall').classList.add('rolling-away');
+            setTimeout(() => {
+                document.getElementById('splash').style.display = 'none';
+                document.getElementById('main-content').classList.add('loaded');
+            }, 800);
+        }, 1500);
+
+        // --- NAVIGATION ---
+        function switchPage(pageId, el) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(`page-${pageId}`).classList.add('active');
+            el.classList.add('active');
+        }
+
+        // --- API (Баланс и Онлайн) ---
+        let userBalance = 0; 
+        const uiBalance = document.getElementById('ui-balance');
+        const uiBalanceCases = document.getElementById('ui-balance-cases');
+        const uiBalanceProf = document.getElementById('ui-balance-prof');
+        const uiBalanceBig = document.getElementById('ui-balance-big');
+
+        function updateUI() { 
+            const val = userBalance.toLocaleString('ru-RU');
+            if(uiBalance) uiBalance.innerText = val; 
+            if(uiBalanceCases) uiBalanceCases.innerText = val;
+            if(uiBalanceProf) uiBalanceProf.innerText = val; 
+            if(uiBalanceBig) uiBalanceBig.innerText = val;
+        }
+
+        async function fetchBalance() {
+            try {
+                const response = await fetch('/api/balance', { headers: { 'Authorization': tg.initData } });
+                if (response.ok) { const data = await response.json(); userBalance = data.balance; updateUI(); }
+            } catch (e) { console.error("Ошибка баланса:", e); }
+        }
+
+        async function fetchOnline() {
+            try {
+                const response = await fetch('/api/online');
+                if (response.ok) { 
+                    const data = await response.json(); 
+                    document.getElementById('online-count').innerText = data.online;
+                    document.getElementById('wheel-players').innerText = Math.floor(data.online * 0.4) + " играют";
+                    document.getElementById('mines-players').innerText = Math.floor(data.online * 0.3) + " играют";
+                    document.getElementById('slot-players').innerText = Math.floor(data.online * 0.2) + " играют";
+                }
+            } catch (e) { console.error("Ошибка онлайна:", e); }
+        }
+        
+        fetchBalance();
+        fetchOnline();
+        setInterval(fetchOnline, 5000);
+
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            document.getElementById('ui-username').innerText = tg.initDataUnsafe.user.first_name || "Игрок";
+            document.getElementById('ui-userid').innerText = `ID: ${tg.initDataUnsafe.user.id}`;
+        }
+
+        // --- OVERLAYS ---
+        function openDeposit() { document.getElementById('deposit-overlay').style.display = 'flex'; }
+        function simulateDeposit(amount) { userBalance += amount; updateUI(); closeOverlay('deposit-overlay'); tg.showAlert(`✅ Тестовое зачисление: +${amount} ⭐`); }
+        
+        function closeOverlay(id) {
+            document.getElementById(id).style.display = 'none';
+            document.getElementById('screen-slot').style.display = 'none';
+            document.getElementById('screen-wheel').style.display = 'none';
+            document.getElementById('screen-mines').style.display = 'none';
+            document.getElementById('game-close-btn').style.display = 'none';
+            document.querySelectorAll('.result-popup').forEach(p => p.classList.remove('show'));
+        }
+
+        // === КЕЙСЫ ЛОГИКА ===
+        const casePrizes = {
+            halloween: [{icon:'🎃', name:'Тыква', price:10}, {icon:'👻', name:'Призрак', price:25}, {icon:'🦇', name:'Летучая мышь', price:15}, {icon:'💀', name:'Череп', price:50}],
+            space: [{icon:'🚀', name:'Ракета', price:50}, {icon:'🪐', name:'Планета', price:30}, {icon:'👽', name:'Пришелец', price:100}, {icon:'☄️', name:'Комета', price:20}],
+            animals: [{icon:'🦊', name:'Лиса', price:80}, {icon:'🐻', name:'Медведь', price:50}, {icon:'🦁', name:'Лев', price:150}, {icon:'🐸', name:'Жаба', price:20}],
+            love: [{icon:'❤️', name:'Сердце', price:15}, {icon:'💍', name:'Кольцо', price:200}, {icon:'🌹', name:'Роза', price:50}, {icon:'🧸', name:'Мишка', price:100}],
+            meme: [{icon:'🐸', name:'Пепе', price:30}, {icon:'💩', name:'Какашка', price:10}, {icon:'🤡', name:'Клоун', price:100}, {icon:'🍌', name:'Банан', price:25}],
+            crypto: [{icon:'💎', name:'Алмаз', price:500}, {icon:'🪙', name:'Монета', price:100}, {icon:'📈', name:'График', price:250}, {icon:'💵', name:'Доллар', price:50}]
+        };
+
+        let currentCasePrize = null;
+
+        function openCase(caseId, price) {
+            if (userBalance < price) return tg.showAlert("Недостаточно средств для открытия!");
+            userBalance -= price; updateUI();
+
+            const screen = document.getElementById('case-screen');
+            const slider = document.getElementById('case-slider');
+            const prizeWindow = document.getElementById('prize-window');
+            
+            screen.style.display = 'flex';
+            slider.style.display = 'flex';
+            prizeWindow.style.display = 'none';
+
+            slider.innerHTML = '<div class="slider-pointer"></div>';
+            const prizes = casePrizes[caseId];
+            
+            for (let i = 0; i < 40; i++) {
+                const p = prizes[Math.floor(Math.random() * prizes.length)];
+                slider.innerHTML += `<div class="case-item-box">${p.icon}<span>${p.name}</span></div>`;
+            }
+
+            currentCasePrize = prizes[Math.floor(Math.random() * prizes.length)];
+            slider.innerHTML += `<div class="case-item-box" style="border-color:var(--gold); box-shadow:0 0 15px var(--gold);">${currentCasePrize.icon}<span>${currentCasePrize.name}</span></div>`;
+
+            const itemWidth = 110;
+            const randomOffset = (Math.random() * 50) - 25;
+            const targetScroll = (40 * itemWidth) + randomOffset;
+            
+            slider.style.transition = 'none'; slider.scrollLeft = 0;
+            setTimeout(() => {
+                slider.style.transition = 'scrollLeft 4s cubic-bezier(0.1, 0.8, 0.1, 1)';
+                slider.scrollLeft = targetScroll;
+            }, 50);
+
+            setTimeout(() => {
+                slider.style.display = 'none';
+                prizeWindow.style.display = 'flex';
+                document.getElementById('prize-icon').innerText = currentCasePrize.icon;
+                document.getElementById('prize-name').innerText = currentCasePrize.name;
+                document.getElementById('sell-price').innerText = currentCasePrize.price;
+            }, 4500);
+        }
+
+        function keepPrize() {
+            document.getElementById('case-screen').style.display = 'none';
+            tg.showAlert(`🎁 ${currentCasePrize.name} добавлен в инвентарь!`);
+        }
+
+        function sellPrize() {
+            document.getElementById('case-screen').style.display = 'none';
+            userBalance += currentCasePrize.price; updateUI();
+            tg.showAlert(`💰 Вы продали ${currentCasePrize.name} за ${currentCasePrize.price} ⭐!`);
+        }
+
+        // === ИГРЫ ЛОГИКА ===
+        let currentGame = '';
+        let currentBet = 50;
+
+        function openBetMenu(game) { 
+            currentGame = game; 
+            document.getElementById('bet-overlay').style.display = 'flex'; 
+        }
+
+        function startGame() {
+            const bet = parseInt(document.getElementById('bet-input').value);
+            if (isNaN(bet) || bet < 5) return tg.showAlert("Мин. ставка 5 ⭐");
+            if (bet > userBalance) return tg.showAlert("Недостаточно средств!");
+            if (bet > 10000) return tg.showAlert("Макс. ставка 10000 ⭐");
+
+            currentBet = bet; userBalance -= currentBet; updateUI();
+            
+            document.getElementById('bet-overlay').style.display = 'none';
+            document.getElementById('game-overlay').style.display = 'flex';
+
+            if (currentGame === 'slot') { document.getElementById('screen-slot').style.display = 'flex'; playSlots(); }
+            else if (currentGame === 'wheel') { document.getElementById('screen-wheel').style.display = 'flex'; playWheel(); }
+            else { document.getElementById('screen-mines').style.display = 'flex'; playMines(); }
+        }
+
+        // СЛОТЫ
+        const EMOJIS = ['🍒', '🍋', '🍉', '🔔', '💎', '💀'];
+        const WIN_EMOJIS = ['🍒', '🍋', '🍉', '🔔'];
+
+        function populateReels() {
+            for(let i=1; i<=3; i++) {
+                const strip = document.getElementById(`reel-${i}`);
+                strip.innerHTML = '';
+                for(let j=0; j<5; j++) strip.innerHTML += `<div class="reel-item">${EMOJIS[Math.floor(Math.random()*EMOJIS.length)]}</div>`;
+            }
+        }
+
+        function playSlots() {
+            document.getElementById('popup-slot').classList.remove('show');
+            document.getElementById('payline').classList.remove('active');
+            document.getElementById('game-close-btn').style.display = 'none';
+            populateReels();
+            const reels = [1, 2, 3].map(i => document.getElementById(`reel-${i}`).parentElement);
+            reels.forEach(r => r.classList.add('spinning'));
+
+            const chance = Math.random();
+            let win = 0, combo = [];
+
+            if (chance < 0.01) { win = currentBet * 2.0; combo = ['💎', '💎', '💎']; }
+            else if (chance < 0.15) { const sym = WIN_EMOJIS[Math.floor(Math.random()*WIN_EMOJIS.length)]; combo = [sym, sym, sym]; win = currentBet * 0.5; }
+            else if (chance < 0.35) { 
+                const sym = WIN_EMOJIS[Math.floor(Math.random()*WIN_EMOJIS.length)];
+                let other = WIN_EMOJIS[Math.floor(Math.random()*WIN_EMOJIS.length)];
+                while(other === sym) other = WIN_EMOJIS[Math.floor(Math.random()*WIN_EMOJIS.length)];
+                combo = [sym, sym, other]; combo.sort(() => Math.random() - 0.5); win = currentBet * 0.2;
+            } else { win = 0; combo = ['💀', '💀', '💀']; }
+
+            setTimeout(() => {
+                stopReel(1, combo[0]);
+                setTimeout(() => {
+                    stopReel(2, combo[1]);
+                    setTimeout(() => { stopReel(3, combo[2]); setTimeout(() => { showSlotResult(combo, win); }, 300); }, 400);
+                }, 400);
+            }, 1200);
+        }
+
+        function stopReel(reelNum, finalEmoji) {
+            const reel = document.getElementById(`reel-${reelNum}`).parentElement;
+            const strip = document.getElementById(`reel-${reelNum}`);
+            reel.classList.remove('spinning');
+            strip.innerHTML = `<div class="reel-item">${finalEmoji}</div>`;
+        }
+
+        function showSlotResult(combo, win) {
+            document.getElementById('popup-slot').classList.add('show');
+            if (combo[0] === combo[1] && combo[1] === combo[2] && combo[0] !== '💀') {
+                document.getElementById('payline').classList.add('active');
+                if(win > currentBet) triggerParticles(100);
+            } else if ((combo[0] === combo[1] || combo[1] === combo[2] || combo[0] === combo[2]) && combo[0] !== '💀') {
+                document.getElementById('payline').classList.add('active');
+            }
+
+            if (win > 0) {
+                document.getElementById('slot-title').innerText = win >= currentBet * 2 ? "ДЖЕКПОТ!" : "ВЫИГРЫШ";
+                document.getElementById('slot-title').className = "res-title win";
+                document.getElementById('slot-amount').innerText = `+${win.toLocaleString('ru-RU')} ⭐`;
+                document.getElementById('slot-amount').className = "res-amount win";
+                userBalance += win;
+            } else {
+                document.getElementById('slot-title').innerText = "УВЫ";
+                document.getElementById('slot-title').className = "res-title lose";
+                document.getElementById('slot-amount').innerText = `-${currentBet.toLocaleString('ru-RU')} ⭐`;
+                document.getElementById('slot-amount').className = "res-amount lose";
+                document.body.classList.add('shake'); setTimeout(() => document.body.classList.remove('shake'), 500);
+            }
+            updateUI(); document.getElementById('game-close-btn').style.display = 'block';
+        }
+
+        // КОЛЕСО
+        const canvas = document.getElementById('wheel-canvas');
+        const ctx = canvas.getContext('2d');
+        const visualSectors = [
+            { label: 'x3', color: '#8b5cf6' }, { label: 'Пусто', color: '#1f1b2e' },
+            { label: 'x2', color: '#3b82f6' }, { label: 'Пусто', color: '#1f1b2e' },
+            { label: 'x0.5', color: '#10b981' }, { label: 'Пусто', color: '#1f1b2e' },
+            { label: 'x1.5', color: '#fbbf24' }, { label: 'Пусто', color: '#1f1b2e' },
+        ];
+
+        function drawWheel() {
+            const centerX = canvas.width / 2, centerY = canvas.height / 2, radius = centerX - 10;
+            const anglePerSector = (Math.PI * 2) / visualSectors.length;
+            for (let i = 0; i < visualSectors.length; i++) {
+                const startAngle = i * anglePerSector, endAngle = startAngle + anglePerSector;
+                ctx.beginPath(); ctx.moveTo(centerX, centerY); ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+                ctx.fillStyle = visualSectors[i].color; ctx.fill();
+                ctx.strokeStyle = '#14121d'; ctx.lineWidth = 4; ctx.stroke();
+                ctx.save(); ctx.translate(centerX, centerY); ctx.rotate(startAngle + anglePerSector / 2);
+                ctx.textAlign = "right"; ctx.fillStyle = "#fff"; ctx.font = "bold 28px Montserrat";
+                ctx.fillText(visualSectors[i].label, radius - 30, 10); ctx.restore();
+            }
+        }
+        drawWheel();
+
+        function playWheel() {
+            const wheel = document.getElementById('wheel-canvas');
+            document.getElementById('popup-wheel').classList.remove('show');
+            wheel.style.transition = 'none'; wheel.style.transform = `rotate(0deg)`;
+            void wheel.offsetWidth; wheel.style.transition = 'transform 6s cubic-bezier(0.1, 0.8, 0.1, 1)';
+
+            const chance = Math.random();
+            let win = 0, sectorIndex = 0;
+
+            if (chance < 0.02) { win = currentBet * 3.0; sectorIndex = 0; }
+            else if (chance < 0.08) { win = currentBet * 2.0; sectorIndex = 2; }
+            else if (chance < 0.20) { win = currentBet * 0.5; sectorIndex = 4; }
+            else if (chance < 0.25) { win = currentBet * 1.5; sectorIndex = 6; }
+            else { const lossSectors = [1, 3, 5, 7]; sectorIndex = lossSectors[Math.floor(Math.random() * lossSectors.length)]; win = 0; }
+
+            const anglePerSector = 360 / visualSectors.length;
+            const targetAngle = (sectorIndex * anglePerSector) + (anglePerSector / 2);
+            const finalRotation = 1800 + (360 - targetAngle) + 270;
+
+            setTimeout(() => { wheel.style.transform = `rotate(${finalRotation}deg)`; }, 50);
+            setTimeout(() => { showWheelResult(win); }, 6200);
+        }
+
+        function showWheelResult(win) {
+            document.getElementById('popup-wheel').classList.add('show');
+            if (win > 0) {
+                document.getElementById('wheel-title').innerText = "ВЫИГРЫШ";
+                document.getElementById('wheel-title').className = "res-title win";
+                document.getElementById('wheel-amount').innerText = `+${win.toLocaleString('ru-RU')} ⭐`;
+                document.getElementById('wheel-amount').className = "res-amount win";
+                userBalance += win;
+                if(win >= currentBet * 2) triggerParticles(50);
+            } else {
+                document.getElementById('wheel-title').innerText = "ПРОИГРЫШ";
+                document.getElementById('wheel-title').className = "res-title lose";
+                document.getElementById('wheel-amount').innerText = `-${currentBet.toLocaleString('ru-RU')} ⭐`;
+                document.getElementById('wheel-amount').className = "res-amount lose";
+                document.body.classList.add('shake'); setTimeout(() => document.body.classList.remove('shake'), 500);
+            }
+            updateUI(); document.getElementById('game-close-btn').style.display = 'block';
+        }
+
+        // МИНЫ
+        function playMines() {
+            const grid = document.getElementById('mines-grid'); grid.innerHTML = '';
+            document.getElementById('popup-mines').classList.remove('show');
+            document.getElementById('game-close-btn').style.display = 'none';
+
+            let cells = Array(9).fill('gem');
+            cells[Math.floor(Math.random()*9)] = 'mine'; 
+            cells[Math.floor(Math.random()*9)] = 'mine'; 
+            cells[Math.floor(Math.random()*9)] = 'mine';
+
+            let opened = 0, isGameOver = false;
+
+            cells.forEach((type, index) => {
+                const cell = document.createElement('div'); cell.className = 'mine-cell';
+                cell.onclick = () => {
+                    if (isGameOver || cell.classList.contains('opened')) return;
+                    cell.classList.add('opened');
+                    if (type === 'mine') {
+                        cell.classList.add('mine'); cell.innerText = '💥'; isGameOver = true;
+                        document.querySelectorAll('.mine-cell').forEach((c, i) => {
+                            if (cells[i] === 'mine') { c.classList.add('mine'); c.innerText = '💣'; }
+                        });
+                        showMinesResult(false);
+                    } else {
+                        cell.innerText = '💎'; opened++;
+                        if (opened === 6) { isGameOver = true; showMinesResult(true); }
+                    }
+                };
+                grid.appendChild(cell);
+            });
+        }
+
+        function showMinesResult(isWin) {
+            document.getElementById('popup-mines').classList.add('show');
+            if (isWin) {
+                const win = currentBet * 2.0;
+                document.getElementById('mines-title').innerText = "ПОБЕДА!";
+                document.getElementById('mines-title').className = "res-title win";
+                document.getElementById('mines-amount').innerText = `+${win.toLocaleString('ru-RU')} ⭐`;
+                document.getElementById('mines-amount').className = "res-amount win";
+                userBalance += win; triggerParticles(100);
+            } else {
+                document.getElementById('mines-title').innerText = "ВЗРЫВ!";
+                document.getElementById('mines-title').className = "res-title lose";
+                document.getElementById('mines-amount').innerText = `-${currentBet.toLocaleString('ru-RU')} ⭐`;
+                document.getElementById('mines-amount').className = "res-amount lose";
+                document.body.classList.add('shake'); setTimeout(() => document.body.classList.remove('shake'), 500);
+            }
+            updateUI(); document.getElementById('game-close-btn').style.display = 'block';
+        }
+
+        // КОНФЕТТИ
+        function triggerParticles(count) {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < count; i++) {
+                const p = document.createElement('div');
+                p.style.position = 'absolute'; p.style.width = Math.random() * 10 + 5 + 'px';
+                p.style.height = Math.random() * 10 + 5 + 'px'; p.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                p.style.left = Math.random() * 100 + 'vw'; p.style.top = '-20px'; p.style.borderRadius = '50%'; p.style.opacity = Math.random();
+                container.appendChild(p);
+                const duration = Math.random() * 2000 + 1000;
+                const xMove = Math.random() * 200 - 100;
+                p.animate([
+                    { transform: `translate(0, 0) rotate(0deg)`, opacity: 1 },
+                    { transform: `translate(${xMove}px, 100vh) rotate(${Math.random()*720}deg)`, opacity: 0 }
+                ], { duration: duration, easing: 'cubic-bezier(0.25, 1, 0.5, 1)' }).onfinish = () => p.remove();
+            }
+        }
+    </script>
+</body>
+</html> 
