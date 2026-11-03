@@ -20,7 +20,6 @@
             --text: #ffffff;
             --text-dim: #9ca3af;
             --border: rgba(255, 255, 255, 0.08);
-            --safe-bottom: env(safe-area-inset-bottom, 20px);
         }
 
         * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
@@ -37,49 +36,87 @@
             overflow: hidden;
         }
 
-        /* --- SPLASH SCREEN --- */
+        /* --- SPLASH SCREEN (MAGIC 8-BALL) --- */
         #splash {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: var(--bg); z-index: 9999;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: opacity 0.5s ease;
+            overflow: hidden;
         }
-        .crystal-ball {
-            width: 100px; height: 100px;
-            background: radial-gradient(circle at 30% 30%, #a78bfa, #4c1d95);
-            border-radius: 50%;
-            box-shadow: 0 0 40px var(--primary), inset -10px -10px 20px rgba(0,0,0,0.5);
-            margin-bottom: 30px;
-            animation: float 2s infinite ease-in-out;
+        
+        .ball-container {
+            position: relative;
+            width: 120px; height: 120px;
+            margin-bottom: 40px;
         }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        .loader-bar {
-            width: 200px; height: 4px; background: rgba(255,255,255,0.1);
-            border-radius: 2px; overflow: hidden;
-        }
-        .loader-progress {
-            width: 0%; height: 100%; background: var(--primary);
-            animation: load 2s forwards cubic-bezier(0.1, 0.8, 0.2, 1);
-        }
-        @keyframes load { 0% { width: 0%; } 100% { width: 100%; } }
-        .splash-text { margin-top: 15px; font-size: 12px; font-weight: 700; color: var(--text-dim); letter-spacing: 2px;}
 
-        /* --- MAIN CONTENT --- */
+        .magic-ball {
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #444 0%, #111 60%, #000 100%);
+            box-shadow: inset -15px -15px 30px rgba(0,0,0,0.9), 
+                        inset 10px 10px 20px rgba(255,255,255,0.2),
+                        0 15px 35px rgba(0,0,0,0.6);
+            display: flex; justify-content: center; align-items: center;
+            position: relative;
+            animation: hover 2s infinite ease-in-out;
+        }
+
+        .ball-center {
+            width: 50px; height: 50px;
+            background: #fff;
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 28px; font-weight: 900; color: #000;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+            position: relative; z-index: 2;
+        }
+
+        .ball-reflection {
+            position: absolute; top: 15%; left: 20%;
+            width: 30px; height: 20px;
+            background: rgba(255,255,255,0.4);
+            border-radius: 50%;
+            transform: rotate(-45deg);
+            filter: blur(2px);
+        }
+
+        @keyframes hover {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Укатывание вправо */
+        .rolling-away {
+            animation: rollRight 0.8s cubic-bezier(0.5, 0, 1, 1) forwards !important;
+        }
+        @keyframes rollRight {
+            0% { transform: translateX(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateX(120vw) rotate(720deg); opacity: 0; }
+        }
+
+        .loader-text {
+            font-size: 14px; font-weight: 800; color: var(--text-dim);
+            letter-spacing: 2px; text-transform: uppercase;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+        /* --- MAIN UI --- */
         .content {
             flex: 1; overflow-y: auto; overflow-x: hidden;
             padding: 15px; padding-bottom: 100px;
             display: flex; flex-direction: column; align-items: center;
+            opacity: 0; transition: opacity 0.5s ease;
         }
-        .page { display: none; width: 100%; max-width: 480px; animation: fadeIn 0.3s; }
-        .page.active { display: block; }
+        .content.loaded { opacity: 1; }
+
+        .page { display: none; width: 100%; max-width: 480px; }
+        .page.active { display: block; animation: fadeIn 0.3s; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- HEADER / PROFILE --- */
-        .top-bar {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 20px; width: 100%;
-        }
-        .logo { font-size: 20px; font-weight: 900; letter-spacing: 1px; display: flex; align-items: center; gap: 5px; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .logo { font-size: 20px; font-weight: 900; letter-spacing: 1px; }
         .logo span { color: var(--primary); }
         
         .balance-btn {
@@ -87,48 +124,11 @@
             border-radius: 20px; padding: 6px 12px 6px 6px;
             display: flex; align-items: center; gap: 8px; cursor: pointer;
         }
-        .balance-icon {
-            width: 24px; height: 24px; background: var(--primary);
-            border-radius: 50%; display: flex; justify-content: center; align-items: center;
-            font-size: 12px; font-weight: 900;
-        }
+        .balance-icon { width: 24px; height: 24px; background: var(--primary); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 12px; font-weight: 900; }
         .balance-val { font-weight: 800; font-size: 14px; }
 
-        /* --- PROFILE CARD --- */
-        .profile-card {
-            background: var(--bg-panel); border-radius: 24px;
-            padding: 20px; margin-bottom: 20px; border: 1px solid var(--border);
-            display: flex; flex-direction: column; align-items: center;
-            position: relative; overflow: hidden;
-        }
-        .profile-avatar {
-            width: 70px; height: 70px; border-radius: 50%;
-            background: var(--bg-panel-light); border: 2px solid var(--primary);
-            display: flex; justify-content: center; align-items: center;
-            font-size: 30px; margin-bottom: 10px; z-index: 2;
-        }
-        .profile-name { font-size: 18px; font-weight: 800; z-index: 2; }
-        .profile-id { font-size: 12px; color: var(--text-dim); margin-bottom: 15px; z-index: 2; }
-        
-        .profile-balance { font-size: 36px; font-weight: 900; margin-bottom: 15px; z-index: 2; display: flex; align-items: center; gap: 10px;}
-        .profile-balance span { font-size: 24px; color: var(--gold); }
-
-        .profile-actions { display: flex; gap: 10px; width: 100%; z-index: 2; }
-        .btn-primary {
-            flex: 1; background: var(--primary); color: white; border: none;
-            padding: 14px; border-radius: 14px; font-weight: 800; font-size: 14px;
-            cursor: pointer; text-transform: uppercase;
-        }
-        .btn-secondary {
-            flex: 1; background: rgba(255,255,255,0.05); color: white; border: 1px solid var(--border);
-            padding: 14px; border-radius: 14px; font-weight: 800; font-size: 14px;
-            cursor: pointer; text-transform: uppercase;
-        }
-
-        /* --- GAMES GRID --- */
-        .games-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
-        }
+        /* GAMES */
+        .games-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .game-tile {
             background: var(--bg-panel); border: 1px solid var(--border);
             border-radius: 20px; overflow: hidden; position: relative;
@@ -136,94 +136,53 @@
             padding: 15px; cursor: pointer;
         }
         .game-tile:active { transform: scale(0.97); }
-        
         .game-tile.upgrade { background: linear-gradient(180deg, #2d1b00 0%, #141416 100%); }
         .game-tile.mines { background: linear-gradient(180deg, #1e1b4b 0%, #141416 100%); }
         .game-tile.rocket { background: linear-gradient(180deg, #064e3b 0%, #141416 100%); }
         .game-tile.cases { background: linear-gradient(180deg, #4c0519 0%, #141416 100%); }
-
-        .tile-players {
-            position: absolute; top: 10px; left: 10px;
-            background: rgba(0,0,0,0.6); padding: 4px 8px; border-radius: 10px;
-            font-size: 10px; font-weight: 700; display: flex; align-items: center; gap: 5px;
-        }
+        
+        .tile-players { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.6); padding: 4px 8px; border-radius: 10px; font-size: 10px; font-weight: 700; display: flex; align-items: center; gap: 5px; }
         .tile-players::before { content: ''; width: 6px; height: 6px; background: var(--green); border-radius: 50%; }
-        
         .tile-icon { font-size: 60px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -70%); filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5));}
-        
         .tile-title { font-size: 16px; font-weight: 900; z-index: 2; }
         .tile-desc { font-size: 10px; color: var(--text-dim); z-index: 2; }
 
-        /* --- BOTTOM NAV --- */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(20, 20, 22, 0.95); backdrop-filter: blur(10px);
-            border-top: 1px solid var(--border);
-            display: flex; justify-content: space-around;
-            padding: 10px 0 calc(10px + var(--safe-bottom));
-            z-index: 100;
-        }
-        .nav-item {
-            display: flex; flex-direction: column; align-items: center; gap: 4px;
-            color: var(--text-dim); font-size: 10px; font-weight: 700;
-            cursor: pointer; width: 25%;
-        }
+        /* PROFILE */
+        .profile-card { background: var(--bg-panel); border-radius: 24px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; }
+        .profile-avatar { width: 70px; height: 70px; border-radius: 50%; background: var(--bg-panel-light); border: 2px solid var(--primary); display: flex; justify-content: center; align-items: center; font-size: 30px; margin-bottom: 10px; z-index: 2; }
+        .profile-name { font-size: 18px; font-weight: 800; z-index: 2; }
+        .profile-id { font-size: 12px; color: var(--text-dim); margin-bottom: 15px; z-index: 2; }
+        .profile-balance { font-size: 36px; font-weight: 900; margin-bottom: 15px; z-index: 2; display: flex; align-items: center; gap: 10px;}
+        .profile-balance span { font-size: 24px; color: var(--gold); }
+        .profile-actions { display: flex; gap: 10px; width: 100%; z-index: 2; }
+        .btn-primary { flex: 1; background: var(--primary); color: white; border: none; padding: 14px; border-radius: 14px; font-weight: 800; font-size: 14px; cursor: pointer; text-transform: uppercase; }
+        .btn-secondary { flex: 1; background: rgba(255,255,255,0.05); color: white; border: 1px solid var(--border); padding: 14px; border-radius: 14px; font-weight: 800; font-size: 14px; cursor: pointer; text-transform: uppercase; }
+
+        /* BOTTOM NAV */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(20, 20, 22, 0.95); backdrop-filter: blur(10px); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 10px 0 20px; z-index: 100; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-dim); font-size: 10px; font-weight: 700; cursor: pointer; width: 25%; }
         .nav-item.active { color: var(--primary); }
         .nav-icon { font-size: 20px; }
 
-        /* --- OVERLAYS --- */
-        .overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(9, 9, 11, 0.95); backdrop-filter: blur(10px);
-            display: none; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 1000; padding: 20px;
-        }
-        .modal {
-            background: var(--bg-panel); border: 1px solid var(--border);
-            border-radius: 24px; padding: 25px; width: 100%; max-width: 400px;
-            display: flex; flex-direction: column; align-items: center;
-        }
+        /* OVERLAYS */
+        .overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(9, 9, 11, 0.95); backdrop-filter: blur(10px); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+        .modal { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 24px; padding: 25px; width: 100%; max-width: 400px; display: flex; flex-direction: column; align-items: center; }
         .modal h2 { margin: 0 0 20px 0; font-size: 20px; font-weight: 900; text-transform: uppercase; }
 
-        .bet-input-container {
-            width: 100%; background: rgba(0,0,0,0.5); border: 2px solid var(--border);
-            border-radius: 16px; padding: 15px; display: flex; align-items: center; gap: 10px;
-            margin-bottom: 15px;
-        }
+        .bet-input-container { width: 100%; background: rgba(0,0,0,0.5); border: 2px solid var(--border); border-radius: 16px; padding: 15px; display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
         .bet-input-container span { font-size: 24px; color: var(--gold); }
-        .bet-input-container input {
-            flex: 1; background: transparent; border: none; color: white;
-            font-size: 32px; font-weight: 900; outline: none; text-align: center;
-        }
+        .bet-input-container input { flex: 1; background: transparent; border: none; color: white; font-size: 32px; font-weight: 900; outline: none; text-align: center; }
         .quick-bets { display: flex; gap: 8px; width: 100%; margin-bottom: 20px; }
-        .quick-bet {
-            flex: 1; background: var(--bg-panel-light); border: none;
-            color: white; padding: 10px 0; border-radius: 10px;
-            font-size: 12px; font-weight: 800; cursor: pointer;
-        }
+        .quick-bet { flex: 1; background: var(--bg-panel-light); border: none; color: white; padding: 10px 0; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; }
         
-        .action-btn {
-            width: 100%; padding: 18px; border-radius: 16px; border: none;
-            background: var(--primary-gradient); color: white;
-            font-size: 16px; font-weight: 900; text-transform: uppercase; cursor: pointer;
-            margin-bottom: 10px;
-        }
+        .action-btn { width: 100%; padding: 18px; border-radius: 16px; border: none; background: var(--primary-gradient); color: white; font-size: 16px; font-weight: 900; text-transform: uppercase; cursor: pointer; margin-bottom: 10px; }
         .action-btn:active { opacity: 0.8; }
-        
-        .close-btn {
-            width: 100%; padding: 15px; border-radius: 16px; border: none;
-            background: rgba(255,255,255,0.05); color: var(--text-dim);
-            font-size: 14px; font-weight: 800; cursor: pointer;
-        }
+        .close-btn { width: 100%; padding: 15px; border-radius: 16px; border: none; background: rgba(255,255,255,0.05); color: var(--text-dim); font-size: 14px; font-weight: 800; cursor: pointer; }
 
-        /* --- GAME SCREENS --- */
+        /* GAMES UI */
         .game-screen { display: none; flex-direction: column; align-items: center; width: 100%; max-width: 100%;}
         
-        /* SLOTS */
-        .slot-machine {
-            background: #000; border: 2px solid var(--primary); border-radius: 20px;
-            padding: 15px; box-shadow: 0 0 30px var(--primary); margin-bottom: 20px; width: 100%; max-width: 340px;
-        }
+        .slot-machine { background: #000; border: 2px solid var(--primary); border-radius: 20px; padding: 15px; box-shadow: 0 0 30px var(--primary); margin-bottom: 20px; width: 100%; max-width: 340px; }
         .reels-container { display: flex; justify-content: center; gap: 10px; background: #08060d; padding: 10px; border-radius: 12px; position: relative; overflow: hidden; }
         .payline { position: absolute; top: 50%; left: 5%; right: 5%; height: 4px; background: rgba(255, 215, 0, 0.2); transform: translateY(-50%); z-index: 10; transition: 0.3s; }
         .payline.active { background: var(--gold); box-shadow: 0 0 20px var(--gold); }
@@ -234,27 +193,18 @@
         .spinning .reel-strip { animation: spinReel 0.25s linear infinite; }
         .spinning { filter: blur(2px); }
 
-        /* WHEEL */
         .wheel-container { position: relative; width: 300px; height: 300px; margin-bottom: 20px; display: flex; justify-content: center; align-items: center; }
         .wheel-pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); font-size: 35px; color: var(--gold); filter: drop-shadow(0 0 10px var(--gold)); z-index: 10; }
         #wheel-canvas { width: 100%; height: 100%; border-radius: 50%; box-shadow: 0 0 40px var(--primary); transition: transform 6s cubic-bezier(0.1, 0.8, 0.1, 1); }
         .wheel-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 70px; height: 70px; background: var(--bg); border-radius: 50%; border: 3px solid var(--primary); z-index: 5; display: flex; justify-content: center; align-items: center; font-size: 30px; }
 
-        /* MINES */
         .mines-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; max-width: 300px; margin-bottom: 20px; }
         .mine-cell { width: 100%; aspect-ratio: 1; background: var(--bg-panel); border: 1px solid var(--border); border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 35px; cursor: pointer; transition: 0.2s; }
         .mine-cell:active { transform: scale(0.95); border-color: var(--primary); }
         .mine-cell.opened { background: rgba(139, 92, 246, 0.15); border-color: var(--primary); cursor: default; }
         .mine-cell.mine { background: rgba(239, 68, 68, 0.2); border-color: var(--red); }
 
-        /* RESULT POPUP */
-        .result-popup {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0);
-            background: var(--bg-panel); border: 2px solid var(--primary);
-            padding: 30px 50px; border-radius: 20px; text-align: center;
-            box-shadow: 0 0 50px var(--primary); z-index: 50;
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none;
-        }
+        .result-popup { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); background: var(--bg-panel); border: 2px solid var(--primary); padding: 30px 50px; border-radius: 20px; text-align: center; box-shadow: 0 0 50px var(--primary); z-index: 50; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none; }
         .result-popup.show { transform: translate(-50%, -50%) scale(1); }
         .res-title { font-size: 26px; font-weight: 900; margin-bottom: 10px; }
         .res-title.win { color: var(--gold); text-shadow: 0 0 20px var(--gold); }
@@ -264,10 +214,8 @@
         .res-amount.lose { color: var(--text-dim); }
 
         #particles { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999; }
-        @keyframes shake { 0% { transform: translate(1px, 1px) rotate(0deg); } 10% { transform: translate(-1px, -2px) rotate(-1deg); } 20% { transform: translate(-3px, 0px) rotate(1deg); } 30% { transform: translate(3px, 2px) rotate(0deg); } 40% { transform: translate(1px, -1px) rotate(1deg); } 50% { transform: translate(-1px, 2px) rotate(-1deg); } 60% { transform: translate(-3px, 1px) rotate(0deg); } 70% { transform: translate(3px, 1px) rotate(-1deg); } 80% { transform: translate(-1px, -1px) rotate(1deg); } 90% { transform: translate(1px, 2px) rotate(0deg); } 100% { transform: translate(1px, -2px) rotate(-1deg); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); } 20%, 40%, 60%, 80% { transform: translateX(5px); } }
         .shake { animation: shake 0.5s; }
-
-        .profile-bg { position: absolute; top: 0; left: 0; right: 0; height: 100px; background: linear-gradient(180deg, rgba(139, 92, 246, 0.2) 0%, transparent 100%); z-index: 1; }
     </style>
 </head>
 <body>
@@ -276,12 +224,17 @@
 
     <!-- SPLASH SCREEN -->
     <div id="splash">
-        <div class="crystal-ball"></div>
-        <div class="loader-bar"><div class="loader-progress"></div></div>
-        <div class="splash-text">ЗАГРУЗКА МАГИИ...</div>
+        <div class="ball-container">
+            <div class="magic-ball" id="magicBall">
+                <div class="ball-reflection"></div>
+                <div class="ball-center">8</div>
+            </div>
+        </div>
+        <div class="loader-text">ЗАГРУЗКА МАГИИ...</div>
     </div>
 
-    <div class="content">
+    <!-- MAIN UI -->
+    <div class="content" id="main-content">
         
         <!-- ГЛАВНАЯ СТРАНИЦА -->
         <div class="page active" id="page-games">
@@ -324,7 +277,7 @@
             </div>
         </div>
 
-        <!-- СТРАНИЦА ПРОФИЛЯ -->
+        <!-- ПРОФИЛЬ -->
         <div class="page" id="page-profile">
             <div class="top-bar">
                 <div class="logo">Профиль</div>
@@ -335,43 +288,35 @@
             </div>
 
             <div class="profile-card">
-                <div class="profile-bg"></div>
                 <div class="profile-avatar">👤</div>
                 <div class="profile-name" id="ui-username">Игрок</div>
                 <div class="profile-id" id="ui-userid">ID: ...</div>
-                
                 <div class="profile-balance"><span>⭐</span> <span id="ui-balance-big">...</span></div>
-                
                 <div class="profile-actions">
                     <button class="btn-primary" onclick="openDeposit()">Пополнить</button>
                     <button class="btn-secondary" onclick="tg.showAlert('Вывод пока недоступен.')">Вывести</button>
                 </div>
             </div>
         </div>
-
     </div>
 
     <!-- BOTTOM NAV -->
     <div class="bottom-nav">
         <div class="nav-item active" onclick="switchPage('games', this)">
-            <div class="nav-icon">🎮</div>
-            <div>Игры</div>
+            <div class="nav-icon">🎮</div><div>Игры</div>
         </div>
         <div class="nav-item" onclick="tg.showAlert('В разработке')">
-            <div class="nav-icon">📦</div>
-            <div>Кейсы</div>
+            <div class="nav-icon">📦</div><div>Кейсы</div>
         </div>
         <div class="nav-item" onclick="tg.showAlert('В разработке')">
-            <div class="nav-icon">💰</div>
-            <div>Заработок</div>
+            <div class="nav-icon">💰</div><div>Заработок</div>
         </div>
         <div class="nav-item" onclick="switchPage('profile', this)">
-            <div class="nav-icon">👤</div>
-            <div>Профиль</div>
+            <div class="nav-icon">👤</div><div>Профиль</div>
         </div>
     </div>
 
-    <!-- BET MENU -->
+    <!-- OVERLAYS -->
     <div class="overlay" id="bet-overlay">
         <div class="modal">
             <h2>Ставка</h2>
@@ -390,7 +335,6 @@
         </div>
     </div>
 
-    <!-- DEPOSIT MENU -->
     <div class="overlay" id="deposit-overlay">
         <div class="modal">
             <h2>Пополнение</h2>
@@ -406,9 +350,7 @@
         </div>
     </div>
 
-    <!-- GAME OVERLAY -->
     <div class="overlay" id="game-overlay">
-        
         <!-- SLOTS -->
         <div class="game-screen" id="screen-slot">
             <div class="slot-machine">
@@ -419,10 +361,7 @@
                     <div class="reel"><div class="reel-strip" id="reel-3"></div></div>
                 </div>
             </div>
-            <div class="result-popup" id="popup-slot">
-                <div class="res-title" id="slot-title">УВЫ</div>
-                <div class="res-amount" id="slot-amount">-50 ⭐</div>
-            </div>
+            <div class="result-popup" id="popup-slot"><div class="res-title" id="slot-title">УВЫ</div><div class="res-amount" id="slot-amount">-50 ⭐</div></div>
         </div>
 
         <!-- WHEEL -->
@@ -432,20 +371,14 @@
                 <canvas id="wheel-canvas" width="600" height="600"></canvas>
                 <div class="wheel-center">🔮</div>
             </div>
-            <div class="result-popup" id="popup-wheel">
-                <div class="res-title" id="wheel-title">ВЫИГРЫШ</div>
-                <div class="res-amount" id="wheel-amount">+100 ⭐</div>
-            </div>
+            <div class="result-popup" id="popup-wheel"><div class="res-title" id="wheel-title">ВЫИГРЫШ</div><div class="res-amount" id="wheel-amount">+100 ⭐</div></div>
         </div>
 
         <!-- MINES -->
         <div class="game-screen" id="screen-mines">
             <h2 style="margin:0 0 20px 0; color:var(--gold); font-size:18px; text-align:center;">Найди 6 кристаллов</h2>
             <div class="mines-grid" id="mines-grid"></div>
-            <div class="result-popup" id="popup-mines">
-                <div class="res-title" id="mines-title">ПРОИГРЫШ</div>
-                <div class="res-amount" id="mines-amount">-50 ⭐</div>
-            </div>
+            <div class="result-popup" id="popup-mines"><div class="res-title" id="mines-title">ПРОИГРЫШ</div><div class="res-amount" id="mines-amount">-50 ⭐</div></div>
         </div>
 
         <button class="close-btn" id="game-close-btn" style="display: none; margin-top: 20px; width: 80%; max-width: 300px;" onclick="closeOverlay('game-overlay')">Забрать и выйти</button>
@@ -455,12 +388,19 @@
         const tg = window.Telegram.WebApp;
         tg.expand(); 
         
-        // --- SPLASH SCREEN ---
+        // --- SPLASH SCREEN LOGIC ---
         setTimeout(() => {
+            const ball = document.getElementById('magicBall');
             const splash = document.getElementById('splash');
-            splash.style.opacity = '0';
-            setTimeout(() => splash.style.display = 'none', 500);
-        }, 2000);
+            const mainContent = document.getElementById('main-content');
+            
+            ball.classList.add('rolling-away');
+            
+            setTimeout(() => {
+                splash.style.display = 'none';
+                mainContent.classList.add('loaded');
+            }, 800);
+        }, 1500);
 
         // --- NAVIGATION ---
         function switchPage(pageId, el) {
@@ -485,9 +425,7 @@
 
         async function fetchBalance() {
             try {
-                const response = await fetch('/api/balance', {
-                    headers: { 'Authorization': tg.initData }
-                });
+                const response = await fetch('/api/balance', { headers: { 'Authorization': tg.initData } });
                 if (response.ok) {
                     const data = await response.json();
                     userBalance = data.balance;
@@ -505,9 +443,7 @@
         // --- UI ---
         function openDeposit() { document.getElementById('deposit-overlay').style.display = 'flex'; }
         function simulateDeposit(amount) {
-            userBalance += amount;
-            updateUI();
-            closeOverlay('deposit-overlay');
+            userBalance += amount; updateUI(); closeOverlay('deposit-overlay');
             tg.showAlert(`✅ Тестовое зачисление: +${amount} ⭐`);
         }
 
@@ -520,10 +456,7 @@
         let currentGame = '';
         let currentBet = 50;
 
-        function openBetMenu(game) {
-            currentGame = game;
-            document.getElementById('bet-overlay').style.display = 'flex';
-        }
+        function openBetMenu(game) { currentGame = game; document.getElementById('bet-overlay').style.display = 'flex'; }
 
         function closeOverlay(id) {
             document.getElementById(id).style.display = 'none';
@@ -536,32 +469,21 @@
 
         function startGame() {
             const bet = parseInt(document.getElementById('bet-input').value);
-            if (isNaN(bet) || bet < 5) return tg.showAlert("Минимальная ставка 5 ⭐");
+            if (isNaN(bet) || bet < 5) return tg.showAlert("Мин. ставка 5 ⭐");
             if (bet > userBalance) return tg.showAlert("Недостаточно средств!");
-            if (bet > 10000) return tg.showAlert("Максимальная ставка 10000 ⭐");
+            if (bet > 10000) return tg.showAlert("Макс. ставка 10000 ⭐");
 
-            currentBet = bet;
-            userBalance -= currentBet;
-            updateUI();
+            currentBet = bet; userBalance -= currentBet; updateUI();
             
             document.getElementById('bet-overlay').style.display = 'none';
             document.getElementById('game-overlay').style.display = 'flex';
 
-            if (currentGame === 'slot') {
-                document.getElementById('screen-slot').style.display = 'flex';
-                playSlots();
-            } else if (currentGame === 'wheel') {
-                document.getElementById('screen-wheel').style.display = 'flex';
-                playWheel();
-            } else {
-                document.getElementById('screen-mines').style.display = 'flex';
-                playMines();
-            }
+            if (currentGame === 'slot') { document.getElementById('screen-slot').style.display = 'flex'; playSlots(); }
+            else if (currentGame === 'wheel') { document.getElementById('screen-wheel').style.display = 'flex'; playWheel(); }
+            else { document.getElementById('screen-mines').style.display = 'flex'; playMines(); }
         }
 
-        // ==========================================
-        // ИГРА: СЛОТЫ
-        // ==========================================
+        // --- SLOTS ---
         const EMOJIS = ['🍒', '🍋', '🍉', '🔔', '💎', '💀'];
         const WIN_EMOJIS = ['🍒', '🍋', '🍉', '🔔'];
         
@@ -569,9 +491,7 @@
             for(let i=1; i<=3; i++) {
                 const strip = document.getElementById(`reel-${i}`);
                 strip.innerHTML = '';
-                for(let j=0; j<5; j++) {
-                    strip.innerHTML += `<div class="reel-item">${EMOJIS[Math.floor(Math.random()*EMOJIS.length)]}</div>`;
-                }
+                for(let j=0; j<5; j++) strip.innerHTML += `<div class="reel-item">${EMOJIS[Math.floor(Math.random()*EMOJIS.length)]}</div>`;
             }
         }
 
@@ -612,8 +532,7 @@
         }
 
         function showSlotResult(combo, win) {
-            const popup = document.getElementById('popup-slot');
-            popup.classList.add('show');
+            document.getElementById('popup-slot').classList.add('show');
             if (combo[0] === combo[1] && combo[1] === combo[2] && combo[0] !== '💀') {
                 document.getElementById('payline').classList.add('active');
                 if(win > currentBet) triggerParticles(100);
@@ -635,13 +554,10 @@
                 document.body.classList.add('shake');
                 setTimeout(() => document.body.classList.remove('shake'), 500);
             }
-            updateUI();
-            document.getElementById('game-close-btn').style.display = 'block';
+            updateUI(); document.getElementById('game-close-btn').style.display = 'block';
         }
 
-        // ==========================================
-        // ИГРА: КОЛЕСО
-        // ==========================================
+        // --- WHEEL ---
         const canvas = document.getElementById('wheel-canvas');
         const ctx = canvas.getContext('2d');
         const visualSectors = [
@@ -652,24 +568,17 @@
         ];
 
         function drawWheel() {
-            const centerX = canvas.width / 2;
-            const centerY = canvas.height / 2;
-            const radius = centerX - 10;
+            const centerX = canvas.width / 2, centerY = canvas.height / 2, radius = centerX - 10;
             const anglePerSector = (Math.PI * 2) / visualSectors.length;
 
             for (let i = 0; i < visualSectors.length; i++) {
-                const startAngle = i * anglePerSector;
-                const endAngle = startAngle + anglePerSector;
-                ctx.beginPath(); ctx.moveTo(centerX, centerY);
-                ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+                const startAngle = i * anglePerSector, endAngle = startAngle + anglePerSector;
+                ctx.beginPath(); ctx.moveTo(centerX, centerY); ctx.arc(centerX, centerY, radius, startAngle, endAngle);
                 ctx.fillStyle = visualSectors[i].color; ctx.fill();
                 ctx.strokeStyle = '#14121d'; ctx.lineWidth = 4; ctx.stroke();
-                ctx.save(); ctx.translate(centerX, centerY);
-                ctx.rotate(startAngle + anglePerSector / 2);
-                ctx.textAlign = "right"; ctx.fillStyle = "#fff";
-                ctx.font = "bold 28px Montserrat";
-                ctx.fillText(visualSectors[i].label, radius - 30, 10);
-                ctx.restore();
+                ctx.save(); ctx.translate(centerX, centerY); ctx.rotate(startAngle + anglePerSector / 2);
+                ctx.textAlign = "right"; ctx.fillStyle = "#fff"; ctx.font = "bold 28px Montserrat";
+                ctx.fillText(visualSectors[i].label, radius - 30, 10); ctx.restore();
             }
         }
         drawWheel();
@@ -678,8 +587,7 @@
             const wheel = document.getElementById('wheel-canvas');
             document.getElementById('popup-wheel').classList.remove('show');
             wheel.style.transition = 'none'; wheel.style.transform = `rotate(0deg)`;
-            void wheel.offsetWidth; 
-            wheel.style.transition = 'transform 6s cubic-bezier(0.1, 0.8, 0.1, 1)';
+            void wheel.offsetWidth; wheel.style.transition = 'transform 6s cubic-bezier(0.1, 0.8, 0.1, 1)';
 
             const chance = Math.random();
             let win = 0, sectorIndex = 0;
@@ -688,10 +596,9 @@
             else if (chance < 0.08) { win = currentBet * 2.0; sectorIndex = 2; }
             else if (chance < 0.20) { win = currentBet * 0.5; sectorIndex = 4; }
             else if (chance < 0.25) { win = currentBet * 1.5; sectorIndex = 6; }
-            else { const lossSectors = [1, 3, 5, 7]; sectorIndex = lossSectors[Math.floor(Mathamount.random() * lossSectors lose.length)];";
- win = 0; }
+            else { const lossSectors = [1, 3, 5, 7]; sectorIndex = lossSectors[Math.floor(Math.random() * lossSectors.length)]; win = 0; }
 
-            const                anglePerSector document = 360 / visualSectors.length;
+            const anglePerSector = 360 / visualSectors.length;
             const targetAngle = (sectorIndex * anglePerSector) + (anglePerSector / 2);
             const finalRotation = 1800 + (360 - targetAngle) + 270;
 
@@ -700,8 +607,7 @@
         }
 
         function showWheelResult(win) {
-            const popup = document.getElementById('popup-wheel');
-            popup.classList.add('show');
+            document.getElementById('popup-wheel').classList.add('show');
             if (win > 0) {
                 document.getElementById('wheel-title').innerText = "ВЫИГРЫШ";
                 document.getElementById('wheel-title').className = "res-title win";
@@ -713,52 +619,37 @@
                 document.getElementById('wheel-title').innerText = "ПРОИГРЫШ";
                 document.getElementById('wheel-title').className = "res-title lose";
                 document.getElementById('wheel-amount').innerText = `-${currentBet.toLocaleString('ru-RU')} ⭐`;
-                document.getElementById('wheel-amount').className = "res-.body.classList.add('shake');
-                setTimeout(() => document.body.classList.remove('shake'), 500);
+                document.getElementById('wheel-amount').className = "res-amount lose";
+                document.body.classList.add('shake'); setTimeout(() => document.body.classList.remove('shake'), 500);
             }
-            updateUI();
-            document.getElementById('game-close-btn').style.display = 'block';
+            updateUI(); document.getElementById('game-close-btn').style.display = 'block';
         }
 
-        // ==========================================
-        // ИГРА: МИНЫ
-        // ==========================================
+        // --- MINES ---
         function playMines() {
-            const grid = document.getElementById('mines-grid');
-            grid.innerHTML = '';
+            const grid = document.getElementById('mines-grid'); grid.innerHTML = '';
             document.getElementById('popup-mines').classList.remove('show');
             document.getElementById('game-close-btn').style.display = 'none';
 
             let cells = Array(9).fill('gem');
-            cells[Math.floor(Math.random()*9)] = 'mine';
-            cells[Math.floor(Math.random()*9)] = 'mine';
-            cells[Math.floor(Math.random()*9)] = 'mine';
+            cells[Math.floor(Math.random()*9)] = 'mine'; cells[Math.floor(Math.random()*9)] = 'mine'; cells[Math.floor(Math.random()*9)] = 'mine';
 
-            let opened = 0;
-            let isGameOver = false;
+            let opened = 0, isGameOver = false;
 
             cells.forEach((type, index) => {
-                const cell = document.createElement('div');
-                cell.className = 'mine-cell';
+                const cell = document.createElement('div'); cell.className = 'mine-cell';
                 cell.onclick = () => {
                     if (isGameOver || cell.classList.contains('opened')) return;
-                    
                     cell.classList.add('opened');
                     if (type === 'mine') {
-                        cell.classList.add('mine');
-                        cell.innerText = '💥';
-                        isGameOver = true;
+                        cell.classList.add('mine'); cell.innerText = '💥'; isGameOver = true;
                         document.querySelectorAll('.mine-cell').forEach((c, i) => {
                             if (cells[i] === 'mine') { c.classList.add('mine'); c.innerText = '💣'; }
                         });
                         showMinesResult(false);
                     } else {
-                        cell.innerText = '💎';
-                        opened++;
-                        if (opened === 6) {
-                            isGameOver = true;
-                            showMinesResult(true);
-                        }
+                        cell.innerText = '💎'; opened++;
+                        if (opened === 6) { isGameOver = true; showMinesResult(true); }
                     }
                 };
                 grid.appendChild(cell);
@@ -766,38 +657,32 @@
         }
 
         function showMinesResult(isWin) {
-            const popup = document.getElementById('popup-mines');
-            popup.classList.add('show');
-
+            document.getElementById('popup-mines').classList.add('show');
             if (isWin) {
                 const win = currentBet * 2.0;
                 document.getElementById('mines-title').innerText = "ПОБЕДА!";
                 document.getElementById('mines-title').className = "res-title win";
                 document.getElementById('mines-amount').innerText = `+${win.toLocaleString('ru-RU')} ⭐`;
                 document.getElementById('mines-amount').className = "res-amount win";
-                userBalance += win;
-                triggerParticles(100);
+                userBalance += win; triggerParticles(100);
             } else {
                 document.getElementById('mines-title').innerText = "ВЗРЫВ!";
                 document.getElementById('mines-title').className = "res-title lose";
                 document.getElementById('mines-amount').innerText = `-${currentBet.toLocaleString('ru-RU')} ⭐`;
                 document.getElementById('mines-amount').className = "res-amount lose";
-                document.body.classList.add('shake');
-                setTimeout(() => document.body.classList.remove('shake'), 500);
+                document.body.classList.add('shake'); setTimeout(() => document.body.classList.remove('shake'), 500);
             }
-            updateUI();
-            document.getElementById('game-close-btn').style.display = 'block';
+            updateUI(); document.getElementById('game-close-btn').style.display = 'block';
         }
 
-        // --- КОНФЕТТИ ---
+        // --- CONFETTI ---
         function triggerParticles(count) {
             const container = document.getElementById('particles');
             for (let i = 0; i < count; i++) {
                 const p = document.createElement('div');
                 p.style.position = 'absolute'; p.style.width = Math.random() * 10 + 5 + 'px';
                 p.style.height = Math.random() * 10 + 5 + 'px'; p.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
-                p.style.left = Math.random() * 100 + 'vw'; p.style.top = '-20px';
-                p.style.borderRadius = '50%'; p.style.opacity = Math.random();
+                p.style.left = Math.random() * 100 + 'vw'; p.style.top = '-20px'; p.style.borderRadius = '50%'; p.style.opacity = Math.random();
                 container.appendChild(p);
                 const duration = Math.random() * 2000 + 1000;
                 const xMove = Math.random() * 200 - 100;
