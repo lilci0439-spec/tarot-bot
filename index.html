@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Игровой центр</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--tg-theme-bg-color, #17212b);
+            color: var(--tg-theme-text-color, #ffffff);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 { font-size: 24px; margin-bottom: 20px; }
+        .game-card {
+            background-color: var(--tg-theme-secondary-bg-color, #232e3c);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-sizing: border-box;
+        }
+        .game-info { display: flex; flex-direction: column; }
+        .game-title { font-size: 18px; font-weight: bold; margin-bottom: 5px; }
+        .game-price { font-size: 14px; color: var(--tg-theme-hint-color, #708499); }
+        .play-btn {
+            background-color: var(--tg-theme-button-color, #2481cc);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .play-btn:active { opacity: 0.8; }
+    </style>
+</head>
+<body>
+    <h1>🎮 Игровой центр</h1>
+    
+    <div class="game-card">
+        <div class="game-info">
+            <div class="game-title">🎡 Колесо Фортуны</div>
+            <div class="game-price">50 Stars за попытку</div>
+        </div>
+        <button class="play-btn" onclick="playGame('wheel')">Играть</button>
+    </div>
+
+    <div class="game-card">
+        <div class="game-info">
+            <div class="game-title">🔢 Угадай число</div>
+            <div class="game-price">50 Stars за попытку</div>
+        </div>
+        <button class="play-btn" onclick="playGame('number')">Играть</button>
+    </div>
+
+    <div class="game-card">
+        <div class="game-info">
+            <div class="game-title">🎰 Мистический слот</div>
+            <div class="game-price">50 Stars за попытку</div>
+        </div>
+        <button class="play-btn" onclick="playGame('slot')">Играть</button>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand(); // Разворачиваем на весь экран
+
+        function playGame(gameType) {
+            // Здесь в будущем будет логика оплаты и запуска игры
+            // Пока просто выводим сообщение
+            tg.showAlert(`Вы выбрали игру: ${gameType}. \nСейчас здесь появится логика оплаты.`);
+            
+            // Пример того, как отправить данные в бота после игры:
+            // tg.sendData(JSON.stringify({ game: gameType, result: "win" }));
+            // tg.close();
+        }
+    </script>
+</body>
+</html>
