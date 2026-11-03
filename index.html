@@ -7,21 +7,21 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --bg-color: #0f0c29;
-            --card-bg: rgba(255, 255, 255, 0.08);
+            --bg: #0b0914;
+            --card-bg: rgba(255, 255, 255, 0.05);
             --accent: #9b51e0;
-            --text-main: #ffffff;
-            --text-sub: #b3b3b3;
-            --win-color: #f1c40f;
-            --lose-color: #e74c3c;
-            --return-color: #3498db;
-            --tg-btn: #2481cc;
+            --accent-glow: rgba(155, 81, 224, 0.6);
+            --text: #ffffff;
+            --sub: #8b8b9f;
+            --win: #f1c40f;
+            --lose: #e74c3c;
+            --gold: #ffd700;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            color: var(--text-main);
+            background: radial-gradient(circle at top, #1a153a, #0b0914);
+            color: var(--text);
             margin: 0;
             padding: 15px;
             display: flex;
@@ -29,167 +29,224 @@
             align-items: center;
             min-height: 100vh;
             box-sizing: border-box;
+            overflow-x: hidden;
         }
 
         .header { text-align: center; margin-bottom: 15px; width: 100%; }
-        .header h1 { font-size: 22px; margin: 0 0 10px 0; text-shadow: 0 0 15px var(--accent); }
+        .header h1 { font-size: 24px; margin: 0 0 10px 0; text-shadow: 0 0 15px var(--accent); }
         
         .balance-box {
-            background: rgba(0,0,0,0.4);
-            padding: 10px 20px;
-            border-radius: 20px;
+            background: rgba(0,0,0,0.6);
+            padding: 10px 25px;
+            border-radius: 25px;
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            border: 1px solid rgba(241, 196, 15, 0.4);
+            border: 1px solid var(--accent-glow);
+            box-shadow: 0 0 15px rgba(155, 81, 224, 0.2);
         }
-        
-        .balance-box .amount { font-size: 20px; color: #f1c40f; font-weight: bold; }
+        .balance-box .amount { font-size: 22px; color: var(--win); font-weight: 800; }
 
-        /* Кнопки управления */
-        .controls {
-            display: flex;
-            gap: 10px;
-            width: 100%;
-            max-width: 400px;
-            margin-bottom: 20px;
-        }
-        
+        .controls { display: flex; gap: 10px; width: 100%; max-width: 400px; margin-bottom: 20px; }
         .ctrl-btn {
-            flex: 1;
-            background: var(--tg-btn);
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 14px;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 5px;
+            flex: 1; background: #2481cc; color: white; border: none;
+            padding: 12px; border-radius: 12px; font-size: 14px; font-weight: bold;
+            cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 5px;
         }
         .ctrl-btn.reg { background: #27ae60; }
         
         .game-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 15px;
-            width: 100%;
-            max-width: 400px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-sizing: border-box;
-            transition: transform 0.2s;
+            background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px; padding: 20px; margin-bottom: 15px;
+            width: 100%; max-width: 400px;
+            display: flex; align-items: center; justify-content: space-between;
+            box-sizing: border-box; transition: transform 0.2s;
         }
-
-        .game-info { display: flex; flex-direction: column; }
         .game-title { font-size: 18px; font-weight: bold; margin-bottom: 5px; }
-        .game-price { font-size: 13px; color: var(--text-sub); }
-
+        .game-price { font-size: 12px; color: var(--sub); text-transform: uppercase; letter-spacing: 1px; }
         .play-btn {
-            background: linear-gradient(45deg, #9b51e0, #e056fd);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
+            background: linear-gradient(45deg, #9b51e0, #e056fd); color: white;
+            border: none; padding: 12px 30px; border-radius: 12px;
+            font-size: 16px; font-weight: bold; cursor: pointer;
+            box-shadow: 0 4px 15px var(--accent-glow);
         }
 
-        /* Модальные окна */
+        /* --- ЭКРАНЫ --- */
         .overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(10, 10, 20, 0.95);
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 20px;
-            text-align: center;
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(11, 9, 20, 0.98); display: none;
+            flex-direction: column; align-items: center; justify-content: center;
+            z-index: 1000; padding: 20px; text-align: center;
         }
 
         .bet-input {
-            width: 80%; max-width: 300px;
-            padding: 15px; font-size: 24px;
-            text-align: center;
-            background: rgba(255,255,255,0.1);
-            border: 2px solid var(--accent);
-            border-radius: 12px;
-            color: white; margin: 15px 0; outline: none;
+            width: 80%; max-width: 300px; padding: 15px; font-size: 26px;
+            text-align: center; background: rgba(255,255,255,0.05);
+            border: 2px solid var(--accent); border-radius: 15px;
+            color: white; margin: 15px 0; outline: none; font-weight: bold;
         }
 
         .action-btn {
-            background: linear-gradient(45deg, var(--accent), #e056fd);
-            color: white; border: none;
-            padding: 15px 40px; border-radius: 12px;
+            background: linear-gradient(45deg, #9b51e0, #e056fd); color: white;
+            border: none; padding: 16px 40px; border-radius: 15px;
             font-size: 18px; font-weight: bold; cursor: pointer;
             width: 80%; max-width: 300px; margin-bottom: 10px;
+            box-shadow: 0 4px 15px var(--accent-glow);
         }
-
         .close-btn {
-            background: rgba(255,255,255,0.1);
-            color: white; border: 1px solid rgba(255,255,255,0.2);
-            padding: 12px 30px; border-radius: 10px;
-            font-size: 16px; cursor: pointer;
+            background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);
+            padding: 14px 30px; border-radius: 15px; font-size: 16px; cursor: pointer;
             width: 80%; max-width: 300px;
         }
 
-        /* Анимации игр */
         .game-area { display: none; flex-direction: column; align-items: center; width: 100%; }
 
-        .wheel-container {
-            width: 200px; height: 200px; border-radius: 50%;
-            border: 5px solid var(--accent);
-            background: conic-gradient(#e74c3c 0deg 72deg, #f1c40f 72deg 144deg, #2ecc71 144deg 216deg, #9b51e0 216deg 288deg, #3498db 288deg 360deg);
-            position: relative; margin-bottom: 30px;
-            transition: transform 3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        /* --- СЛОТЫ --- */
+        .slot-machine {
+            background: linear-gradient(to bottom, #1f1a3a, #120e24);
+            border: 4px solid #9b51e0;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 0 30px var(--accent-glow), inset 0 0 20px rgba(0,0,0,0.8);
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .slot-reels {
+            display: flex;
+            gap: 5px;
+            background: #000;
+            padding: 5px;
+            border-radius: 10px;
+            border: 2px solid #332b5a;
+            position: relative;
+            overflow: hidden;
         }
         
+        /* Линия посередине */
+        .payline {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: rgba(255, 215, 0, 0.6);
+            box-shadow: 0 0 10px var(--gold);
+            transform: translateY(-50%);
+            z-index: 10;
+            display: none;
+        }
+        .payline.active { display: block; }
+
+        .reel {
+            width: 80px;
+            height: 120px;
+            background: linear-gradient(to bottom, #222, #111);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            font-size: 50px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .reel-item {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            flex-shrink: 0;
+        }
+
+        .slot-spinning .reel-strip {
+            animation: spinReel 0.2s infinite linear;
+        }
+
+        @keyframes spinReel {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-120px); }
+        }
+
+        /* --- КОЛЕСО --- */
+        .wheel-container {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            margin-bottom: 30px;
+        }
+        
+        .wheel-pointer {
+            position: absolute;
+            top: -20px; left: 50%;
+            transform: translateX(-50%);
+            font-size: 40px; color: var(--gold);
+            text-shadow: 0 0 15px var(--gold); z-index: 10;
+        }
+
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 8px solid #2a1b41;
+            box-shadow: 0 0 30px var(--accent-glow), inset 0 0 20px rgba(0,0,0,0.8);
+            position: relative;
+            background: conic-gradient(
+                #e74c3c 0deg 45deg, 
+                #f1c40f 45deg 90deg, 
+                #2ecc71 90deg 135deg, 
+                #3498db 135deg 180deg, 
+                #9b51e0 180deg 225deg,
+                #e67e22 225deg 270deg,
+                #1abc9c 270deg 315deg,
+                #34495e 315deg 360deg
+            );
+            transition: transform 5s cubic-bezier(0.15, 0.9, 0.15, 1);
+            transform: rotate(0deg);
+        }
+
         .wheel-center {
             position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 40px; height: 40px;
-            background: #0f0c29; border-radius: 50%;
-            border: 3px solid var(--accent);
+            width: 60px; height: 60px;
+            background: #0b0914; border-radius: 50%;
+            border: 4px solid var(--accent);
+            box-shadow: 0 0 20px rgba(0,0,0,0.9);
+            z-index: 5;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px;
         }
 
-        .wheel-pointer {
-            position: absolute; top: -15px; left: 50%;
-            transform: translateX(-50%);
-            font-size: 30px; color: white;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.5); z-index: 10;
+        /* --- РЕЗУЛЬТАТ --- */
+        .result-screen {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85); display: none;
+            flex-direction: column; align-items: center; justify-content: center;
+            border-radius: 20px; z-index: 20;
         }
-
-        .slots-container { display: flex; gap: 10px; margin-bottom: 30px; }
-        .slot-reel {
-            width: 70px; height: 90px;
-            background: rgba(0,0,0,0.5);
-            border: 3px solid var(--accent); border-radius: 10px;
-            font-size: 50px; display: flex;
-            align-items: center; justify-content: center;
-            overflow: hidden;
-        }
-
-        .result-text {
-            font-size: 22px; font-weight: bold; margin-bottom: 20px;
-            opacity: 0; transition: opacity 0.5s;
-        }
-        .result-win { color: var(--win-color); text-shadow: 0 0 20px var(--win-color); }
-        .result-lose { color: var(--lose-color); }
-        .result-return { color: var(--return-color); }
         
-        .reg-form input {
-            width: 80%; max-width: 300px; padding: 12px;
-            margin-bottom: 10px; border-radius: 8px;
-            border: 1px solid #ccc; background: rgba(255,255,255,0.9);
+        .result-title {
+            font-size: 32px; font-weight: 900; text-transform: uppercase;
+            margin-bottom: 10px; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .result-win { color: var(--win); text-shadow: 0 0 20px var(--win); }
+        .result-lose { color: var(--lose); }
+        
+        .result-amount {
+            font-size: 40px; font-weight: bold; color: white;
+            animation: slideUp 0.5s ease-out 0.2s both;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes slideUp {
+            0% { transform: translateY(20px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
         }
     </style>
 </head>
@@ -203,92 +260,102 @@
     </div>
 
     <div class="controls">
-        <button class="ctrl-btn" onclick="openDeposit()">💳 Пополнить</ <button>
+        <button class="ctrl-btn" onclick="openDeposit()">💳 Пополнить</button>
         <button class="ctrl-btn reg" onclick="openRegistration()">📝 Регистрация</button>
     </div>
 
     <div class="game-card" onclick="openBetScreen('wheel')">
-        <div class="game-info">
+        <div>
             <div class="game-title">🎡 Колесо Фортуны</div>
-            <div class="game-price">Шанс выигрыша 5%</div>
+            <div class="game-price">Множители до x3</div>
         </div>
         <button class="play-btn">Играть</button>
     </div>
 
     <div class="game-card" onclick="openBetScreen('slot')">
-        <div class="game-info">
+        <div>
             <div class="game-title">🎰 Мистический слот</div>
-            <div class="game-price">Шанс выигрыша 5%</div>
+            <div class="game-price">Джекпот 75 ⭐</div>
         </div>
         <button class="play-btn">Играть</button>
     </div>
 
-    <!-- Экран Регистрации -->
-    <div class="overlay" id="reg-overlay">
-        <h2>Регистрация профиля</h2>
-       p style="color: var(--text-sub); font-size: 14px;">Введите ваши данные для сохранения прогресса</p>
-        <div class="reg-form">
-            <input type="text" id="reg-name" placeholder="Ваше имя">
-            <input type="email" id="reg-email" placeholder="Email">
-            <button class="action-btn" onclick="doRegister()">Создать профиль</button>
-        </div>
-        <button class="close-btn" onclick="closeOverlay('reg-overlay')">Отмена</button>
-    </div>
-
-    <!-- Экран Пополнения -->
-    <div class="overlay" id="deposit-overlay">
-        <h2>Пополнение баланса</h2>
-        <p style="color: var(--text-sub); font-size: 14px; margin-bottom: 20px;">
-            (Здесь будет происходить реальная оплата через Telegram Stars)<br>
-            Для теста нажмите кнопку ниже.
-        </p>
-        <button class="action-btn" onclick="simulatePayment()">Купить 50 Stars</button>
-        <button class="close-btn" onclick="closeOverlay('deposit-overlay')">Отмена</button>
-    </div>
-
-    <!-- Экран ставки -->
+    <!-- Экраны -->
     <div class="overlay" id="bet-overlay">
-        <h2 style="margin-bottom: 5px;">Ставка</h2>
-        <p style="color: var(--text-sub); margin-top: 0; margin-bottom: 15px;">Введите сумму от 5 до 10000</p>
+        <h2>Сделать ставку</h2>
         <input type="number" id="bet-input" class="bet-input" value="50" min="5" max="10000">
         <button class="action-btn" onclick="startGame()">Крутить!</button>
         <button class="close-btn" onclick="closeOverlay('bet-overlay')">Отмена</button>
     </div>
 
-    <!-- Игровое поле -->
     <div class="overlay" id="game-overlay">
-        <div class="game-area" id="area-wheel">
-            <div class="wheel-container" id="wheel">
-                <div class="wheel-pointer">▼</div>
-                <div class="wheel-center"></div>
-            </div>
-        </div>
-
+        <!-- Слоты -->
         <div class="game-area" id="area-slot">
-            <div class="slots-container">
-                <div class="slot-reel" id="reel1">🍒</div>
-                <div class="slot-reel" id="reel2">🍋</div>
-                <div class="slot-reel" id="reel3">💎</div>
+            <div class="slot-machine">
+                <div class="slot-reels" id="slot-reels">
+                    <div class="payline" id="payline"></div>
+                    <div class="reel"><div class="reel-strip" id="strip1"></div></div>
+                    <div class="reel"><div class="reel-strip" id="strip2"></div></div>
+                    <div class="reel"><div class="reel-strip" id="strip3"></div></div>
+                </div>
+                <div class="result-screen" id="result-slot">
+                    <div class="result-title" id="slot-title"></div>
+                    <div class="result-amount" id="slot-amount"></div>
+                </div>
             </div>
         </div>
 
-        <div class="result-text" id="result-text"></div>
+        <!-- Колесо -->
+        <div class="game-area" id="area-wheel">
+            <div class="wheel-container">
+                <div class="wheel-pointer">🔻</div>
+                <div class="wheel" id="wheel"></div>
+                <div class="wheel-center">🔮</div>
+            </div>
+            <div class="result-screen" id="result-wheel">
+                <div class="result-title" id="wheel-title"></div>
+                <div class="result-amount" id="wheel-amount"></div>
+            </div>
+        </div>
+
         <button class="close-btn" id="game-close-btn" style="display: none;" onclick="closeOverlay('game-overlay')">Забрать и закрыть</button>
+    </div>
+
+    <div class="overlay" id="reg-overlay">
+        <h2>Регистрация</h2>
+        <input type="text" id="reg-name" placeholder="Ваше имя" style="padding:15px; border-radius:10px; border:none; width:80%; max-width:300px; margin-bottom:15px;">
+        <button class="action-btn" onclick="doRegister()">Создать</button>
+        <button class="close-btn" onclick="closeOverlay('reg-overlay')">Отмена</button>
+    </div>
+
+    <div class="overlay" id="deposit-overlay">
+        <h2>Пополнение</h2>
+        <button class="action-btn" onclick="simulatePayment(50)">Купить 50 ⭐</button>
+        <button class="close-btn" onclick="closeOverlay('deposit-overlay')">Отмена</button>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand(); 
         
-        // СТАРТОВЫЙ ТЕСТОВЫЙ БАЛАНС - 1 МИЛЛИОН
         let userBalance = 1000000; 
         let currentGame = '';
         let currentBet = 0;
         
         document.getElementById('balance-val').innerText = userBalance;
+        const updateUI = () => document.getElementById('balance-val').innerText = userBalance;
 
-        function updateBalanceUI() {
-            document.getElementById('balance-val').innerText = userBalance;
+        // --- ИНИЦИАЛИЗАЦИЯ БАРАБАНОВ ---
+        const emojis = ['🍒', '🍋', '🍉', '🔔', '💎', '💀'];
+        function initReels() {
+            for(let i=1; i<=3; i++) {
+                const strip = document.getElementById(`strip${i}`);
+                strip.innerHTML = '';
+                // Заполняем ленту случайными символами
+                for(let j=0; j<15; j++) {
+                    strip.innerHTML += `<div class="reel-item">${emojis[Math.floor(Math.random() * emojis.length)]}</div>`;
+                }
+            }
         }
 
         function openBetScreen(game) {
@@ -301,59 +368,38 @@
             document.getElementById(id).style.display = 'none';
         }
 
-        // --- Логика пополнения ---
-        function openDeposit() {
-            document.getElementById('deposit-overlay').style.display = 'flex';
-        }
-
-        function simulatePayment() {
-            // В реальности здесь будет вызов: tg.openInvoice('ссылка_на_счет')
-            userBalance += 50;
-            updateBalanceUI();
+        function openDeposit() { document.getElementById('deposit-overlay').style.display = 'flex'; }
+        function simulatePayment(amount) {
+            userBalance += amount;
+            updateUI();
             closeOverlay('deposit-overlay');
-            tg.showAlert("✅ Тестовая оплата прошла! Баланс пополнен на 50 Stars.");
+            tg.showAlert(`✅ Баланс пополнен на ${amount} ⭐`);
         }
 
-        // --- Логика регистрации ---
-        function openRegistration() {
-            document.getElementById('reg-overlay').style.display = 'flex';
-        }
-
+        function openRegistration() { document.getElementById('reg-overlay').style.display = 'flex'; }
         function doRegister() {
             const name = document.getElementById('reg-name').value;
-            if(!name) {
-                tg.showAlert("Введите имя!");
-                return;
-            }
-            // В реальности здесь будет отправка данных на сервер (tg.sendData)
+            if(!name) { tg.showAlert("Введите имя!"); return; }
             closeOverlay('reg-overlay');
-            tg.showAlert(`👋 Привет, ${name}! Профиль успешно создан.`);
+            tg.showAlert(`👋 Привет, ${name}!`);
         }
 
-        // --- Логика игры ---
         function startGame() {
-            const betValue = parseInt(document.getElementById('bet-input').value);
-            
-            if (isNaN(betValue) || betValue < 5 || betValue > 10000) {
-                tg.showAlert("Введите сумму от 5 до 10000!");
-                return;
-            }
-            if (betValue > userBalance) {
-                tg.showAlert("Недостаточно средств! Пополните баланс.");
-                return;
-            }
+            const bet = parseInt(document.getElementById('bet-input').value);
+            if (isNaN(bet) || bet < 5) return tg.showAlert("Мин. ставка 5 ⭐");
+            if (bet > userBalance) return tg.showAlert("Недостаточно средств!");
 
-            currentBet = betValue;
+            currentBet = bet;
             userBalance -= currentBet;
-            updateBalanceUI();
+            updateUI();
             
             document.getElementById('bet-overlay').style.display = 'none';
             document.getElementById('game-overlay').style.display = 'flex';
             document.getElementById('game-close-btn').style.display = 'none';
             
-            const resultText = document.getElementById('result-text');
-            resultText.style.opacity = 0;
-            resultText.className = 'result-text';
+            // Скрываем экраны результата
+            document.getElementById('result-slot').style.display = 'none';
+            document.getElementById('result-wheel').style.display = 'none';
 
             if (currentGame === 'wheel') {
                 playWheel();
@@ -362,79 +408,150 @@
             }
         }
 
-        function playWheel() {
-            document.getElementById('area-wheel').style.display = 'flex';
-            document.getElementById('area-slot').style.display = 'none';
-            
-            const wheel = document.getElementById('wheel');
-            const randomDeg = (Math.floor(Math.random() * 360) + 1440); 
-            wheel.style.transform = `rotate(${randomDeg}deg)`;
-
-            setTimeout(() => {
-                showResult();
-            }, 3000);
-        }
-
+        // --- ЛОГИКА СЛОТОВ ---
         function playSlots() {
             document.getElementById('area-wheel').style.display = 'none';
             document.getElementById('area-slot').style.display = 'flex';
+            document.getElementById('payline').classList.remove('active');
             
-            const reels = [document.getElementById('reel1'), document.getElementById('reel2'), document.getElementById('reel3')];
-            const emojis = ['🍒', '🍋', '💎', '🔔', '💀'];
-            
-            let spinCount = 0;
-            const spinInterval = setInterval(() => {
-                reels.forEach(reel => {
-                    reel.innerText = emojis[Math.floor(Math.random() * emojis.length)];
-                });
-                spinCount++;
+            initReels();
+            const reels = document.getElementById('slot-reels');
+            reels.classList.add('slot-spinning');
+
+            // Определяем результат ЗАРАНЕЕ (до анимации)
+            const chance = Math.random();
+            let win = 0;
+            let combo = []; // Что должно выпасть
+
+            // 70% - Каша (Проигрыш)
+            if (chance < 0.70) {
+                win = 0;
+                combo = [emojis[Math.floor(Math.random()*4)], emojis[Math.floor(Math.random()*4)], emojis[Math.floor(Math.random()*4)]];
+                // Убедимся, что нет трех одинаковых
+                if(combo[0] === combo[1] && combo[1] === combo[2]) combo[2] = emojis[5];
+            } 
+            // 5% - ДЖЕКПОТ (Три Алмаза)
+            else if (chance < 0.75) {
+                win = currentBet * 1.5; // Чистый выигрыш 75 при ставке 50
+                combo = ['💎', '💎', '💎'];
+            }
+            // 10% - 3 одинаковых (кроме алмазов)
+            else if (chance < 0.85) {
+                const sym = emojis[Math.floor(Math.random()*4)];
+                combo = [sym, sym, sym];
+                win = currentBet * 0.5; // Возврат половины
+            }
+            // 15% - 2 одинаковых
+            else {
+                const sym = emojis[Math.floor(Math.random()*4)];
+                const other = emojis[Math.floor(Math.random()*4)];
+                combo = [sym, sym, other];
+                // Перемешаем
+                combo.sort(() => Math.random() - 0.5);
+                win = Math.floor(currentBet * 0.2); // Маленький возврат
+            }
+
+            // Анимация кручения (2 секунды)
+            setTimeout(() => {
+                reels.classList.remove('slot-spinning');
                 
-                if (spinCount > 15) {
-                    clearInterval(spinInterval);
-                    showResult();
-                }
-            }, 100);
+                // Останавливаем барабаны по очереди (как в реальном слоте)
+                setTimeout(() => setReelResult(1, combo[0]), 200);
+                setTimeout(() => setReelResult(2, combo[1]), 400);
+                setTimeout(() => setReelResult(3, combo[2]), 600);
+
+                // Показываем результат
+                setTimeout(() => {
+                    showSlotResult(combo, win);
+                }, 1000);
+
+            }, 2000);
         }
 
-        function showResult() {
-            const chance = Math.random(); 
-            let resultMessage = "";
-            let resultClass = "";
-            let winAmount = 0;
+        function setReelResult(reelIndex, symbol) {
+            const strip = document.getElementById(`strip${reelIndex}`);
+            strip.innerHTML = `<div class="reel-item" style="transform: translateY(0);">${symbol}</div>`;
+        }
+
+        function showSlotResult(combo, win) {
+            const resultScreen = document.getElementById('result-slot');
+            const title = document.getElementById('slot-title');
+            const amount = document.getElementById('slot-amount');
             
-            if (chance < 0.05) {
-                winAmount = Math.floor(currentBet * 1.5);
-                userBalance += winAmount;
-                resultMessage = `🎉 ДЖЕКПОТ! Вы выиграли ${winAmount} ⭐`;
-                resultClass = "result-win";
-            } else if (chance < 0.20) {
-                winAmount = Math.floor(currentBet * 0.5);
-                userBalance += winAmount;
-                resultMessage = `✨ Возврат половины: ${winAmount} ⭐`;
-                resultClass = "result-return";
+            resultScreen.style.display = 'flex';
+            
+            // Проверяем на комбинации для линии
+            if (combo[0] === combo[1] && combo[1] === combo[2]) {
+                document.getElementById('payline').classList.add('active');
+            } else if (combo[0] === combo[1] || combo[1] === combo[2] || combo[0] === combo[2]) {
+                 document.getElementById('payline').classList.add('active');
+            }
+
+            if (win > 0) {
+                title.innerText = win >= currentBet * 1.5 ? "ДЖЕКПОТ!" : "ВЫИГРЫШ";
+                title.className = "result-title result-win";
+                amount.innerText = `+${win} ⭐`;
+                userBalance += win;
             } else {
-                resultMessage = "💀 Увы, вы проиграли ставку.";
-                resultClass = "result-lose";
+                title.innerText = "УВЫ";
+                title.className = "result-title result-lose";
+                amount.innerText = "-" + currentBet + " ⭐";
             }
-
-            if (currentGame === 'slot') {
-                const reels = [document.getElementById('reel1'), document.getElementById('reel2'), document.getElementById('reel3')];
-                if (chance < 0.05) {
-                    reels.forEach(r => r.innerText = '💎');
-                } else if (chance < 0.20) {
-                    reels[0].innerText = '🍋'; reels[1].innerText = '🍋'; reels[2].innerText = '💀';
-                } else {
-                    reels[0].innerText = '💀'; reels[1].innerText = '🍒'; reels[2].innerText = '🔔';
-                }
-            }
-
-            updateBalanceUI();
-            const resultText = document.getElementById('result-text');
-            resultText.innerText = resultMessage;
-            resultText.classList.add(resultClass);
-            resultText.style.opacity = 1;
+            updateUI();
             
+            // Кнопка "Забрать"
             document.getElementById('game-close-btn').style.display = 'block';
+        }
+
+        // --- ЛОГИКА КОЛЕСА ---
+        function playWheel() {
+            document.getElementById('area-slot').style.display = 'none';
+            document.getElementById('area-wheel').style.display = 'flex';
+            
+            const wheel = document.getElementById('wheel');
+            wheel.style.transform = `rotate(0deg)`;
+            
+            // Случайный выигрыш для колеса
+            const chance = Math.random();
+            let win = 0;
+            let resultText = "";
+            let targetDeg = 0;
+
+            if (chance < 0.05) { win = currentBet * 3; targetDeg = 202; resultText = "x3"; } // Фиолетовый
+            else if (chance < 0.15) { win = currentBet * 2; targetDeg = 157; resultText = "x2"; } // Голубой
+            else if (chance < 0.30) { win = currentBet * 0.5; targetDeg = 337; resultText = "x0.5"; } // Темный
+            else { win = 0; targetDeg = 247; resultText = "ПРОИГРЫШ"; } // Оранжевый
+
+            // Крутим много оборотов + добавляем градус
+            const randomDeg = 3600 + targetDeg + (Math.random() * 30 - 15); // Плюс-минус 15 градусов для реализма
+            
+            setTimeout(() => {
+                wheel.style.transform = `rotate(${randomDeg}deg)`;
+            }, 50);
+
+            setTimeout(() => {
+                const resultScreen = document.getElementById('result-wheel');
+                const title = document.getElementById('wheel-title');
+                const amount = document.getElementById('wheel-amount');
+                
+                resultScreen.style.display = 'flex';
+                resultScreen.style.background = 'rgba(0,0,0,0.9)';
+                resultScreen.style.borderRadius = '50%';
+
+                if (win > 0) {
+                    title.innerText = "ВЫИГРЫШ";
+                    title.className = "result-title result-win";
+                    amount.innerText = `+${win} ⭐`;
+                    userBalance += win;
+                } else {
+                    title.innerText = "ПРОИГРЫШ";
+                    title.className = "result-title result-lose";
+                    amount.innerText = `-${currentBet} ⭐`;
+                }
+                updateUI();
+                document.getElementById('game-close-btn').style.display = 'block';
+
+            }, 5200); // Ждем остановки колеса
         }
     </script>
 </body>
