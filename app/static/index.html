@@ -7,9 +7,7 @@
     <title>Зал Оракула</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* =========================================
-           ТВОЙ ФИОЛЕТОВЫЙ ДИЗАЙН (СОХРАНЕН)
-        ========================================= */
+        /* ... ТВОЙ CSS ... */
         :root {
             --bg: #10051f; --bg-light: #1b0b32; --panel: rgba(35, 12, 62, 0.88);
             --panel-light: rgba(54, 20, 91, 0.8); --purple: #922cff;
@@ -21,19 +19,10 @@
         body { min-height: 100vh; min-height: 100dvh; }
         button, label { font: inherit; }
         button { color: inherit; }
-
-        .app {
-            position: relative; width: 100%; max-width: 520px; min-height: 100vh; min-height: 100dvh;
-            margin: 0 auto; padding: 16px 16px 112px; overflow: hidden;
-            background: radial-gradient(ellipse at 50% 28%, rgba(104, 25, 174, 0.18), transparent 42%), radial-gradient(ellipse at 10% 85%, rgba(87, 20, 147, 0.12), transparent 35%), linear-gradient(180deg, #10051f 0%, #0c0418 100%);
-        }
-        
-        /* СКРЫТЫЕ ПЕРЕКЛЮЧАТЕЛИ */
+        .app { position: relative; width: 100%; max-width: 520px; min-height: 100vh; min-height: 100dvh; margin: 0 auto; padding: 16px 16px 112px; overflow: hidden; background: radial-gradient(ellipse at 50% 28%, rgba(104, 25, 174, 0.18), transparent 42%), radial-gradient(ellipse at 10% 85%, rgba(87, 20, 147, 0.12), transparent 35%), linear-gradient(180deg, #10051f 0%, #0c0418 100%); }
         input[name="screen"], #game-open { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
         .screen { display: none; animation: screenAppear 0.35s ease both; }
         @keyframes screenAppear { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* ШАПКА */
         .topbar { position: relative; z-index: 5; display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; margin-bottom: 34px; }
         .user-button { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; padding: 7px 12px 7px 7px; border: 1px solid var(--border); border-radius: 50px; background: linear-gradient(120deg, rgba(62, 20, 105, 0.8), rgba(20, 7, 39, 0.9)); cursor: pointer; }
         .avatar { position: relative; display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 54px; height: 54px; border: 2px solid #9e42ff; border-radius: 50%; background: radial-gradient(circle, #8d39d9, #291044 75%); box-shadow: 0 0 15px rgba(151, 53, 255, 0.55); }
@@ -47,15 +36,12 @@
         .balance strong { font-size: 19px; font-weight: 650; }
         .star-icon { color: var(--gold); font-size: 27px; text-shadow: 0 0 10px rgba(255, 198, 42, 0.8); }
         .add-balance { display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; margin-left: 3px; border: 0; border-radius: 50%; background: #34115b; color: #e5c4ff; font-size: 26px; cursor: pointer; }
-
-        /* ЗАГОЛОВКИ И ШАР */
         .home-title, .section-heading { display: flex; align-items: center; justify-content: center; gap: 13px; margin: 15px 0 24px; }
         .home-title h1, .section-heading h1 { color: #d8a0ff; font-family: Georgia, serif; font-size: clamp(27px, 7vw, 38px); font-weight: 400; text-align: center; text-shadow: 0 0 14px rgba(180, 91, 255, 0.8); }
         .title-decoration { width: 35px; height: 1px; background: linear-gradient(90deg, transparent, #b65cff); }
         .title-decoration:last-child { transform: rotate(180deg); }
         .section-heading span { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, #a746ff); }
         .section-heading span:last-child { transform: rotate(180deg); }
-
         .oracle-section { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 330px; margin: 0 auto 20px; isolation: isolate; }
         .oracle-glow { position: absolute; top: 30%; left: 50%; width: 250px; height: 250px; border-radius: 50%; background: #8124ff; opacity: 0.16; filter: blur(70px); transform: translate(-50%, -50%); z-index: -1; }
         .crystal-orb { position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; width: 205px; height: 205px; overflow: hidden; border: 2px solid rgba(207, 155, 255, 0.9); border-radius: 50%; background: radial-gradient(circle at 35% 25%, rgba(229, 185, 255, 0.7), transparent 17%), radial-gradient(circle at 50% 55%, #48117d 0%, #21073f 50%, #12051f 100%); box-shadow: inset -15px -20px 35px rgba(0, 0, 0, 0.65), inset 10px 8px 25px rgba(219, 164, 255, 0.3), 0 0 15px #9e35ff, 0 0 40px rgba(155, 48, 255, 0.65); }
@@ -74,15 +60,12 @@
         .stand-body { display: flex; align-items: center; justify-content: center; width: 145px; height: 48px; margin-top: -4px; border: 1px solid #6b2da0; border-radius: 5px 5px 25px 25px; background: linear-gradient(90deg, #170823, #4a176d, #170823); box-shadow: inset 0 0 15px #10051c; }
         .stand-gem { color: #d9a0ff; font-size: 30px; text-shadow: 0 0 12px #b34cff; }
         .stand-bottom { width: 180px; height: 13px; margin-top: -2px; border: 1px solid #7734a7; border-radius: 50%; background: #28103f; box-shadow: 0 5px 20px rgba(162, 54, 255, 0.4); }
-
-        /* КАРТОЧКИ ИГРЫ */
         .welcome-card { padding: 23px 15px; border: 1px solid var(--border); border-radius: 25px; background: radial-gradient(circle at 50% 0%, rgba(117, 40, 185, 0.25), transparent 60%), linear-gradient(140deg, rgba(43, 13, 72, 0.9), rgba(19, 6, 35, 0.95)); text-align: center; box-shadow: 0 0 22px rgba(122, 33, 207, 0.12); margin-bottom: 20px; }
         .welcome-card h2 { color: #d8a0ff; font-family: Georgia, serif; font-size: 23px; font-weight: 400; }
         .welcome-balance { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 10px 0 3px; }
         .welcome-balance .star-icon { font-size: 42px; }
         .welcome-balance strong { color: #e4c5ff; font-size: 45px; font-weight: 500; text-shadow: 0 0 15px rgba(179, 97, 255, 0.5); }
         .welcome-card p { color: var(--muted); font-size: 14px; }
-
         .game-card { overflow: hidden; border: 1px solid #8b2ce3; border-radius: 25px; background: linear-gradient(150deg, #25103e, #10051f); box-shadow: 0 0 20px rgba(135, 41, 218, 0.2); margin-top: 20px; }
         .game-preview { position: relative; height: 200px; overflow: hidden; background: radial-gradient(circle at 50% 50%, #5d347e, #27123e); display: flex; justify-content: center; align-items: center; font-size: 80px; }
         .game-card-content { padding: 20px 17px 16px; }
@@ -90,34 +73,25 @@
         .game-card-content p { color: var(--muted); font-size: 13px; line-height: 1.6; text-align: center; margin-bottom: 15px; }
         .play-button { display: flex; align-items: center; justify-content: center; gap: 13px; width: 100%; padding: 16px; border: 1px solid #d28aff; border-radius: 50px; background: linear-gradient(100deg, #8e21ec, #b04bff, #7615d7); box-shadow: 0 0 20px rgba(161, 50, 255, 0.45); color: white; font-size: 19px; font-weight: 650; cursor: pointer; }
         .play-button:active { filter: brightness(1.2); transform: scale(0.98); }
-
-        /* НАВИГАЦИЯ */
         .bottom-nav { position: fixed; z-index: 20; bottom: max(10px, env(safe-area-inset-bottom)); left: 50%; display: grid; grid-template-columns: repeat(4, 1fr); width: min(calc(100% - 20px), 500px); padding: 12px 5px 10px; border: 1px solid rgba(136, 47, 206, 0.5); border-radius: 30px; background: rgba(20, 6, 36, 0.96); box-shadow: 0 -5px 30px rgba(102, 29, 170, 0.17); backdrop-filter: blur(15px); transform: translateX(-50%); }
         .nav-item { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; min-width: 0; padding: 3px 0; color: #a981d0; font-size: 11px; cursor: pointer; }
         .nav-icon { font-size: 25px; line-height: 1.2; filter: drop-shadow(0 0 5px rgba(167, 90, 255, 0.3)); }
         .nav-item::after { position: absolute; right: 20%; bottom: -10px; left: 20%; height: 3px; border-radius: 10px; background: transparent; content: ""; }
         #screen-home:checked ~ .app .nav-item, #screen-games:checked ~ .app .nav-games, #screen-cases:checked ~ .app .nav-cases, #screen-bonuses:checked ~ .app .nav-bonuses, #screen-profile:checked ~ .app .nav-profile { color: #e0b9ff; text-shadow: 0 0 10px #a64bff; }
         #screen-games:checked ~ .app .nav-games::after, #screen-cases:checked ~ .app .nav-cases::after, #screen-bonuses:checked ~ .app .nav-bonuses::after, #screen-profile:checked ~ .app .nav-profile::after { background: #c46cff; box-shadow: 0 0 12px #b34aff; }
-
         #screen-home:checked ~ .app .screen-home { display: block; }
         #screen-games:checked ~ .app .screen-games { display: block; }
         #screen-cases:checked ~ .app .screen-cases { display: block; }
         #screen-bonuses:checked ~ .app .screen-bonuses { display: block; }
         #screen-profile:checked ~ .app .screen-profile { display: block; }
-
-        /* ЭКРАН ИГРЫ (CANVAS) */
         .game-screen { position: fixed; z-index: 50; inset: 0; display: none; flex-direction: column; overflow: hidden; background: #10051f; }
         #game-open:checked ~ .app .game-screen { display: flex; }
-        
         .game-topbar { position: absolute; z-index: 10; top: max(15px, env(safe-area-inset-top)); right: 15px; left: 15px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
         .pause-button, .game-score, .game-distance { display: flex; align-items: center; justify-content: center; min-height: 43px; padding: 8px 14px; border: 1px solid rgba(183, 98, 255, 0.6); border-radius: 14px; background: rgba(28, 8, 49, 0.9); box-shadow: 0 0 15px rgba(149, 47, 255, 0.2); backdrop-filter: blur(10px); }
         .pause-button { width: 45px; color: #e2bdff; font-size: 22px; cursor: pointer; }
         .game-score { gap: 7px; color: var(--gold); font-size: 18px; }
         .game-distance { color: #e6c9ff; font-size: 16px; }
-
         #gameCanvas { width: 100%; flex: 1; height: 100%; touch-action: none; background: #3a2850; }
-        
-        /* Экран загрузки */
         #splash { position: fixed; inset: 0; z-index: 9999; background: #0c0418; display: flex; justify-content: center; align-items: center; transition: opacity 0.5s ease; }
         #splash.hide { opacity: 0; pointer-events: none; display: none; }
         .splash-content { display: flex; flex-direction: column; align-items: center; gap: 30px; }
@@ -132,7 +106,6 @@
 </head>
 <body>
 
-    <!-- ЭКРАН ЗАГРУЗКИ -->
     <div id="splash">
         <div class="splash-content">
             <div class="splash-logo">MAGIC</div>
@@ -142,7 +115,6 @@
         </div>
     </div>
 
-    <!-- СКРЫТЫЕ ПЕРЕКЛЮЧАТЕЛИ -->
     <input type="radio" name="screen" id="screen-home" checked>
     <input type="radio" name="screen" id="screen-games">
     <input type="radio" name="screen" id="screen-cases">
@@ -151,7 +123,6 @@
     <input type="checkbox" id="game-open">
 
     <div class="app">
-        <!-- ШАПКА -->
         <header class="topbar">
             <label for="screen-profile" class="user-button">
                 <span class="avatar"><span class="avatar-bunny">🐰</span><span class="online-dot"></span></span>
@@ -164,7 +135,6 @@
             </div>
         </header>
 
-        <!-- ГЛАВНАЯ -->
         <main class="screen screen-home">
             <div class="home-title"><span class="title-decoration"></span><h1>Зал Оракула</h1><span class="title-decoration"></span></div>
             <section class="oracle-section">
@@ -182,7 +152,6 @@
             </section>
         </main>
 
-        <!-- ИГРЫ -->
         <main class="screen screen-games">
             <div class="section-heading"><span></span><h1>Игры</h1><span></span></div>
             <article class="game-card">
@@ -195,13 +164,11 @@
             </article>
         </main>
 
-        <!-- КЕЙСЫ -->
         <main class="screen screen-cases">
             <div class="section-heading"><span></span><h1>Кейсы</h1><span></span></div>
             <div class="welcome-card"><h2>Скоро...</h2><p>Здесь будут NFT-кейсы с зайцами.</p></div>
         </main>
 
-        <!-- ПРОФИЛЬ -->
         <main class="screen screen-profile">
             <div class="section-heading"><span></span><h1>Профиль</h1><span></span></div>
             <div class="welcome-card">
@@ -211,7 +178,6 @@
             </div>
         </main>
 
-        <!-- НАВИГАЦИЯ -->
         <nav class="bottom-nav">
             <label for="screen-games" class="nav-item nav-games"><span class="nav-icon">🎮</span><span>Игры</span></label>
             <label for="screen-cases" class="nav-item nav-cases"><span class="nav-icon">🎁</span><span>Кейсы</span></label>
@@ -219,7 +185,6 @@
             <label for="screen-profile" class="nav-item nav-profile"><span class="nav-icon">♟</span><span>Профиль</span></label>
         </nav>
 
-        <!-- ЭКРАН ИГРЫ (CANVAS) -->
         <section class="game-screen">
             <header class="game-topbar">
                 <label for="game-open" class="pause-button">Ⅱ</label>
@@ -230,140 +195,6 @@
         </section>
     </div>
 
-    <script>
-        // СКРИПТ ЗАГРУЗКИ
-        setTimeout(() => {
-            const splash = document.getElementById('splash');
-            if(splash) {
-                splash.classList.add('hide');
-                setTimeout(() => splash.remove(), 500);
-            }
-        }, 2000);
-
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-
-        // =========================================
-        // ЛОГИКА ИГРЫ (CANVAS)
-        // =========================================
-        const canvas = document.getElementById("gameCanvas");
-        const ctx = canvas.getContext("2d");
-        let player = { x: 2, y: 7 };
-        let stage = 1;
-        let record = Number(localStorage.getItem("oracleRecord") || 0);
-        let gameRunning = false;
-        let animationId = null;
-        let obstacles = [];
-        let gameOver = false;
-        const LANES = 5;
-        const ROWS = 8;
-
-        function resizeCanvas() {
-            if (!canvas) return;
-            const rect = canvas.getBoundingClientRect();
-            const ratio = window.devicePixelRatio || 1;
-            canvas.width = rect.width * ratio;
-            canvas.height = rect.height * ratio;
-            ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-            drawGame();
-        }
-
-        window.addEventListener("resize", resizeCanvas);
-
-        function laneWidth() { return canvas.clientWidth / LANES; }
-        function rowHeight() { return canvas.clientHeight / ROWS; }
-        function playerPosition() { return { x: laneWidth() * (player.x + 0.5), y: rowHeight() * (player.y + 0.5) }; }
-        function laneCenterY(row) { return rowHeight() * (row + 0.5); }
-
-        document.querySelector('label[for="game-open"]').addEventListener('click', () => {
-            setTimeout(() => {
-                resizeCanvas();
-                startGame();
-            }, 100);
-        });
-
-        function startGame() {
-            player = { x: 2, y: 7 };
-            stage = 1;
-            obstacles = [];
-            gameOver = false;
-            gameRunning = true;
-            createObstacles();
-            if (animationId) cancelAnimationFrame(animationId);
-            animationId = requestAnimationFrame(gameLoop);
-        }
-
-        function createObstacles() {
-            obstacles = [];
-            for (let row = 1; row < ROWS - 1; row++) {
-                if (Math.random() < 0.6) {
-                    obstacles.push({ x: Math.floor(Math.random() * LANES), y: row, color: ["#e63c61", "#e6ad3e", "#4168ed", "#c7b7d6"][Math.floor(Math.random() * 4)] });
-                }
-            }
-        }
-
-        function drawGame() {
-            if (!canvas || !canvas.clientWidth) return;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Дорога
-            ctx.fillStyle = "#25232c"; ctx.fillRect(0, 0, canvas.clientWidth, canvas.clientHeight);
-            ctx.strokeStyle = "#b4a8b8"; ctx.lineWidth = 2; ctx.setLineDash([15, 15]);
-            for (let i = 1; i < LANES; i++) { ctx.beginPath(); ctx.moveTo(i * laneWidth(), 0); ctx.lineTo(i * laneWidth(), canvas.clientHeight); ctx.stroke(); }
-            ctx.setLineDash([]);
-
-            // Машины
-            for (const obs of obstacles) {
-                const x = (obs.x + 0.5) * laneWidth(), y = laneCenterY(obs.y);
-                ctx.fillStyle = obs.color; ctx.beginPath(); ctx.roundRect(x - laneWidth() * 0.35, y - 15, laneWidth() * 0.7, 30, 8); ctx.fill();
-                ctx.fillStyle = "#222"; ctx.fillRect(x - laneWidth() * 0.2, y - 10, laneWidth() * 0.4, 8);
-            }
-            
-            // Шар
-            const w = canvas.clientWidth, h = canvas.clientHeight;
-            ctx.fillStyle = "#555"; ctx.beginPath(); ctx.arc(w/2, h-20, 30, 0, Math.PI * 2); ctx.fill();
-            ctx.strokeStyle = "#d3c6db"; ctx.stroke();
-
-            // Заяц
-            const pos = playerPosition();
-            ctx.textAlign = "center"; ctx.font = "35px Arial"; ctx.fillText("🐇", pos.x, pos.y + 10);
-        }
-
-        function movePlayer(dx, dy) {
-            if (!gameRunning || gameOver) return;
-            const nextX = player.x + dx, nextY = player.y + dy;
-            if (nextX >= 0 && nextX < LANES && nextY >= 0 && nextY < ROWS) {
-                player.x = nextX; player.y = nextY;
-                if (obstacles.some(o => o.x === player.x && o.y === player.y)) { endGame("Машина сбила зайца!"); return; }
-                if (player.y === 0) { stage++; player = { x: 2, y: 7 }; createObstacles(); document.getElementById('distanceLabel').textContent = stage + " м"; }
-                drawGame();
-            }
-        }
-
-        function endGame(reason) {
-            gameOver = true; gameRunning = false;
-            if (animationId) cancelAnimationFrame(animationId);
-            if (stage > record) { record = stage; localStorage.setItem("oracleRecord", record); }
-            setTimeout(() => {
-                tg.showAlert(reason + "\\nПройдено: " + stage + " м");
-                document.getElementById('game-open').checked = false;
-            }, 100);
-        }
-
-        function gameLoop() { if (!gameRunning || gameOver) return; drawGame(); animationId = requestAnimationFrame(gameLoop); }
-
-        let touchStartX = 0, touchStartY = 0;
-        canvas.addEventListener("touchstart", e => { touchStartX = e.changedTouches[0].clientX; touchStartY = e.changedTouches[0].clientY; }, { passive: true });
-        canvas.addEventListener("touchend", e => {
-            const dx = e.changedTouches[0].clientX - touchStartX, dy = e.changedTouches[0].clientY - touchStartY;
-            if (Math.max(Math.abs(dx), Math.abs(dy)) < 20) return;
-            if (Math.abs(dx) > Math.abs(dy)) movePlayer(dx > 0 ? 1 : -1, 0); else movePlayer(0, dy > 0 ? 1 : -1);
-        }, { passive: true });
-
-        window.addEventListener("keydown", e => {
-            const keys = { ArrowUp: [0,-1], ArrowDown: [0,1], ArrowLeft: [-1,0], ArrowRight: [1,0] };
-            if (keys[e.key]) { e.preventDefault(); movePlayer(...keys[e.key]); }
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
