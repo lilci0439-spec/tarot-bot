@@ -47,4 +47,4 @@ async def get_balance(request: Request):
             await session.commit()
             await session.refresh(user)
             
-        return {"balance": user.balance}
+        return {"balance": user.balance, "best_distance": user.best_distance}
