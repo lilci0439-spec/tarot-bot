@@ -61,6 +61,30 @@ body { min-height: 100vh; min-height: 100dvh; }
 .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; background: none; border: none; color: #a981d0; font-size: 11px; cursor: pointer; transition: 0.2s; }
 .nav-item.active { color: #e0b9ff; text-shadow: 0 0 10px #a64bff; }
 .nav-icon { font-size: 22px; filter: drop-shadow(0 0 5px rgba(167, 90, 255, 0.3)); }
+
+.game-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 15px;
+background: rgba(20, 6, 36, 0.95);
+position: relative;
+z-index: 10;
+}
+.back-btn {
+background: #302044;
+border: 1px solid #76549a;
+color: white;
+padding: 8px 15px;
+border-radius: 10px;
+cursor: pointer;
+}
+.game-balance {
+color: var(--gold);
+font-weight: bold;
+font-size: 18px;
+}
+
 </style>
 
 </head>
