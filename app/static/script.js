@@ -38,3 +38,15 @@ document.querySelector('.play-button').addEventListener('click', () => {
 
 // Запускаем при старте
 document.addEventListener('DOMContentLoaded', loadBalance);
+// Скрипт для экрана загрузки
+document.addEventListener('DOMContentLoaded', () => {
+    // Через 2 секунды скрываем загрузку
+    setTimeout(() => {
+        const splash = document.getElementById('splash');
+        if (splash) {
+            splash.classList.add('hide');
+            // Полностью удаляем из DOM через 0.5 сек (когда анимация закончится)
+            setTimeout(() => splash.remove(), 500);
+        }
+    }, 2000);
+});
