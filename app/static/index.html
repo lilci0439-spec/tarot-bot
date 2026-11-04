@@ -1,646 +1,509 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#10051f">
-    <title>Зал Оракула</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        /* =========================================
-           ЗАЛ ОРАКУЛА — ОСНОВНЫЕ НАСТРОЙКИ
-        ========================================= */
-        :root {
-            --bg: #10051f;
-            --bg-light: #1b0b32;
-            --panel: rgba(35, 12, 62, 0.88);
-            --panel-light: rgba(54, 20, 91, 0.8);
-            --purple: #922cff;
-            --purple-light: #bd78ff;
-            --purple-bright: #d9a6ff;
-            --text: #f5eaff;
-            --muted: #b89bd7;
-            --gold: #ffd34f;
-            --border: rgba(164, 65, 255, 0.48);
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#100b20">
+  <title>Зал Оракула</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      min-height: 100vh;
+      background: #100b20;
+      color: #f5efff;
+      font-family: Arial, sans-serif;
+      overflow-x: hidden;
+    }
 
-        html, body {
-            width: 100%; min-height: 100%;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            background: var(--bg); color: var(--text); overflow-x: hidden;
-        }
+    button {
+      font: inherit;
+      cursor: pointer;
+      border: 0;
+    }
 
-        body { min-height: 100vh; min-height: 100dvh; }
-        button, label { font: inherit; }
-        button { color: inherit; }
+    .app {
+      width: 100%;
+      max-width: 480px;
+      min-height: 100vh;
+      margin: auto;
+      padding: 22px 18px 100px;
+      background:
+        radial-gradient(ellipse at 50% 0%, #39215a 0%, transparent 48%),
+        #100b20;
+      position: relative;
+    }
 
-        .app {
-            position: relative; width: 100%; max-width: 520px;
-            min-height: 100vh; min-height: 100dvh;
-            margin: 0 auto; padding: 16px 16px 112px; overflow: hidden;
-            background:
-                radial-gradient(ellipse at 50% 28%, rgba(104, 25, 174, 0.18), transparent 42%),
-                radial-gradient(ellipse at 10% 85%, rgba(87, 20, 147, 0.12), transparent 35%),
-                linear-gradient(180deg, #10051f 0%, #0c0418 100%);
-        }
+    .hidden {
+      display: none !important;
+    }
 
-        /* СКРЫТЫЕ ПЕРЕКЛЮЧАТЕЛИ */
-        input[name="screen"], #game-open { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
-        .screen { display: none; animation: screenAppear 0.35s ease both; }
-        @keyframes screenAppear { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    /* Заставка */
+    #splash {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      background: #100b20;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 35px;
+    }
 
-        /* ВЕРХНЯЯ ПАНЕЛЬ */
-        .topbar { position: relative; z-index: 5; display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; margin-bottom: 34px; }
-        .user-button { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; padding: 7px 12px 7px 7px; border: 1px solid var(--border); border-radius: 50px; background: linear-gradient(120deg, rgba(62, 20, 105, 0.8), rgba(20, 7, 39, 0.9)); cursor: pointer; }
-        .avatar { position: relative; display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 54px; height: 54px; border: 2px solid #9e42ff; border-radius: 50%; background: radial-gradient(circle, #8d39d9, #291044 75%); box-shadow: 0 0 15px rgba(151, 53, 255, 0.55); }
-        .avatar-bunny { font-size: 30px; filter: drop-shadow(0 0 5px #d6a1ff); }
-        .online-dot { position: absolute; right: -2px; bottom: 0; width: 15px; height: 15px; border: 2px solid #1b0a2e; border-radius: 50%; background: #51ec57; box-shadow: 0 0 8px #51ec57; }
-        .user-info { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-        .user-info strong { font-size: 16px; font-weight: 650; }
-        .user-info small { color: var(--muted); font-size: 11px; white-space: nowrap; }
-        .header-arrow { margin-left: auto; color: var(--purple-light); font-size: 27px; }
-        .balance { display: flex; align-items: center; gap: 8px; flex-shrink: 0; padding: 10px 9px 10px 13px; border: 1px solid rgba(255, 186, 76, 0.3); border-radius: 50px; background: linear-gradient(120deg, #26113c, #160824); box-shadow: 0 0 14px rgba(161, 57, 255, 0.12); }
-        .balance strong { font-size: 19px; font-weight: 650; }
-        .star-icon { color: var(--gold); font-size: 27px; text-shadow: 0 0 10px rgba(255, 198, 42, 0.8); }
-        .add-balance { display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; margin-left: 3px; border: 0; border-radius: 50%; background: #34115b; color: #e5c4ff; font-size: 26px; cursor: pointer; }
+    .magic-title {
+      letter-spacing: 12px;
+      font-size: 28px;
+      color: #e5caff;
+      text-shadow: 0 0 20px #b77aff;
+    }
 
-        /* ЗАГОЛОВКИ */
-        .home-title, .section-heading { display: flex; align-items: center; justify-content: center; gap: 13px; margin: 15px 0 24px; }
-        .home-title h1, .section-heading h1 { color: #d8a0ff; font-family: Georgia, serif; font-size: clamp(27px, 7vw, 38px); font-weight: 400; text-align: center; text-shadow: 0 0 14px rgba(180, 91, 255, 0.8); }
-        .title-decoration { width: 35px; height: 1px; background: linear-gradient(90deg, transparent, #b65cff); }
-        .title-decoration:last-child { transform: rotate(180deg); }
-        .section-heading span { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, #a746ff); }
-        .section-heading span:last-child { transform: rotate(180deg); }
+    .orb {
+      width: 190px;
+      height: 190px;
+      border-radius: 50%;
+      border: 2px solid #c9a5ff;
+      background: radial-gradient(circle at 35% 30%, #b88aff, #37205e 48%, #100b20 75%);
+      box-shadow: 0 0 35px #a45cff, inset 0 0 35px #c18aff;
+      position: relative;
+      animation: float 3s ease-in-out infinite;
+      display: grid;
+      place-items: center;
+      font-size: 65px;
+    }
 
-        /* ШАР */
-        .oracle-section { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 330px; margin: 0 auto 20px; isolation: isolate; }
-        .oracle-glow { position: absolute; top: 30%; left: 50%; width: 250px; height: 250px; border-radius: 50%; background: #8124ff; opacity: 0.16; filter: blur(70px); transform: translate(-50%, -50%); z-index: -1; }
-        .crystal-orb { position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; width: 205px; height: 205px; overflow: hidden; border: 2px solid rgba(207, 155, 255, 0.9); border-radius: 50%; background: radial-gradient(circle at 35% 25%, rgba(229, 185, 255, 0.7), transparent 17%), radial-gradient(circle at 50% 55%, #48117d 0%, #21073f 50%, #12051f 100%); box-shadow: inset -15px -20px 35px rgba(0, 0, 0, 0.65), inset 10px 8px 25px rgba(219, 164, 255, 0.3), 0 0 15px #9e35ff, 0 0 40px rgba(155, 48, 255, 0.65); }
-        .orb-shine { position: absolute; top: 13px; left: 28px; width: 48px; height: 20px; border-radius: 50%; background: rgba(255, 255, 255, 0.6); filter: blur(9px); transform: rotate(-40deg); }
-        .orb-magic { position: relative; width: 145px; height: 145px; border: 1px solid rgba(179, 86, 255, 0.3); border-radius: 50%; background: conic-gradient(from 0deg, transparent, rgba(174, 65, 255, 0.6), transparent, rgba(217, 145, 255, 0.4), transparent); animation: orbRotate 8s linear infinite; }
-        .orb-magic::before, .orb-magic::after { position: absolute; content: ""; inset: 13px; border: 1px solid rgba(198, 115, 255, 0.45); border-radius: 50%; }
-        .orb-magic::after { inset: 30px; border-color: rgba(218, 165, 255, 0.35); }
-        .magic-star { position: absolute; color: #e9caff; text-shadow: 0 0 12px #bd65ff; }
-        .star-one { top: 8px; left: 63px; font-size: 23px; }
-        .star-two { right: 10px; bottom: 30px; font-size: 19px; }
-        .star-three { bottom: 8px; left: 26px; font-size: 15px; }
-        .magic-core { position: absolute; top: 50%; left: 50%; width: 28px; height: 28px; border-radius: 50%; background: #edcaff; box-shadow: 0 0 12px #d8a0ff, 0 0 35px #a12cff; transform: translate(-50%, -50%); }
-        @keyframes orbRotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        .orb-stand { position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; margin-top: -12px; }
-        .stand-top { width: 190px; height: 17px; border: 1px solid #9f53e6; border-radius: 50%; background: linear-gradient(90deg, #31104c, #9b45dc, #31104c); box-shadow: 0 0 13px #9e3cff; }
-        .stand-body { display: flex; align-items: center; justify-content: center; width: 145px; height: 48px; margin-top: -4px; border: 1px solid #6b2da0; border-radius: 5px 5px 25px 25px; background: linear-gradient(90deg, #170823, #4a176d, #170823); box-shadow: inset 0 0 15px #10051c; }
-        .stand-gem { color: #d9a0ff; font-size: 30px; text-shadow: 0 0 12px #b34cff; }
-        .stand-bottom { width: 180px; height: 13px; margin-top: -2px; border: 1px solid #7734a7; border-radius: 50%; background: #28103f; box-shadow: 0 5px 20px rgba(162, 54, 255, 0.4); }
+    .orb::after {
+      content: "";
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      border: 2px solid #e0c4ff;
+      border-radius: 50%;
+      animation: spin 5s linear infinite;
+      border-left-color: transparent;
+      border-right-color: transparent;
+    }
 
-        /* КАРТОЧКА ПРИВЕТСТВИЯ */
-        .welcome-card { padding: 23px 15px; border: 1px solid var(--border); border-radius: 25px; background: radial-gradient(circle at 50% 0%, rgba(117, 40, 185, 0.25), transparent 60%), linear-gradient(140deg, rgba(43, 13, 72, 0.9), rgba(19, 6, 35, 0.95)); text-align: center; box-shadow: 0 0 22px rgba(122, 33, 207, 0.12); }
-        .welcome-card h2 { color: #d8a0ff; font-family: Georgia, serif; font-size: 23px; font-weight: 400; }
-        .welcome-balance { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 10px 0 3px; }
-        .welcome-balance .star-icon { font-size: 42px; }
-        .welcome-balance strong { color: #e4c5ff; font-size: 45px; font-weight: 500; text-shadow: 0 0 15px rgba(179, 97, 255, 0.5); }
-        .welcome-card p { color: var(--muted); font-size: 14px; }
+    .orb::before {
+      content: "";
+      position: absolute;
+      width: 115px;
+      height: 115px;
+      border: 1px solid #d4a8ff;
+      border-radius: 50%;
+      animation: spin 3s linear infinite reverse;
+      border-top-color: transparent;
+    }
 
-        /* КАРТОЧКА ИНФО */
-        .home-info-card { display: flex; align-items: center; gap: 14px; margin-top: 23px; padding: 20px 16px; border: 1px solid rgba(125, 43, 196, 0.45); border-radius: 22px; background: linear-gradient(120deg, rgba(44, 13, 73, 0.9), rgba(19, 6, 35, 0.9)); }
-        .info-symbol { display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 48px; height: 48px; border-radius: 50%; background: rgba(125, 46, 195, 0.2); color: #d5a0ff; font-size: 33px; text-shadow: 0 0 12px #bd69ff; }
-        .home-info-card h3 { margin-bottom: 5px; font-size: 15px; }
-        .home-info-card p { color: var(--muted); font-size: 12px; line-height: 1.5; }
-        .info-arrow { margin-left: auto; color: var(--purple-light); font-size: 28px; }
+    .pedestal {
+      width: 125px;
+      height: 18px;
+      border-radius: 50%;
+      background: linear-gradient(90deg, #49306a, #d0a6ff, #49306a);
+      box-shadow: 0 0 25px #a45cff;
+      margin-top: -30px;
+    }
 
-        /* КАРТОЧКА ИГРЫ */
-        .game-card { overflow: hidden; border: 1px solid #8b2ce3; border-radius: 25px; background: linear-gradient(150deg, #25103e, #10051f); box-shadow: 0 0 20px rgba(135, 41, 218, 0.2); }
-        .game-preview { position: relative; height: 245px; overflow: hidden; background: linear-gradient(180deg, rgba(30, 10, 53, 0.15), rgba(12, 4, 23, 0.15)), linear-gradient(180deg, #34205e, #5d347e 55%, #27123e); }
-        .preview-sky { position: absolute; inset: 0; background: radial-gradient(circle at 50% 25%, rgba(189, 91, 255, 0.5), transparent 50%); }
-        .preview-building { position: absolute; bottom: 70px; width: 90px; height: 130px; background: linear-gradient(90deg, #201038, #48266a); opacity: 0.9; }
-        .preview-building::after { position: absolute; content: ""; inset: 12px; background: repeating-linear-gradient(180deg, transparent 0 16px, rgba(255, 188, 104, 0.65) 17px 23px, transparent 24px 32px); }
-        .building-left { left: 0; }
-        .building-right { right: 0; height: 160px; }
-        .preview-road { position: absolute; bottom: 0; left: 50%; width: 75%; height: 155px; overflow: hidden; background: #332448; transform: translateX(-50%) perspective(150px) rotateX(12deg); }
-        .road-line { position: absolute; top: 0; left: 50%; width: 4px; height: 100%; background: repeating-linear-gradient(180deg, #c7a6dc 0 18px, transparent 18px 35px); }
-        .preview-car { position: absolute; width: 48px; height: 25px; border-radius: 7px; box-shadow: inset 0 -5px rgba(0, 0, 0, 0.2); }
-        .car-red { top: 55px; left: 12%; background: #ed456b; }
-        .car-blue { top: 95px; right: 10%; background: #456dff; }
-        .preview-star { position: absolute; top: 38%; left: 50%; color: var(--gold); font-size: 35px; text-shadow: 0 0 15px #ffd34f; transform: translateX(-50%); }
-        .preview-bunny { position: absolute; bottom: 16px; left: 50%; display: flex; align-items: center; justify-content: center; width: 80px; height: 85px; border-radius: 50%; background: radial-gradient(circle, rgba(185, 100, 255, 0.6), transparent 70%); transform: translateX(-50%); }
-        .preview-bunny span { font-size: 55px; filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.5)); }
-        .preview-label { position: absolute; top: 15px; left: 15px; padding: 7px 13px; border: 1px solid rgba(206, 151, 255, 0.5); border-radius: 30px; background: rgba(77, 24, 126, 0.85); color: #e7c9ff; font-size: 10px; letter-spacing: 1px; }
-        .game-card-content { padding: 20px 17px 16px; }
-        .game-card-content h2 { margin-bottom: 9px; color: #e3bdff; font-size: 25px; text-align: center; }
-        .game-card-content p { color: var(--muted); font-size: 13px; line-height: 1.6; text-align: center; }
-        .play-button { display: flex; align-items: center; justify-content: center; gap: 13px; width: 100%; margin: 20px 0; padding: 16px; border: 1px solid #d28aff; border-radius: 50px; background: linear-gradient(100deg, #8e21ec, #b04bff, #7615d7); box-shadow: 0 0 20px rgba(161, 50, 255, 0.45); color: white; font-size: 19px; font-weight: 650; cursor: pointer; transition: filter 0.2s, transform 0.2s; }
-        .play-button:active { filter: brightness(1.2); transform: scale(0.98); }
-        .play-icon { font-size: 18px; }
-        .game-stats { display: flex; align-items: center; justify-content: space-around; padding: 14px 5px; border: 1px solid rgba(112, 43, 174, 0.35); border-radius: 17px; background: rgba(16, 5, 31, 0.75); }
-        .stat { display: flex; align-items: center; gap: 9px; }
-        .stat-icon { color: var(--gold); font-size: 27px; }
-        .stat div { display: flex; flex-direction: column; gap: 3px; }
-        .stat small { color: var(--muted); font-size: 11px; }
-        .stat strong { font-size: 16px; }
-        .stat-divider { width: 1px; height: 35px; background: rgba(163, 90, 219, 0.4); }
+    .loading-track {
+      width: 190px;
+      height: 5px;
+      background: #332344;
+      border-radius: 20px;
+      overflow: hidden;
+    }
 
-        /* КАРТОЧКА СКОРО */
-        .coming-card { display: flex; align-items: center; gap: 15px; margin-top: 18px; padding: 17px; border: 1px solid rgba(115, 40, 176, 0.5); border-radius: 20px; background: linear-gradient(120deg, #281044, #150823); }
-        .coming-art { display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 65px; height: 65px; border-radius: 15px; background: radial-gradient(circle, #8937d2, #29103f); color: #e5c2ff; font-size: 35px; }
-        .coming-card small { color: var(--purple-light); font-size: 10px; letter-spacing: 1px; }
-        .coming-card h3 { margin: 5px 0; font-size: 14px; }
-        .coming-card p { color: var(--muted); font-size: 11px; }
-        .lock-icon { margin-left: auto; font-size: 20px; }
+    .loading-fill {
+      height: 100%;
+      width: 0;
+      background: #c99aff;
+      box-shadow: 0 0 12px #c99aff;
+      animation: loading 2.2s ease forwards;
+    }
 
-        /* КЕЙСЫ И БОНУСЫ */
-        .empty-section, .bonus-card { padding: 35px 20px; border: 1px solid var(--border); border-radius: 25px; background: linear-gradient(145deg, #291044, #120620); text-align: center; }
-        .empty-icon, .bonus-icon { margin-bottom: 18px; color: #d8a0ff; font-size: 65px; text-shadow: 0 0 25px #a34aff; }
-        .empty-section h2, .bonus-card h2 { margin-bottom: 12px; color: #dfb6ff; font-family: Georgia, serif; font-size: 24px; font-weight: 400; }
-        .empty-section p, .bonus-card p { color: var(--muted); font-size: 14px; line-height: 1.6; }
-        .soon-label { display: inline-block; margin-top: 22px; padding: 8px 20px; border: 1px solid var(--border); border-radius: 30px; color: var(--purple-light); font-size: 11px; letter-spacing: 1px; }
-        .bonus-reward { margin: 22px 0; color: var(--gold); font-size: 28px; text-shadow: 0 0 10px rgba(255, 204, 64, 0.5); }
-        .bonus-button { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 40px; background: #511b81; color: white; font-weight: 600; }
+    @keyframes loading {
+      to { width: 100%; }
+    }
 
-        /* ПРОФИЛЬ */
-        .profile-card { padding: 28px 20px; border: 1px solid var(--border); border-radius: 25px; background: linear-gradient(150deg, #291044, #120620); text-align: center; }
-        .profile-avatar { display: flex; align-items: center; justify-content: center; width: 100px; height: 100px; margin: 0 auto 15px; border: 2px solid #a64cff; border-radius: 50%; background: radial-gradient(circle, #7933ae, #220b38); font-size: 55px; box-shadow: 0 0 25px rgba(163, 65, 255, 0.5); }
-        .profile-card h2 { margin-bottom: 6px; font-size: 23px; }
-        .profile-card p { color: var(--muted); font-size: 13px; }
-        .profile-balance { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 20px 0; }
-        .profile-balance span { color: var(--gold); font-size: 30px; }
-        .profile-balance strong { font-size: 30px; }
-        .profile-actions { display: flex; gap: 10px; }
-        .profile-actions button { flex: 1; padding: 13px 5px; border: 1px solid #a34bff; border-radius: 30px; background: #54208a; color: white; font-size: 13px; }
-        .profile-statistics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 18px; }
-        .profile-statistics div { display: flex; flex-direction: column; gap: 7px; padding: 17px 5px; border: 1px solid rgba(137, 54, 205, 0.4); border-radius: 15px; background: rgba(42, 14, 66, 0.7); text-align: center; }
-        .profile-statistics strong { color: #d9a6ff; font-size: 17px; }
-        .profile-statistics small { color: var(--muted); font-size: 10px; }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
 
-        /* НИЖНЯЯ НАВИГАЦИЯ */
-        .bottom-nav { position: fixed; z-index: 20; bottom: max(10px, env(safe-area-inset-bottom)); left: 50%; display: grid; grid-template-columns: repeat(4, 1fr); width: min(calc(100% - 20px), 500px); padding: 12px 5px 10px; border: 1px solid rgba(136, 47, 206, 0.5); border-radius: 30px; background: rgba(20, 6, 36, 0.96); box-shadow: 0 -5px 30px rgba(102, 29, 170, 0.17); backdrop-filter: blur(15px); transform: translateX(-50%); }
-        .nav-item { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; min-width: 0; padding: 3px 0; color: #a981d0; font-size: 11px; cursor: pointer; }
-        .nav-icon { font-size: 25px; line-height: 1.2; filter: drop-shadow(0 0 5px rgba(167, 90, 255, 0.3)); }
-        .nav-item::after { position: absolute; right: 20%; bottom: -10px; left: 20%; height: 3px; border-radius: 10px; background: transparent; content: ""; }
-        #screen-home:checked ~ .app .nav-item, #screen-games:checked ~ .app .nav-games, #screen-cases:checked ~ .app .nav-cases, #screen-bonuses:checked ~ .app .nav-bonuses, #screen-profile:checked ~ .app .nav-profile { color: #e0b9ff; text-shadow: 0 0 10px #a64bff; }
-        #screen-games:checked ~ .app .nav-games::after, #screen-cases:checked ~ .app .nav-cases::after, #screen-bonuses:checked ~ .app .nav-bonuses::after, #screen-profile:checked ~ .app .nav-profile::after { background: #c46cff; box-shadow: 0 0 12px #b34aff; }
+    @keyframes float {
+      50% { transform: translateY(-10px); }
+    }
 
-        /* ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК */
-        #screen-home:checked ~ .app .screen-home { display: block; }
-        #screen-games:checked ~ .app .screen-games { display: block; }
-        #screen-cases:checked ~ .app .screen-cases { display: block; }
-        #screen-bonuses:checked ~ .app .screen-bonuses { display: block; }
-        #screen-profile:checked ~ .app .screen-profile { display: block; }
+    /* Шапка */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
 
-        /* ИГРОВОЙ ЭКРАН */
-        .game-screen { position: fixed; z-index: 50; inset: 0; display: none; flex-direction: column; overflow: hidden; background: #10051f; }
-        #game-open:checked ~ .app .game-screen { display: flex; }
-        .game-topbar { position: absolute; z-index: 10; top: max(15px, env(safe-area-inset-top)); right: 15px; left: 15px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-        .pause-button, .game-score, .game-distance { display: flex; align-items: center; justify-content: center; min-height: 43px; padding: 8px 14px; border: 1px solid rgba(183, 98, 255, 0.6); border-radius: 14px; background: rgba(28, 8, 49, 0.9); box-shadow: 0 0 15px rgba(149, 47, 255, 0.2); backdrop-filter: blur(10px); }
-        .pause-button { width: 45px; color: #e2bdff; font-size: 22px; cursor: pointer; }
-        .game-score { gap: 7px; color: var(--gold); font-size: 18px; }
-        .game-distance { color: #e6c9ff; font-size: 16px; }
-        .game-world { position: absolute; inset: 0; overflow: hidden; background: linear-gradient(rgba(19, 7, 36, 0.1), rgba(19, 7, 36, 0.1)), repeating-linear-gradient(90deg, transparent 0 45px, rgba(0, 0, 0, 0.05) 46px 48px), #3a2850; }
-        .world-buildings { position: absolute; inset: 0; pointer-events: none; }
-        .world-building { position: absolute; top: 12%; bottom: 8%; width: 12%; border: 2px solid rgba(15, 5, 29, 0.4); background: repeating-linear-gradient(180deg, #38224e 0 35px, #4c3066 36px 70px); }
-        .left-building { left: 0; }
-        .right-building { right: 0; }
-        .crossing-road { position: absolute; left: 10%; width: 80%; height: 17%; overflow: hidden; border-top: 5px solid #78658d; border-bottom: 5px solid #78658d; background: #292137; }
-        .road-one { top: 22%; }
-        .road-two { top: 43%; }
-        .lane-markings { position: absolute; top: 50%; right: 0; left: 0; height: 4px; background: repeating-linear-gradient(90deg, #b7a4c9 0 30px, transparent 30px 55px); transform: translateY(-50%); }
-        .game-car { position: absolute; top: 28%; width: 62px; height: 43px; border: 3px solid rgba(0, 0, 0, 0.25); border-radius: 11px; box-shadow: inset 0 -8px rgba(0, 0, 0, 0.15), 0 4px 5px rgba(0, 0, 0, 0.3); }
-        .game-car::before { position: absolute; top: 6px; right: 9px; left: 9px; height: 15px; border-radius: 5px; background: rgba(16, 20, 44, 0.65); content: ""; }
-        .red-car { left: 8%; background: #e63c61; }
-        .yellow-car { right: 7%; background: #e6ad3e; }
-        .blue-car { right: 10%; background: #4168ed; }
-        .white-car { left: 9%; background: #c7b7d6; }
-        .sidewalk { position: absolute; top: 61%; left: 0; width: 100%; height: 7%; border-top: 3px solid #b59cbd; border-bottom: 3px solid #9479a6; background: repeating-linear-gradient(90deg, #876f96 0 48px, #9a82a9 49px 51px); }
-        .river { position: absolute; top: 69%; left: 0; width: 100%; height: 18%; overflow: hidden; border-top: 5px solid #9075a5; border-bottom: 5px solid #9075a5; background: repeating-linear-gradient(165deg, transparent 0 25px, rgba(180, 220, 255, 0.12) 26px 29px), linear-gradient(180deg, #1971c8, #1655a5); }
-        .river-log { position: absolute; width: 95px; height: 27px; border: 2px solid #77452f; border-radius: 6px; background: linear-gradient(180deg, #a96a3c, #6d3e2c); box-shadow: inset 0 -5px rgba(0, 0, 0, 0.15); }
-        .log-one { top: 20%; left: 8%; }
-        .log-two { top: 55%; left: 56%; }
-        .log-three { top: 15%; right: 4%; }
-        .crocodile { position: absolute; font-size: 32px; }
-        .croc-one { top: 55%; left: 30%; }
-        .croc-two { top: 15%; right: 26%; }
-        .player-bunny { position: absolute; z-index: 8; bottom: 14%; left: 50%; display: flex; align-items: center; justify-content: center; width: 85px; height: 95px; border-radius: 50%; background: radial-gradient(circle, rgba(187, 105, 255, 0.45), transparent 70%); transform: translateX(-50%); }
-        .player-bunny span { position: relative; z-index: 2; font-size: 62px; filter: drop-shadow(0 7px 5px rgba(0, 0, 0, 0.5)); }
-        .bunny-shadow { position: absolute; bottom: 4px; width: 50px; height: 16px; border-radius: 50%; background: rgba(0, 0, 0, 0.35); filter: blur(5px); }
-        .chasing-boulder { position: absolute; z-index: 6; bottom: -95px; left: 50%; width: 210px; height: 210px; border: 4px solid #8d45c2; border-radius: 50%; background: radial-gradient(circle at 35% 25%, #6e568a, transparent 28%), radial-gradient(circle at 60% 70%, #21162f, #443052 65%, #1c102a); box-shadow: 0 0 25px rgba(167, 64, 255, 0.8), inset -15px -15px 35px #100719; transform: translateX(-50%); }
-        .boulder-crack { position: absolute; top: 25%; left: 35%; width: 45%; height: 40%; border-left: 2px solid #b85cff; border-bottom: 2px solid #b85cff; filter: drop-shadow(0 0 5px #b85cff); transform: rotate(-25deg); }
-        .game-distance-label { position: absolute; top: 15%; left: 50%; color: white; font-size: 25px; font-weight: 700; text-shadow: 0 0 15px #b35aff; transform: translateX(-50%); }
-        .game-controls { position: absolute; z-index: 10; right: 15px; bottom: max(20px, env(safe-area-inset-bottom)); left: 15px; }
-        .control-hint { display: flex; align-items: center; justify-content: center; gap: 15px; padding: 13px 10px; border: 1px solid rgba(179, 95, 255, 0.5); border-radius: 20px; background: rgba(22, 6, 40, 0.9); box-shadow: 0 0 20px rgba(129, 43, 208, 0.2); }
-        .control-hint span { color: #d4a1ff; font-size: 25px; font-weight: 700; }
-        .control-hint p { color: #d8c2e9; font-size: 12px; text-align: center; }
+    .profile-mini {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-        @media (max-width: 370px) {
-            .app { padding-right: 11px; padding-left: 11px; }
-            .avatar { width: 47px; height: 47px; }
-            .avatar-bunny { font-size: 26px; }
-            .user-info strong { font-size: 14px; }
-            .user-info small { font-size: 10px; }
-            .balance { gap: 5px; padding: 8px 7px; }
-            .balance strong { font-size: 16px; }
-            .add-balance { width: 29px; height: 29px; }
-            .oracle-section { min-height: 290px; }
-            .crystal-orb { width: 180px; height: 180px; }
-            .orb-magic { width: 130px; height: 130px; }
-            .game-preview { height: 215px; }
-            .game-card-content h2 { font-size: 22px; }
-        }
+    .avatar {
+      width: 47px;
+      height: 47px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #35214f;
+      border: 1px solid #a77ad5;
+      font-size: 26px;
+    }
 
-        @media (min-width: 600px) {
-            .app { padding-top: 24px; }
-            .game-preview { height: 300px; }
-            .oracle-section { min-height: 380px; }
-            .crystal-orb { width: 235px; height: 235px; }
-            .orb-magic { width: 165px; height: 165px; }
-        }
+    .guest {
+      font-weight: bold;
+    }
 
-        @supports (padding: max(0px)) {
-            .app { padding-top: max(16px, env(safe-area-inset-top)); padding-bottom: max(112px, calc(100px + env(safe-area-inset-bottom))); }
-        }
-   /* =========================================
-   ЭКРАН ЗАГРУЗКИ (SPLASH)
-========================================= */
-#splash {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    background: #0c0418;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: opacity 0.5s ease;
-}
+    .muted {
+      color: #a99ab9;
+      font-size: 12px;
+      margin-top: 4px;
+    }
 
-#splash.hide {
-    opacity: 0;
-    pointer-events: none;
-}
+    .balance {
+      background: #281b3c;
+      border: 1px solid #65458a;
+      border-radius: 13px;
+      padding: 10px 12px;
+      color: #f3d8a1;
+      white-space: nowrap;
+    }
 
-.splash-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 30px;
-}
+    .online {
+      color: #a7e6b2;
+      font-size: 12px;
+      text-align: right;
+      margin-top: 7px;
+    }
 
-.splash-logo {
-    font-family: Georgia, serif;
-    font-size: 40px;
-    font-weight: 700;
-    letter-spacing: 5px;
-    color: #d8a0ff;
-    text-shadow: 0 0 20px rgba(180, 91, 255, 0.8);
-}
+    h1 {
+      font-size: 26px;
+      margin-bottom: 8px;
+    }
 
-.splash-orb {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 35% 25%, rgba(229, 185, 255, 0.7), transparent 17%), radial-gradient(circle at 50% 55%, #48117d 0%, #21073f 50%, #12051f 100%);
-    box-shadow: inset -15px -20px 35px rgba(0, 0, 0, 0.65), inset 10px 8px 25px rgba(219, 164, 255, 0.3), 0 0 15px #9e35ff, 0 0 40px rgba(155, 48, 255, 0.65);
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+    .subtitle {
+      color: #aa9bbd;
+      font-size: 14px;
+      line-height: 1.5;
+    }
 
-.splash-orb-inner {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    border: 1px solid rgba(179, 86, 255, 0.3);
-    background: conic-gradient(from 0deg, transparent, rgba(174, 65, 255, 0.6), transparent, rgba(217, 145, 255, 0.4), transparent);
-    animation: orbRotate 4s linear infinite;
-}
+    /* Карточки */
+    .section-title {
+      font-size: 17px;
+      margin: 28px 0 14px;
+    }
 
-.splash-loader {
-    width: 200px;
-    height: 6px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 3px;
-    overflow: hidden;
-}
+    .game-card {
+      border: 1px solid #624486;
+      border-radius: 20px;
+      padding: 18px;
+      background: linear-gradient(145deg, #302047, #1b142b);
+      margin-bottom: 15px;
+      box-shadow: 0 8px 25px #08051066;
+    }
 
-.splash-progress {
-    width: 0%;
-    height: 100%;
-    background: linear-gradient(90deg, #8b5cf6, #d8a0ff);
-    border-radius: 3px;
-    animation: loadProgress 2s ease forwards;
-}
+    .game-art {
+      height: 135px;
+      border-radius: 14px;
+      background:
+        radial-gradient(circle at 50% 45%, #8153a9, transparent 40%),
+        linear-gradient(135deg, #211735, #493061);
+      display: grid;
+      place-items: center;
+      font-size: 65px;
+      margin-bottom: 15px;
+    }
 
-@keyframes loadProgress {
-    0% { width: 0%; }
-    100% { width: 100%; }
-}
+    .game-card h3 {
+      font-size: 18px;
+      margin-bottom: 7px;
+    }
 
-.splash-text {
-    color: #b89bd7;
-    font-size: 14px;
-    letter-spacing: 2px;
-} </style>
+    .game-card p {
+      color: #b9aac9;
+      font-size: 13px;
+      line-height: 1.5;
+      margin-bottom: 15px;
+    }
+
+    .primary {
+      width: 100%;
+      border-radius: 12px;
+      padding: 14px;
+      color: white;
+      font-weight: bold;
+      background: linear-gradient(100deg, #8955c5, #b17be9);
+      box-shadow: 0 5px 18px #8955c544;
+    }
+
+    .primary:active {
+      transform: scale(.98);
+    }
+
+    /* Нижняя навигация */
+    .navigation {
+      position: fixed;
+      z-index: 10;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 480px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      padding: 12px 8px calc(12px + env(safe-area-inset-bottom));
+      background: #171025;
+      border-top: 1px solid #49325f;
+    }
+
+    .nav-button {
+      background: transparent;
+      color: #9c8baE;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+    }
+
+    .nav-button span:first-child {
+      font-size: 21px;
+    }
+
+    .nav-button.active {
+      color: #d9b5ff;
+    }
+
+    /* Игровой экран */
+    .game-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 15;
+      background: #100b20;
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+    }
+
+    .game-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .small-button {
+      background: #302044;
+      border: 1px solid #76549a;
+      color: white;
+      border-radius: 10px;
+      padding: 10px 14px;
+    }
+
+    .game-info {
+      display: flex;
+      justify-content: space-between;
+      color: #d9c6ed;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    #gameCanvas {
+      display: block;
+      width: 100%;
+      flex: 1;
+      min-height: 300px;
+      border-radius: 16px;
+      border: 1px solid #77539b;
+      background: #24202c;
+      touch-action: none;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(3, 58px);
+      justify-content: center;
+      gap: 8px;
+      margin: 14px 0;
+    }
+
+    .control {
+      background: #39264f;
+      color: white;
+      border: 1px solid #8059a7;
+      border-radius: 12px;
+      height: 48px;
+      font-size: 20px;
+    }
+
+    .control.empty {
+      visibility: hidden;
+    }
+
+    .game-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      background: #0d0819dd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 25px;
+    }
+
+    .overlay-card {
+      background: #241832;
+      border: 1px solid #9169b5;
+      border-radius: 20px;
+      padding: 25px;
+      width: 100%;
+      max-width: 320px;
+      text-align: center;
+    }
+
+    .overlay-card h2 {
+      margin-bottom: 10px;
+    }
+
+    .overlay-card p {
+      color: #c2b0d4;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    .overlay-card button {
+      margin-top: 8px;
+    }
+
+    .back-button {
+      color: #d9baff;
+      background: transparent;
+      margin-bottom: 18px;
+    }
+
+    .tab-panel {
+      min-height: 250px;
+      padding: 20px;
+      border: 1px solid #503768;
+      border-radius: 18px;
+      background: #21172f;
+      margin-top: 20px;
+      line-height: 1.7;
+    }
+  </style>
 </head>
-
 <body>
-    <!-- ЭКРАН ЗАГРУЗКИ -->
-    <div id="splash">
-        <div class="splash-content">
-            <div class="splash-logo">MAGIC</div>
-            <div class="splash-orb">
-                <div class="splash-orb-inner"></div>
-            </div>
-            <div class="splash-loader">
-                <div class="splash-progress"></div>
-            </div>
-            <div class="splash-text">Загрузка...</div>
+
+  <div id="splash">
+    <div class="magic-title">MAGIC</div>
+    <div>
+      <div class="orb">✦</div>
+      <div class="pedestal"></div>
+    </div>
+    <div class="loading-track">
+      <div class="loading-fill"></div>
+    </div>
+  </div>
+
+  <main class="app">
+    <header class="header">
+      <div class="profile-mini">
+        <div class="avatar">🐇</div>
+        <div>
+          <div class="guest">Гость</div>
+          <div class="muted">Добро пожаловать</div>
         </div>
+      </div>
+      <div>
+        <div class="balance">⭐ <span id="balance">100</span> <button onclick="addStars()" style="background:transparent;color:#f3d8a1">+</button></div>
+        <div class="online">● Онлайн: <span id="online">128</span></div>
+      </div>
+    </header>
+
+    <section id="homePage">
+      <h1>Зал Оракула</h1>
+      <p class="subtitle">Место, где удача встречается с мастерством.</p>
+
+      <h2 class="section-title">Игры</h2>
+
+      <article class="game-card">
+        <div class="game-art">🐇</div>
+        <h3>Перебеги дорогу</h3>
+        <p>Помоги зайцу преодолеть препятствия. Не дай каменному шару догнать тебя!</p>
+        <button class="primary" onclick="startGame()">Играть</button>
+      </article>
+    </section>
+
+    <section id="otherPage" class="hidden">
+      <h1 id="otherTitle">Кейсы</h1>
+      <p class="subtitle" id="otherSubtitle">Твоя коллекция и достижения.</p>
+      <div class="tab-panel" id="otherContent">
+        Здесь появятся твои коллекции и награды.
+      </div>
+    </section>
+  </main>
+
+  <nav class="navigation">
+    <button class="nav-button active" onclick="openTab('games',this)">
+      <span>🎮</span><span>Игры</span>
+    </button>
+    <button class="nav-button" onclick="openTab('cases',this)">
+      <span>🎁</span><span>Кейсы</span>
+    </button>
+    <button class="nav-button" onclick="openTab('bonus',this)">
+      <span>✨</span><span>Бонусы</span>
+    </button>
+    <button class="nav-button" onclick="openTab('profile',this)">
+      <span>👤</span><span>Профиль</span>
+    </button>
+  </nav>
+
+  <section id="gameScreen" class="game-screen hidden">
+    <div class="game-top">
+      <button class="small-button" onclick="leaveGame()">← Назад</button>
+      <strong>Перебеги дорогу</strong>
+      <button class="small-button" onclick="pauseGame()">Ⅱ</button>
     </div>
 
-    <!-- СКРИПТ ДЛЯ СКРЫТИЯ ЗАГРУЗКИ -->
-    <script>
-        setTimeout(function() {
-            var splash = document.getElementById('splash');
-            if (splash) {
-                splash.style.opacity = '0';
-                splash.style.transition = 'opacity 0.5s ease';
-                setTimeout(function() {
-                    splash.style.display = 'none';
-                }, 500);
-            }
-        }, 2000);
-    </script>
-
-    
-<div id="splash">
-        <div class="splash-content">
-            <div class="splash-logo">MAGIC</div>
-            <div class="splash-orb">
-                <div class="splash-orb-inner"></div>
-            </div>
-            <div class="splash-loader">
-                <div class="splash-progress"></div>
-            </div>
-            <div class="splash-text">Загрузка...</div>
-        </div>
-    </div>
-    <input type="radio" name="screen" id="screen-home" checked>
-    <input type="radio" name="screen" id="screen-games">
-    <input type="radio" name="screen" id="screen-cases">
-    <input type="radio" name="screen" id="screen-bonuses">
-    <input type="radio" name="screen" id="screen-profile">
-    <input type="checkbox" id="game-open">
-
-    <div class="app">
-
-        <header class="topbar">
-            <label for="screen-profile" class="user-button">
-                <span class="avatar">
-                    <span class="avatar-bunny">🐰</span>
-                    <span class="online-dot"></span>
-                </span>
-                <span class="user-info">
-                    <strong>Гость</strong>
-                    <small>Добро пожаловать!</small>
-                </span>
-                <span class="header-arrow">›</span>
-            </label>
-
-            <div class="balance">
-                <span class="star-icon">★</span>
-                <strong>100</strong>
-                <button class="add-balance" type="button" onclick="tg.showAlert('Скоро!')">+</button>
-            </div>
-        </header>
-
-        <main class="screen screen-home">
-            <div class="home-title">
-                <span class="title-decoration"></span>
-                <h1>Зал Оракула</h1>
-                <span class="title-decoration"></span>
-            </div>
-
-            <section class="oracle-section">
-                <div class="oracle-glow"></div>
-                <div class="crystal-orb">
-                    <div class="orb-shine"></div>
-                    <div class="orb-magic">
-                        <span class="magic-star star-one">✦</span>
-                        <span class="magic-star star-two">✧</span>
-                        <span class="magic-star star-three">✦</span>
-                        <span class="magic-core"></span>
-                    </div>
-                </div>
-                <div class="orb-stand">
-                    <div class="stand-top"></div>
-                    <div class="stand-body"><span class="stand-gem">◆</span></div>
-                    <div class="stand-bottom"></div>
-                </div>
-            </section>
-
-            <section class="welcome-card">
-                <h2>Добро пожаловать!</h2>
-                <div class="welcome-balance">
-                    <span class="star-icon">★</span>
-                    <strong>100</strong>
-                </div>
-                <p>Твой баланс</p>
-            </section>
-
-            <section class="home-info-card">
-                <div class="info-symbol">✦</div>
-                <div>
-                    <h3>Твой магический мир</h3>
-                    <p>Открой игры, собирай награды и получай достижения</p>
-                </div>
-                <span class="info-arrow">›</span>
-            </section>
-        </main>
-
-        <main class="screen screen-games">
-            <div class="section-heading">
-                <span></span>
-                <h1>Игры</h1>
-                <span></span>
-            </div>
-
-            <article class="game-card">
-                <div class="game-preview">
-                    <div class="preview-sky"></div>
-                    <div class="preview-building building-left"></div>
-                    <div class="preview-building building-right"></div>
-                    <div class="preview-road">
-                        <div class="road-line"></div>
-                        <div class="preview-car car-red"></div>
-                        <div class="preview-car car-blue"></div>
-                    </div>
-                    <div class="preview-star">★</div>
-                    <div class="preview-bunny"><span>🐰</span></div>
-                    <div class="preview-label">БЕСКОНЕЧНАЯ ИГРА</div>
-                </div>
-
-                <div class="game-card-content">
-                    <h2>Перебеги дорогу</h2>
-                    <p>Помоги зайцу преодолеть дороги, реки и опасные препятствия. Не дай каменному шару догнать тебя!</p>
-                    <label for="game-open" class="play-button">
-                        <span class="play-icon">▶</span> Играть
-                    </label>
-                    <div class="game-stats">
-                        <div class="stat">
-                            <span class="stat-icon">🏆</span>
-                            <div><small>Рекорд</small><strong>0 м</strong></div>
-                        </div>
-                        <span class="stat-divider"></span>
-                        <div class="stat">
-                            <span class="stat-icon">★</span>
-                            <div><small>Награда</small><strong>+10</strong></div>
-                        </div>
-                    </div>
-                </div>
-            </article>
-
-            <article class="coming-card">
-                <div class="coming-art">✦</div>
-                <div><small>СКОРО</small><h3>Новые приключения</h3><p>Совсем скоро появятся новые игры</p></div>
-                <span class="lock-icon">🔒</span>
-            </article>
-        </main>
-
-        <main class="screen screen-cases">
-            <div class="section-heading">
-                <span></span>
-                <h1>Кейсы</h1>
-                <span></span>
-            </div>
-            <div class="empty-section">
-                <div class="empty-icon">🎁</div>
-                <h2>Магические кейсы</h2>
-                <p>Здесь будут коллекционные предметы и косметические награды.</p>
-                <span class="soon-label">СКОРО</span>
-            </div>
-        </main>
-
-        <main class="screen screen-bonuses">
-            <div class="section-heading">
-                <span></span>
-                <h1>Бонусы</h1>
-                <span></span>
-            </div>
-            <div class="bonus-card">
-                <div class="bonus-icon">✧</div>
-                <h2>Ежедневный бонус</h2>
-                <p>Заходи каждый день, выполняй задания и получай игровые очки.</p>
-                <div class="bonus-reward">★ +10</div>
-                <button class="bonus-button" type="button">Скоро</button>
-            </div>
-        </main>
-
-        <main class="screen screen-profile">
-            <div class="section-heading">
-                <span></span>
-                <h1>Профиль</h1>
-                <span></span>
-            </div>
-            <section class="profile-card">
-                <div class="profile-avatar">🐰</div>
-                <h2>Гость</h2>
-                <p>Путешественник Зала Оракула</p>
-                <div class="profile-balance">
-                    <span>★</span>
-                    <strong>100</strong>
-                </div>
-                <div class="profile-actions">
-                    <button type="button">Войти</button>
-                    <button type="button">Регистрация</button>
-                </div>
-            </section>
-            <section class="profile-statistics">
-                <div><strong>0 м</strong><small>Лучший результат</small></div>
-                <div><strong>0</strong><small>Игр сыграно</small></div>
-                <div><strong>0</strong><small>Достижений</small></div>
-            </section>
-        </main>
-
-        <nav class="bottom-nav">
-            <label for="screen-games" class="nav-item nav-games"><span class="nav-icon">🎮</span><span>Игры</span></label>
-            <label for="screen-cases" class="nav-item nav-cases"><span class="nav-icon">🎁</span><span>Кейсы</span></label>
-            <label for="screen-bonuses" class="nav-item nav-bonuses"><span class="nav-icon">✦</span><span>Бонусы</span></label>
-            <label for="screen-profile" class="nav-item nav-profile"><span class="nav-icon">♟</span><span>Профиль</span></label>
-        </nav>
-
-        <section class="game-screen">
-            <header class="game-topbar">
-                <label for="game-open" class="pause-button">Ⅱ</label>
-                <div class="game-score"><span>★</span><strong>100</strong></div>
-                <div class="game-distance"><strong>0 м</strong></div>
-            </header>
-            <div class="game-world">
-                <div class="world-buildings">
-                    <div class="world-building left-building"></div>
-                    <div class="world-building right-building"></div>
-                </div>
-                <div class="crossing-road road-one">
-                    <div class="lane-markings"></div>
-                    <div class="game-car red-car"></div>
-                    <div class="game-car yellow-car"></div>
-                </div>
-                <div class="crossing-road road-two">
-                    <div class="lane-markings"></div>
-                    <div class="game-car blue-car"></div>
-                    <div class="game-car white-car"></div>
-                </div>
-                <div class="sidewalk"></div>
-                <div class="river">
-                    <div class="river-log log-one"></div>
-                    <div class="river-log log-two"></div>
-                    <div class="river-log log-three"></div>
-                    <div class="crocodile croc-one">🐊</div>
-                    <div class="crocodile croc-two">🐊</div>
-                </div>
-                <div class="player-bunny"><span>🐰</span><div class="bunny-shadow"></div></div>
-                <div class="chasing-boulder"><div class="boulder-crack"></div></div>
-                <div class="game-distance-label">0 м</div>
-            </div>
-            <footer class="game-controls">
-                <div class="control-hint">
-                    <span>↑</span>
-                    <p>Проведи вверх, чтобы перейти</p>
-                    <span>← →</span>
-                </div>
-            </footer>
-        </section>
+    <div class="game-info">
+      <span>Этап: <b id="stage">1</b></span>
+      <span>Множитель: <b id="multiplier">×1.0</b></span>
+      <span>Рекорд: <b id="record">0</b></span>
     </div>
 
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-    </script>
-<script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
+    <canvas id="gameCanvas"></canvas>
 
-        document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                const splash = document.getElementById('splash');
-                if (splash) {
-                    splash.classList.add('hide');
-                    setTimeout(() => splash.remove(), 500);
-                }
-            }, 2000);
-        });
-    </script>
-<script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
+    <div class="controls">
+      <button class="control empty"></button>
+      <button class="control" onclick="movePlayer(0,-1)">↑</button>
+      <button class="control empty"></button>
+      <button class="control" onclick="movePlayer(-1,0)">←</button>
+      <button class="control" onclick="movePlayer(0,1)">↓</button>
+      <button class="control" onclick="movePlayer(1,0)">→</button>
+    </div>
 
-        document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                const splash = document.getElementById('splash');
-                if (splash) {
-                    splash.classList.add('hide');
-                    setTimeout(() => splash.remove(), 500);
-                }
-            }, 2000);
-        });
-    </script>
+    <div id="gameOverlay" class="game-overlay">
+      <div class="overlay-card">
+        <h2 id="overlayTitle">Готов?</h2>
+        <p id="overlayText">Проведи зайца через дорогу и не попади под препятствия.</p>
+        <button class="primary" id="overlayButton" onclick="resumeGame()">Начать</button>
+      </div>
+    </div>
+  </section>
+
+  <script src="/static/script.js"></script>
 </body>
 </html>
