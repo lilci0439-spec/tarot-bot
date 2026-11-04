@@ -159,6 +159,33 @@ body { min-height: 100vh; min-height: 100dvh; }
 </div>
 
 <!-- ПОДКЛЮЧАЕМ ЛОГИКУ -->
-<script src="app.js"></script>
+
+<script>
+// Подключаем Telegram
+const tg = window.Telegram.WebApp;
+tg.expand();
+
+// Функция переключения экранов
+function switchScreen(screenId, btn) {
+// Скрываем все экраны
+document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+// Убираем активный класс со всех кнопок
+document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+
+// Показываем нужный
+const target = document.getElementById('screen-' + screenId);
+if (target) target.classList.add('active');
+
+// Подсвечиваем кнопку
+if (btn) btn.classList.add('active');
+}
+
+// Устанавливаем баланс при загрузке
+document.addEventListener('DOMContentLoaded', () => {
+document.getElementById('balance-val').innerText = '100';
+document.getElementById('welcome-bal').innerText = '100';
+});
+</script>
+
 </body>
 </html>
