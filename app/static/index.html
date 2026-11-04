@@ -257,11 +257,105 @@
         @supports (padding: max(0px)) {
             .app { padding-top: max(16px, env(safe-area-inset-top)); padding-bottom: max(112px, calc(100px + env(safe-area-inset-bottom))); }
         }
-    </style>
+   /* =========================================
+   ЭКРАН ЗАГРУЗКИ (SPLASH)
+========================================= */
+#splash {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: #0c0418;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.5s ease;
+}
+
+#splash.hide {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.splash-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+}
+
+.splash-logo {
+    font-family: Georgia, serif;
+    font-size: 40px;
+    font-weight: 700;
+    letter-spacing: 5px;
+    color: #d8a0ff;
+    text-shadow: 0 0 20px rgba(180, 91, 255, 0.8);
+}
+
+.splash-orb {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 25%, rgba(229, 185, 255, 0.7), transparent 17%), radial-gradient(circle at 50% 55%, #48117d 0%, #21073f 50%, #12051f 100%);
+    box-shadow: inset -15px -20px 35px rgba(0, 0, 0, 0.65), inset 10px 8px 25px rgba(219, 164, 255, 0.3), 0 0 15px #9e35ff, 0 0 40px rgba(155, 48, 255, 0.65);
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.splash-orb-inner {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 1px solid rgba(179, 86, 255, 0.3);
+    background: conic-gradient(from 0deg, transparent, rgba(174, 65, 255, 0.6), transparent, rgba(217, 145, 255, 0.4), transparent);
+    animation: orbRotate 4s linear infinite;
+}
+
+.splash-loader {
+    width: 200px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.splash-progress {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #8b5cf6, #d8a0ff);
+    border-radius: 3px;
+    animation: loadProgress 2s ease forwards;
+}
+
+@keyframes loadProgress {
+    0% { width: 0%; }
+    100% { width: 100%; }
+}
+
+.splash-text {
+    color: #b89bd7;
+    font-size: 14px;
+    letter-spacing: 2px;
+} </style>
 </head>
 
 <body>
 
+    
+<div id="splash">
+        <div class="splash-content">
+            <div class="splash-logo">MAGIC</div>
+            <div class="splash-orb">
+                <div class="splash-orb-inner"></div>
+            </div>
+            <div class="splash-loader">
+                <div class="splash-progress"></div>
+            </div>
+            <div class="splash-text">Загрузка...</div>
+        </div>
+    </div>
     <input type="radio" name="screen" id="screen-home" checked>
     <input type="radio" name="screen" id="screen-games">
     <input type="radio" name="screen" id="screen-cases">
@@ -492,6 +586,20 @@
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
+    </script>
+<script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash');
+                if (splash) {
+                    splash.classList.add('hide');
+                    setTimeout(() => splash.remove(), 500);
+                }
+            }, 2000);
+        });
     </script>
 </body>
 </html>
