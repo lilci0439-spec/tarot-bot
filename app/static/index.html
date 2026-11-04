@@ -176,17 +176,25 @@ tg.expand();
 
 // Функция переключения экранов
 function switchScreen(screenId, btn) {
-// Скрываем все экраны
 document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-// Убираем активный класс со всех кнопок
 document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
 
-// Показываем нужный
 const target = document.getElementById('screen-' + screenId);
 if (target) target.classList.add('active');
 
-// Подсвечиваем кнопку
 if (btn) btn.classList.add('active');
+}
+
+// Функция открытия игры
+function openGame(gameName) {
+document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+
+const gameScreen = document.getElementById('screen-game-play');
+if (gameScreen) {
+gameScreen.classList.add('active');
+} else {
+tg.showAlert("Игра загружается...");
+}
 }
 
 // Устанавливаем баланс при загрузке
@@ -195,6 +203,7 @@ document.getElementById('balance-val').innerText = '100';
 document.getElementById('welcome-bal').innerText = '100';
 });
 </script>
+
 
 </body>
 </html>
