@@ -1,94 +1,109 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#10051f">
+<title>Зал Оракула</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
 <div class="app">
-    <!-- ШАПКА -->
-    <header class="topbar">
-        <div class="user-button">
-            <span class="avatar">🐰</span>
-            <span class="user-info">
-                <strong>Гость</strong>
-                <small>Добро пожаловать!</small>
-            </span>
-        </div>
-        <div class="balance">
-            <span class="star-icon">★</span>
-            <strong id="balance-val">100</strong>
-        </div>
-    </header>
+<!-- ШАПКА -->
+<header class="topbar">
+<div class="user-button">
+<span class="avatar">🐰</span>
+<span class="user-info">
+<strong>Гость</strong>
+<small>Добро пожаловать!</small>
+</span>
+</div>
+<div class="balance">
+<span class="star-icon">★</span>
+<strong id="balance-val">100</strong>
+</div>
+</header>
 
-    <!-- ГЛАВНЫЙ ЭКРАН (Шар) -->
-    <main class="screen active" id="screen-home">
-        <div class="home-title">
-            <span class="title-decoration"></span>
-            <h1>Зал Оракула</h1>
-            <span class="title-decoration"></span>
-        </div>
-        
-        <div class="oracle-section">
-            <div class="oracle-glow"></div>
-            <div class="crystal-orb">
-                <div class="orb-shine"></div>
-                <div class="orb-magic">
-                    <span class="magic-star star-one">✦</span>
-                    <span class="magic-star star-two">✧</span>
-                    <span class="magic-star star-three">✦</span>
-                    <span class="magic-core"></span>
-                </div>
-            </div>
-            <div class="orb-stand">
-                <div class="stand-top"></div>
-                <div class="stand-body"><span class="stand-gem">◆</span></div>
-                <div class="stand-bottom"></div>
-            </div>
-        </div>
+<!-- ГЛАВНЫЙ ЭКРАН (Шар) -->
+<main class="screen active" id="screen-home">
+<div class="home-title">
+<span class="title-decoration"></span>
+<h1>Зал Оракула</h1>
+<span class="title-decoration"></span>
+</div>
 
-        <div class="welcome-card">
-            <h2>Добро пожаловать!</h2>
-            <div class="welcome-balance"><span>★</span> <strong id="welcome-bal">100</strong></div>
-            <p>Твой баланс</p>
-        </div>
-    </main>
+<div class="oracle-section">
+<div class="oracle-glow"></div>
+<div class="crystal-orb">
+<div class="orb-shine"></div>
+<div class="orb-magic">
+<span class="magic-star star-one">✦</span>
+<span class="magic-star star-two">✧</span>
+<span class="magic-star star-three">✦</span>
+<span class="magic-core"></span>
+</div>
+</div>
+<div class="orb-stand">
+<div class="stand-top"></div>
+<div class="stand-body"><span class="stand-gem">◆</span></div>
+<div class="stand-bottom"></div>
+</div>
+</div>
 
-    <!-- ЭКРАН ИГР (Пока пустой) -->
-    <main class="screen" id="screen-games">
-        <div class="section-heading">
-            <span></span>
-            <h1>Игры</h1>
-            <span></span>
-        </div>
-        <div id="game-container" style="width: 100%; height: 100%;">
-            <!-- Сюда потом загрузится игра -->
-            <p style="text-align:center; color:#b89bd7; margin-top:50px;">Игры скоро появятся...</p>
-        </div>
-    </main>
+<div class="welcome-card">
+<h2>Добро пожаловать!</h2>
+<div class="welcome-balance"><span>★</span> <strong id="welcome-bal">100</strong></div>
+<p>Твой баланс</p>
+</div>
+</main>
 
-    <!-- ЭКРАН КЕЙСОВ (Пока пустой) -->
-    <main class="screen" id="screen-cases">
-        <div class="section-heading">
-            <span></span>
-            <h1>Кейсы</h1>
-            <span></span>
-        </div>
-        <div id="cases-container" style="width: 100%; height: 100%;">
-            <!-- Сюда потом загрузятся кейсы -->
-            <p style="text-align:center; color:#b89bd7; margin-top:50px;">Кейсы скоро появятся...</p>
-        </div>
-    </main>
+<!-- ЭКРАН ИГР (Пока пустой) -->
+<main class="screen" id="screen-games">
+<div class="section-heading">
+<span></span>
+<h1>Игры</h1>
+<span></span>
+</div>
+<div id="game-container" style="width: 100%; height: 100%;">
+<!-- Сюда потом загрузится игра -->
+<p style="text-align:center; color:#b89bd7; margin-top:50px;">Игры скоро появятся...</p>
+</div>
+</main>
 
-    <!-- НИЖНЕЕ МЕНЮ -->
-    <nav class="bottom-nav">
-        <button class="nav-item active" onclick="switchScreen('home', this)">
-            <span class="nav-icon">🏠</span>
-            <span>Главная</span>
-        </button>
-        <button class="nav-item" onclick="switchScreen('games', this)">
-            <span class="nav-icon">🎮</span>
-            <span>Игры</span>
-        </button>
-        <button class="nav-item" onclick="switchScreen('cases', this)">
-            <span class="nav-icon">🎁</span>
-            <span>Кейсы</span>
-        </button>
-    </nav>
+<!-- ЭКРАН КЕЙСОВ (Пока пустой) -->
+<main class="screen" id="screen-cases">
+<div class="section-heading">
+<span></span>
+<h1>Кейсы</h1>
+<span></span>
+</div>
+<div id="cases-container" style="width: 100%; height: 100%;">
+<!-- Сюда потом загрузятся кейсы -->
+<p style="text-align:center; color:#b89bd7; margin-top:50px;">Кейсы скоро появятся...</p>
+</div>
+</main>
+
+<!-- НИЖНЕЕ МЕНЮ -->
+<nav class="bottom-nav">
+<button class="nav-item active" onclick="switchScreen('home', this)">
+<span class="nav-icon">🏠</span>
+<span>Главная</span>
+</button>
+<button class="nav-item" onclick="switchScreen('games', this)">
+<span class="nav-icon">🎮</span>
+<span>Игры</span>
+</button>
+<button class="nav-item" onclick="switchScreen('cases', this)">
+<span class="nav-icon">🎁</span>
+<span>Кейсы</span>
+</button>
+</nav>
 </div>
 
 <!-- ПОДКЛЮЧАЕМ ЛОГИКУ -->
 <script src="app.js"></script>
+</body>
+</html>
