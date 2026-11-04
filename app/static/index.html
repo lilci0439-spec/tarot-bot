@@ -601,5 +601,19 @@
             }, 2000);
         });
     </script>
+<script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash');
+                if (splash) {
+                    splash.classList.add('hide');
+                    setTimeout(() => splash.remove(), 500);
+                }
+            }, 2000);
+        });
+    </script>
 </body>
 </html>
