@@ -124,7 +124,16 @@ body { min-height: 100vh; min-height: 100dvh; }
 </div>
 <div id="game-container" style="width: 100%; height: 100%;">
 <!-- Сюда потом загрузится игра -->
-<p style="text-align:center; color:#b89bd7; margin-top:50px;">Игры скоро появятся...</p>
+
+<article class="game-card" onclick="openGame('bunny')">
+<div class="game-preview">🐰</div>
+<div class="game-card-content">
+<h2>Перебеги дорогу</h2>
+<p>Помоги зайцу преодолеть препятствия. Не дай каменному шару догнать тебя!</p>
+<button class="play-button"><span class="play-icon">▶</span> Играть</button>
+</div>
+</article>
+
 </div>
 </main>
 
