@@ -342,6 +342,33 @@
 </head>
 
 <body>
+    <!-- ЭКРАН ЗАГРУЗКИ -->
+    <div id="splash">
+        <div class="splash-content">
+            <div class="splash-logo">MAGIC</div>
+            <div class="splash-orb">
+                <div class="splash-orb-inner"></div>
+            </div>
+            <div class="splash-loader">
+                <div class="splash-progress"></div>
+            </div>
+            <div class="splash-text">Загрузка...</div>
+        </div>
+    </div>
+
+    <!-- СКРИПТ ДЛЯ СКРЫТИЯ ЗАГРУЗКИ -->
+    <script>
+        setTimeout(function() {
+            var splash = document.getElementById('splash');
+            if (splash) {
+                splash.style.opacity = '0';
+                splash.style.transition = 'opacity 0.5s ease';
+                setTimeout(function() {
+                    splash.style.display = 'none';
+                }, 500);
+            }
+        }, 2000);
+    </script>
 
     
 <div id="splash">
