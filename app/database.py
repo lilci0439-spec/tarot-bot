@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from app.models import Base
 
-DATABASE_URL = "sqlite+aiosqlite:///./bot_database.db"
+DATABASE_URL = "sqlite+aiosqlite:///./magic_database.db"
 
 engine = create_async_engine(DATABASE_URL, echo=False)
 async_session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
