@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#10051f">
+    <meta name="description" content="Зал Оракула — магический игровой мир">
+    <title>Зал Оракула</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- CSS-переключатели экранов -->
+    <input type="radio" name="screen" id="screen-home" checked>
+    <input type="radio" name="screen" id="screen-games">
+    <input type="radio" name="screen" id="screen-cases">
+    <input type="radio" name="screen" id="screen-bonuses">
+    <input type="radio" name="screen" id="screen-profile">
+    <input type="checkbox" id="game-open">
+
+    <div class="app">
+
+        <!-- Общая шапка -->
+        <header class="topbar">
+            <label for="screen-profile" class="user-button">
+                <span class="avatar">
+                    <span class="avatar-bunny">🐰</span>
+                    <span class="online-dot"></span>
+                </span>
+
+                <span class="user-info">
+                    <strong>Гость</strong>
+                    <small>Добро пожаловать!</small>
+                </span>
+
+                <span class="header-arrow">›</span>
+            </label>
+
+            <div class="balance">
+                <span class="star-icon">★</span>
+                <strong>100</strong>
+                <button class="add-balance" type="button" aria-label="Пополнить баланс">+</button>
+            </div>
+        </header>
+
+        <!-- Главная -->
+        <main class="screen screen-home">
+
+            <div class="home-title">
+                <span class="title-decoration"></span>
+                <h1>Зал Оракула</h1>
+                <span class="title-decoration"></span>
+            </div>
+
+            <section class="oracle-section">
+                <div class="oracle-glow"></div>
+
+                <div class="crystal-orb">
+                    <div class="orb-shine"></div>
+                    <div class="orb-magic">
+                        <span class="magic-star star-one">✦</span>
+                        <span class="magic-star star-two">✧</span>
+                        <span class="magic-star star-three">✦</span>
+                        <span class="magic-core"></span>
+                    </div>
+                </div>
+
+                <div class="orb-stand">
+                    <div class="stand-top"></div>
+                    <div class="stand-body">
+                        <span class="stand-gem">◆</span>
+                    </div>
+                    <div class="stand-bottom"></div>
+                </div>
+            </section>
+
+            <section class="welcome-card">
+                <h2>Добро пожаловать!</h2>
+
+                <div class="welcome-balance">
+                    <span class="star-icon">★</span>
+                    <strong>100</strong>
+                </div>
+
+                <p>Твой баланс</p>
+            </section>
+
+            <section class="home-info-card">
+                <div class="info-symbol">✦</div>
+
+                <div>
+                    <h3>Твой магический мир</h3>
+                    <p>Открой игры, собирай награды и получай достижения</p>
+                </div>
+
+                <span class="info-arrow">›</span>
+            </section>
+
+        </main>
+
+        <!-- Вкладка игр -->
+        <main class="screen screen-games">
+
+            <div class="section-heading">
+                <span></span>
+                <h1>Игры</h1>
+                <span></span>
+            </div>
+
+            <article class="game-card">
+
+                <div class="game-preview">
+                    <div class="preview-sky"></div>
+                    <div class="preview-building building-left"></div>
+                    <div class="preview-building building-right"></div>
+
+                    <div class="preview-road">
+                        <div class="road-line"></div>
+                        <div class="preview-car car-red"></div>
+                        <div class="preview-car car-blue"></div>
+                    </div>
+
+                    <div class="preview-star">★</div>
+
+                    <div class="preview-bunny">
+                        <span>🐰</span>
+                    </div>
+
+                    <div class="preview-label">БЕСКОНЕЧНАЯ ИГРА</div>
+                </div>
+
+                <div class="game-card-content">
+                    <h2>Перебеги дорогу</h2>
+
+                    <p>
+                        Помоги зайцу преодолеть дороги, реки и опасные
+                        препятствия. Не дай каменному шару догнать тебя!
+                    </p>
+
+                    <label for="game-open" class="play-button">
+                        <span class="play-icon">▶</span>
+                        Играть
+                    </label>
+
+                    <div class="game-stats">
+                        <div class="stat">
+                            <span class="stat-icon">🏆</span>
+                            <div>
+                                <small>Рекорд</small>
+                                <strong>0 м</strong>
+                            </div>
+                        </div>
+
+                        <span class="stat-divider"></span>
+
+                        <div class="stat">
+                            <span class="stat-icon">★</span>
+                            <div>
+                                <small>Награда</small>
+                                <strong>+10</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <article class="coming-card">
+                <div class="coming-art">✦</div>
+                <div>
+                    <small>СКОРО</small>
+                    <h3>Новые приключения</h3>
+                    <p>Совсем скоро появятся новые игры</p>
+                </div>
+                <span class="lock-icon">🔒</span>
+            </article>
+
+        </main>
+
+        <!-- Вкладка кейсов -->
+        <main class="screen screen-cases">
+
+            <div class="section-heading">
+                <span></span>
+                <h1>Кейсы</h1>
+                <span></span>
+            </div>
+
+            <div class="empty-section">
+                <div class="empty-icon">🎁</div>
+                <h2>Магические кейсы</h2>
+                <p>Здесь будут коллекционные предметы и косметические награды.</p>
+                <span class="soon-label">СКОРО</span>
+            </div>
+
+        </main>
+
+        <!-- Вкладка бонусов -->
+        <main class="screen screen-bonuses">
+
+            <div class="section-heading">
+                <span></span>
+                <h1>Бонусы</h1>
+                <span></span>
+            </div>
+
+            <div class="bonus-card">
+                <div class="bonus-icon">✧</div>
+                <h2>Ежедневный бонус</h2>
+                <p>Заходи каждый день, выполняй задания и получай игровые очки.</p>
+                <div class="bonus-reward">★ +10</div>
+                <button class="bonus-button" type="button">Скоро</button>
+            </div>
+
+        </main>
+
+        <!-- Вкладка профиля -->
+        <main class="screen screen-profile">
+
+            <div class="section-heading">
+                <span></span>
+                <h1>Профиль</h1>
+                <span></span>
+            </div>
+
+            <section class="profile-card">
+                <div class="profile-avatar">🐰</div>
+                <h2>Гость</h2>
+                <p>Путешественник Зала Оракула</p>
+
+                <div class="profile-balance">
+                    <span>★</span>
+                    <strong>100</strong>
+                </div>
+
+                <div class="profile-actions">
+                    <button type="button">Войти</button>
+                    <button type="button">Регистрация</button>
+                </div>
+            </section>
+
+            <section class="profile-statistics">
+                <div>
+                    <strong>0 м</strong>
+                    <small>Лучший результат</small>
+                </div>
+                <div>
+                    <strong>0</strong>
+                    <small>Игр сыграно</small>
+                </div>
+                <div>
+                    <strong>0</strong>
+                    <small>Достижений</small>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Нижняя навигация -->
+        <nav class="bottom-nav" aria-label="Главная навигация">
+
+            <label for="screen-games" class="nav-item nav-games">
+                <span class="nav-icon">🎮</span>
+                <span>Игры</span>
+            </label>
+
+            <label for="screen-cases" class="nav-item nav-cases">
+                <span class="nav-icon">🎁</span>
+                <span>Кейсы</span>
+            </label>
+
+            <label for="screen-bonuses" class="nav-item nav-bonuses">
+                <span class="nav-icon">✦</span>
+                <span>Бонусы</span>
+            </label>
+
+            <label for="screen-profile" class="nav-item nav-profile">
+                <span class="nav-icon">♟</span>
+                <span>Профиль</span>
+            </label>
+
+        </nav>
+
+        <!-- Экран самой игры -->
+        <section class="game-screen">
+
+            <header class="game-topbar">
+                <label for="game-open" class="pause-button" aria-label="Вернуться к меню">Ⅱ</label>
+
+                <div class="game-score">
+                    <span>★</span>
+                    <strong>100</strong>
+                </div>
+
+                <div class="game-distance">
+                    <strong>0 м</strong>
+                </div>
+            </header>
+
+            <div class="game-world">
+
+                <div class="world-buildings">
+                    <div class="world-building left-building"></div>
+                    <div class="world-building right-building"></div>
+                </div>
+
+                <!-- Дорога -->
+                <div class="crossing-road road-one">
+                    <div class="lane-markings"></div>
+                    <div class="game-car red-car"></div>
+                    <div class="game-car yellow-car"></div>
+                </div>
+
+                <div class="crossing-road road-two">
+                    <div class="lane-markings"></div>
+                    <div class="game-car blue-car"></div>
+                    <div class="game-car white-car"></div>
+                </div>
+
+                <!-- Тротуар -->
+                <div class="sidewalk"></div>
+
+                <!-- Река -->
+                <div class="river">
+                    <div class="river-log log-one"></div>
+                    <div class="river-log log-two"></div>
+                    <div class="river-log log-three"></div>
+
+                    <div class="crocodile croc-one">🐊</div>
+                    <div class="crocodile croc-two">🐊</div>
+                </div>
+
+                <!-- Персонаж -->
+                <div class="player-bunny">
+                    <span>🐰</span>
+                    <div class="bunny-shadow"></div>
+                </div>
+
+                <!-- Каменный шар позади -->
+                <div class="chasing-boulder">
+                    <div class="boulder-crack"></div>
+                </div>
+
+                <div class="game-distance-label">0 м</div>
+
+            </div>
+
+            <footer class="game-controls">
+                <div class="control-hint">
+                    <span>↑</span>
+                    <p>Проведи вверх, чтобы перейти</p>
+                    <span>← →</span>
+                </div>
+            </footer>
+
+        </section>
+
+    </div>
+
+</body>
+</html>
