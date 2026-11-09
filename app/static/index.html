@@ -1,240 +1,303 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#10051f">
-<title>Зал Оракула</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#06121d">
+    <title>Бурса Штурвал</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg: #06121d;
+            --panel: rgba(10, 30, 50, 0.88);
+            --purple: #00b4d8; /* Морской бирюзовый */
+            --text: #e0f7fa;
+            --muted: #80c1d1;
+            --gold: #ffd34f;
+            --border: rgba(0, 180, 216, 0.48);
+        }
 
-<style>
-:root {
---bg: #10051f; --panel: rgba(35, 12, 62, 0.88); --purple: #922cff;
---text: #f5eaff; --muted: #b89bd7; --gold: #ffd34f; --border: rgba(164, 65, 255, 0.48);
-}
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; user-select: none; }
-html, body { width: 100%; min-height: 100%; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
-body { min-height: 100vh; min-height: 100dvh; }
-.app { position: relative; width: 100%; max-width: 520px; min-height: 100vh; min-height: 100dvh; margin: 0 auto; padding: 16px 16px 120px; overflow: hidden; background: radial-gradient(ellipse at 50% 28%, rgba(104, 25, 174, 0.18), transparent 42%), linear-gradient(180deg, #10051f 0%, #0c0418 100%); }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; user-select: none; }
+        html, body { width: 100%; min-height: 100%; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+        body { min-height: 100vh; min-height: 100dvh; }
+        
+        .app {
+            position: relative; width: 100%; max-width: 520px; min-height: 100vh; min-height: 100dvh;
+            margin: 0 auto; padding: 16px 16px 100px; overflow: hidden;
+            background: radial-gradient(ellipse at 50% 28%, rgba(0, 180, 216, 0.15), transparent 42%), linear-gradient(180deg, #06121d 0%, #030a10 100%);
+        }
 
-.screen { display: none; animation: screenAppear 0.35s ease both; }
-.screen.active { display: block; }
-@keyframes screenAppear { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        /* ШАПКА */
+        .topbar { position: relative; z-index: 5; display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; margin-bottom: 34px; }
+        .user-button { display: flex; align-items: center; gap: 10px; padding: 7px 12px 7px 7px; border: 1px solid var(--border); border-radius: 50px; background: linear-gradient(120deg, rgba(10, 40, 70, 0.8), rgba(5, 15, 25, 0.9)); }
+        .avatar { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 2px solid var(--purple); border-radius: 50%; background: radial-gradient(circle, #005f73, #001219 75%); box-shadow: 0 0 15px rgba(0, 180, 216, 0.55); font-size: 24px; }
+        .user-info strong { font-size: 15px; display: block; }
+        .user-info small { color: var(--muted); font-size: 11px; }
+        .balance { display: flex; align-items: center; gap: 6px; padding: 10px 15px; border: 1px solid rgba(255, 211, 79, 0.3); border-radius: 50px; background: linear-gradient(120deg, #0a1c2e, #05101a); }
+        .coin-icon { width: 20px; height: 20px; object-fit: contain; }
+        .balance strong { font-size: 18px; color: var(--gold); }
 
-.topbar { position: relative; z-index: 5; display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; margin-bottom: 34px; }
-.user-button { display: flex; align-items: center; gap: 10px; padding: 7px 12px 7px 7px; border: 1px solid var(--border); border-radius: 50px; background: linear-gradient(120deg, rgba(62, 20, 105, 0.8), rgba(20, 7, 39, 0.9)); }
-.avatar { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 2px solid #9e42ff; border-radius: 50%; background: radial-gradient(circle, #8d39d9, #291044 75%); box-shadow: 0 0 15px rgba(151, 53, 255, 0.55); font-size: 24px; }
-.user-info strong { font-size: 15px; display: block; }
-.user-info small { color: var(--muted); font-size: 11px; }
-.balance { display: flex; align-items: center; gap: 6px; padding: 10px 15px; border: 1px solid rgba(255, 186, 76, 0.3); border-radius: 50px; background: linear-gradient(120deg, #26113c, #160824); }
-.star-icon { color: var(--gold); font-size: 20px; }
-.balance strong { font-size: 18px; }
+        /* ГЛАВНЫЙ ЭКРАН */
+        .home-title { display: flex; align-items: center; justify-content: center; gap: 13px; margin: 15px 0 24px; }
+        .home-title h1, .section-heading h1 { color: #90e0ef; font-family: Georgia, serif; font-size: 32px; font-weight: 400; text-align: center; text-shadow: 0 0 14px rgba(0, 180, 216, 0.8); }
+        .title-decoration { width: 35px; height: 1px; background: linear-gradient(90deg, transparent, var(--purple)); }
+        .title-decoration:last-child { transform: rotate(180deg); }
+        .section-heading { display: flex; align-items: center; justify-content: center; gap: 13px; margin: 18px 0 28px; }
+        .section-heading span { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--purple)); }
+        .section-heading span:last-child { transform: rotate(180deg); }
 
-.home-title { display: flex; align-items: center; justify-content: center; gap: 13px; margin: 15px 0 24px; }
-.home-title h1, .section-heading h1 { color: #d8a0ff; font-family: Georgia, serif; font-size: 32px; font-weight: 400; text-align: center; text-shadow: 0 0 14px rgba(180, 91, 255, 0.8); }
-.title-decoration { width: 35px; height: 1px; background: linear-gradient(90deg, transparent, #b65cff); }
-.title-decoration:last-child { transform: rotate(180deg); }
-.section-heading { display: flex; align-items: center; justify-content: center; gap: 13px; margin: 18px 0 28px; }
-.section-heading span { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, #a746ff); }
-.section-heading span:last-child { transform: rotate(180deg); }
+        .oracle-section { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 330px; margin: 0 auto 20px; isolation: isolate; }
+        .oracle-glow { position: absolute; top: 30%; left: 50%; width: 250px; height: 250px; border-radius: 50%; background: #00b4d8; opacity: 0.16; filter: blur(70px); transform: translate(-50%, -50%); z-index: -1; }
+        
+        .crystal-orb { position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; width: 205px; height: 205px; overflow: hidden; border: 2px solid rgba(144, 224, 239, 0.9); border-radius: 50%; background: radial-gradient(circle at 35% 25%, rgba(200, 240, 255, 0.7), transparent 17%), radial-gradient(circle at 50% 55%, #005f73 0%, #001219 50%, #000000 100%); box-shadow: inset -15px -20px 35px rgba(0, 0, 0, 0.65), inset 10px 8px 25px rgba(200, 240, 255, 0.3), 0 0 15px #00b4d8, 0 0 40px rgba(0, 180, 216, 0.65); }
+        .orb-magic { position: relative; width: 145px; height: 145px; border: 1px solid rgba(144, 224, 239, 0.3); border-radius: 50%; background: conic-gradient(from 0deg, transparent, rgba(0, 180, 216, 0.6), transparent, rgba(144, 224, 239, 0.4), transparent); animation: orbRotate 8s linear infinite; }
+        @keyframes orbRotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        
+        .orb-stand { position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; margin-top: -12px; }
+        .stand-top { width: 190px; height: 17px; border: 1px solid var(--purple); border-radius: 50%; background: linear-gradient(90deg, #001219, #00b4d8, #001219); box-shadow: 0 0 13px #00b4d8; }
+        .stand-body { display: flex; align-items: center; justify-content: center; width: 145px; height: 48px; margin-top: -4px; border: 1px solid #005f73; border-radius: 5px 5px 25px 25px; background: linear-gradient(90deg, #001219, #003545, #001219); box-shadow: inset 0 0 15px #000; }
+        .stand-gem { color: var(--purple); font-size: 30px; text-shadow: 0 0 12px var(--purple); }
+        .stand-bottom { width: 180px; height: 13px; margin-top: -2px; border: 1px solid #005f73; border-radius: 50%; background: #001219; box-shadow: 0 5px 20px rgba(0, 180, 216, 0.4); }
 
-.oracle-section { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 330px; margin: 0 auto 20px; isolation: isolate; }
-.oracle-glow { position: absolute; top: 30%; left: 50%; width: 250px; height: 250px; border-radius: 50%; background: #8124ff; opacity: 0.16; filter: blur(70px); transform: translate(-50%, -50%); z-index: -1; }
-.crystal-orb { position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; width: 205px; height: 205px; overflow: hidden; border: 2px solid rgba(207, 155, 255, 0.9); border-radius: 50%; background: radial-gradient(circle at 35% 25%, rgba(229, 185, 255, 0.7), transparent 17%), radial-gradient(circle at 50% 55%, #48117d 0%, #21073f 50%, #12051f 100%); box-shadow: inset -15px -20px 35px rgba(0, 0, 0, 0.65), inset 10px 8px 25px rgba(219, 164, 255, 0.3), 0 0 15px #9e35ff, 0 0 40px rgba(155, 48, 255, 0.65); }
-.orb-magic { position: relative; width: 145px; height: 145px; border: 1px solid rgba(179, 86, 255, 0.3); border-radius: 50%; background: conic-gradient(from 0deg, transparent, rgba(174, 65, 255, 0.6), transparent, rgba(217, 145, 255, 0.4), transparent); animation: orbRotate 8s linear infinite; }
-@keyframes orbRotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-.orb-stand { position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; margin-top: -12px; }
-.stand-top { width: 190px; height: 17px; border: 1px solid #9f53e6; border-radius: 50%; background: linear-gradient(90deg, #31104c, #9b45dc, #31104c); box-shadow: 0 0 13px #9e3cff; }
-.stand-body { display: flex; align-items: center; justify-content: center; width: 145px; height: 48px; margin-top: -4px; border: 1px solid #6b2da0; border-radius: 5px 5px 25px 25px; background: linear-gradient(90deg, #170823, #4a176d, #170823); box-shadow: inset 0 0 15px #10051c; }
-.stand-gem { color: #d9a0ff; font-size: 30px; text-shadow: 0 0 12px #b34cff; }
-.stand-bottom { width: 180px; height: 13px; margin-top: -2px; border: 1px solid #7734a7; border-radius: 50%; background: #28103f; box-shadow: 0 5px 20px rgba(162, 54, 255, 0.4); }
+        .welcome-card { padding: 23px 15px; border: 1px solid var(--border); border-radius: 25px; background: radial-gradient(circle at 50% 0%, rgba(0, 180, 216, 0.25), transparent 60%), linear-gradient(140deg, rgba(10, 40, 70, 0.9), rgba(5, 15, 25, 0.95)); text-align: center; box-shadow: 0 0 22px rgba(0, 180, 216, 0.12); margin-bottom: 20px; }
+        .welcome-card h2 { color: #90e0ef; font-family: Georgia, serif; font-size: 23px; font-weight: 400; }
+        .welcome-balance { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 10px 0 3px; }
+        .welcome-balance .coin-icon { width: 42px; height: 42px; }
+        .welcome-balance strong { color: #caf0f8; font-size: 40px; font-weight: 500; text-shadow: 0 0 15px rgba(0, 180, 216, 0.5); }
+        .welcome-card p { color: var(--muted); font-size: 14px; }
 
-.welcome-card { padding: 23px 15px; border: 1px solid var(--border); border-radius: 25px; background: radial-gradient(circle at 50% 0%, rgba(117, 40, 185, 0.25), transparent 60%), linear-gradient(140deg, rgba(43, 13, 72, 0.9), rgba(19, 6, 35, 0.95)); text-align: center; box-shadow: 0 0 22px rgba(122, 33, 207, 0.12); }
-.welcome-card h2 { color: #d8a0ff; font-family: Georgia, serif; font-size: 23px; font-weight: 400; }
-.welcome-balance { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 10px 0 3px; }
-.welcome-balance span { color: var(--gold); font-size: 32px; }
-.welcome-balance strong { color: #e4c5ff; font-size: 40px; font-weight: 500; text-shadow: 0 0 15px rgba(179, 97, 255, 0.5); }
-.welcome-card p { color: var(--muted); font-size: 14px; }
+        /* ИГРЫ */
+        .game-card { overflow: hidden; border: 1px solid #005f73; border-radius: 25px; background: linear-gradient(150deg, #001219, #000); box-shadow: 0 0 20px rgba(0, 180, 216, 0.2); margin-top: 20px; cursor: pointer; }
+        .game-preview { position: relative; height: 200px; overflow: hidden; background: radial-gradient(circle at 50% 50%, #005f73, #000); display: flex; justify-content: center; align-items: center; font-size: 80px; }
+        .game-card-content { padding: 20px 17px 16px; }
+        .game-card-content h2 { margin-bottom: 9px; color: #90e0ef; font-size: 25px; text-align: center; }
+        .game-card-content p { color: var(--muted); font-size: 13px; line-height: 1.6; text-align: center; margin-bottom: 15px; }
+        .play-button { display: flex; align-items: center; justify-content: center; gap: 13px; width: 100%; padding: 16px; border: 1px solid var(--purple); border-radius: 50px; background: linear-gradient(100deg, #0077b6, #00b4d8); box-shadow: 0 0 20px rgba(0, 180, 216, 0.45); color: white; font-size: 19px; font-weight: 650; cursor: pointer; }
 
-.bottom-nav { position: fixed; z-index: 20; bottom: max(10px, env(safe-area-inset-bottom)); left: 50%; display: grid; grid-template-columns: repeat(3, 1fr); width: min(calc(100% - 20px), 500px); padding: 12px 5px 10px; border: 1px solid rgba(136, 47, 206, 0.5); border-radius: 30px; background: rgba(20, 6, 36, 0.96); box-shadow: 0 -5px 30px rgba(102, 29, 170, 0.17); backdrop-filter: blur(15px); transform: translateX(-50%); }
-.nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; background: none; border: none; color: #a981d0; font-size: 11px; cursor: pointer; transition: 0.2s; }
-.nav-item.active { color: #e0b9ff; text-shadow: 0 0 10px #a64bff; }
-.nav-icon { font-size: 22px; filter: drop-shadow(0 0 5px rgba(167, 90, 255, 0.3)); }
+        /* МЕНЮ */
+        .bottom-nav { position: fixed; z-index: 20; bottom: max(10px, env(safe-area-inset-bottom)); left: 50%; display: grid; grid-template-columns: repeat(5, 1fr); width: min(calc(100% - 20px), 500px); padding: 12px 5px 10px; border: 1px solid var(--border); border-radius: 30px; background: rgba(5, 15, 25, 0.96); box-shadow: 0 -5px 30px rgba(0, 180, 216, 0.17); backdrop-filter: blur(15px); transform: translateX(-50%); }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; background: none; border: none; color: var(--muted); font-size: 10px; cursor: pointer; transition: 0.2s; }
+        .nav-item.active { color: #90e0ef; text-shadow: 0 0 10px var(--purple); }
+        .nav-icon { font-size: 20px; filter: drop-shadow(0 0 5px rgba(0, 180, 216, 0.3)); }
 
-.game-header {
-display: flex;
-justify-content: space-between;
-align-items: center;
-padding: 15px;
-background: rgba(20, 6, 36, 0.95);
-position: relative;
-z-index: 10;
-}
-.back-btn {
-background: #302044;
-border: 1px solid #76549a;
-color: white;
-padding: 8px 15px;
-border-radius: 10px;
-cursor: pointer;
-}
-.game-balance {
-color: var(--gold);
-font-weight: bold;
-font-size: 18px;
-}
+        /* ЭКРАНЫ */
+        .screen { display: none; animation: screenAppear 0.35s ease both; }
+        .screen.active { display: block; }
+        @keyframes screenAppear { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-</style>
-
+        /* ЭКРАН ИГРЫ */
+        .game-header { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(5, 15, 25, 0.95); position: relative; z-index: 10; }
+        .back-btn { background: #001219; border: 1px solid #005f73; color: white; padding: 8px 15px; border-radius: 10px; cursor: pointer; }
+        .game-balance { color: var(--gold); font-weight: bold; font-size: 18px; display: flex; align-items: center; gap: 5px; }
+    </style>
 </head>
 <body>
 
-<div class="app">
-<!-- ШАПКА -->
-<header class="topbar">
-<div class="user-button">
-<span class="avatar">🐰</span>
-<span class="user-info">
-<strong>Гость</strong>
-<small>Добро пожаловать!</small>
-</span>
-</div>
-<div class="balance">
-<span class="star-icon">★</span>
-<strong id="balance-val">100</strong>
-</div>
-</header>
+    <div class="app">
+        <!-- ШАПКА -->
+        <header class="topbar">
+            <div class="user-button">
+                <span class="avatar">⚓</span>
+                <span class="user-info">
+                    <strong>Юнга</strong>
+                    <small>Добро пожаловать на борт!</small>
+                </span>
+            </div>
+            <div class="balance">
+                <img src="coin.png" class="coin-icon" alt="coin">
+                <strong id="balance-val">100</strong>
+            </div>
+        </header>
 
-<!-- ГЛАВНЫЙ ЭКРАН (Шар) -->
-<main class="screen active" id="screen-home">
-<div class="home-title">
-<span class="title-decoration"></span>
-<h1>Зал Оракула</h1>
-<span class="title-decoration"></span>
-</div>
+        <!-- ГЛАВНАЯ -->
+        <main class="screen active" id="screen-home">
+            <div class="home-title">
+                <span class="title-decoration"></span>
+                <h1>Бурса Штурвал</h1>
+                <span class="title-decoration"></span>
+            </div>
+            
+            <div class="oracle-section">
+                <div class="oracle-glow"></div>
+                <div class="crystal-orb">
+                    <div class="orb-magic"></div>
+                </div>
+                <div class="orb-stand">
+                    <div class="stand-top"></div>
+                    <div class="stand-body"><span class="stand-gem">⚓</span></div>
+                    <div class="stand-bottom"></div>
+                </div>
+            </div>
 
-<div class="oracle-section">
-<div class="oracle-glow"></div>
-<div class="crystal-orb">
-<div class="orb-shine"></div>
-<div class="orb-magic">
-<span class="magic-star star-one">✦</span>
-<span class="magic-star star-two">✧</span>
-<span class="magic-star star-three">✦</span>
-<span class="magic-core"></span>
-</div>
-</div>
-<div class="orb-stand">
-<div class="stand-top"></div>
-<div class="stand-body"><span class="stand-gem">◆</span></div>
-<div class="stand-bottom"></div>
-</div>
-</div>
+            <div class="welcome-card">
+                <h2>Добро пожаловать!</h2>
+                <div class="welcome-balance">
+                    <img src="coin.png" class="coin-icon" alt="coin">
+                    <strong id="welcome-bal">100</strong>
+                </div>
+                <p>Твои Бурса Коины</p>
+            </div>
+        </main>
 
-<div class="welcome-card">
-<h2>Добро пожаловать!</h2>
-<div class="welcome-balance"><span>★</span> <strong id="welcome-bal">100</strong></div>
-<p>Твой баланс</p>
-</div>
-</main>
+        <!-- ПАЛУБА (ИГРЫ) -->
+        <main class="screen" id="screen-games">
+            <div class="section-heading"><span></span><h1>Палуба</h1><span></span></div>
+            
+            <article class="game-card" onclick="openGame('bunny')">
+                <div class="game-preview" style="background-image: url('bunny_game.jpg'); background-size: cover; background-position: center;">
+                    <div class="preview-text" style="position: absolute; top: 15px; left: 15px; background: rgba(0,0,0,0.6); padding: 5px 12px; border-radius: 15px; color: #fff; font-size: 10px; font-weight: bold; letter-spacing: 1px; z-index: 3;">142 играют</div>
+                </div>
+                <div class="game-card-content">
+                    <h2>Морской Бой</h2>
+                    <p>Найди сокровища на дне, но не задень торпеду!</p>
+                    <button class="play-button">▶ Играть</button>
+                </div>
+            </article>
+        </main>
 
-<!-- ЭКРАН ИГР (Пока пустой) -->
-<main class="screen" id="screen-games">
-<div class="section-heading">
-<span></span>
-<h1>Игры</h1>
-<span></span>
-</div>
-<div id="game-container" style="width: 100%; height: 100%;">
-<!-- Сюда потом загрузится игра -->
+        <!-- СУНДУКИ (КЕЙСЫ) -->
+        <main class="screen" id="screen-cases">
+            <div class="section-heading"><span></span><h1>Сундуки</h1><span></span></div>
+            <p style="text-align:center; color:var(--muted); margin-top:50px;">Сундуки скоро появятся...</p>
+        </main>
 
+        <!-- КЛАД (БОНУСЫ) -->
+        <main class="screen" id="screen-bonuses">
+            <div class="section-heading"><span></span><h1>Клад</h1><span></span></div>
+            <p style="text-align:center; color:var(--muted); margin-top:50px;">Клад скоро появится...</p>
+        </main>
 
-<article class="game-card" onclick="openGame('bunny')">
-<div class="game-preview">
-<div class="preview-bg"></div>
-<div class="preview-bunny">🐰</div>
-<div class="preview-car car-red"></div>
-<div class="preview-car car-blue"></div>
-<div class="preview-text">ПЕРЕБЕГИ ДОРОГУ</div>
-</div>
-<div class="game-card-content">
-<h2>Перебеги дорогу</h2>
-<p>Помоги зайцу преодолеть препятствия. Не дай каменному шару догнать тебя!</p>
-<button class="play-button"><span class="play-icon">▶</span> Играть</button>
-</div>
-</article>
+        <!-- БОРТЖУРНАЛ (ПРОФИЛЬ) -->
+        <main class="screen" id="screen-profile">
+            <div class="section-heading"><span></span><h1>Бортжурнал</h1><span></span></div>
+            <p style="text-align:center; color:var(--muted); margin-top:50px;">Бортжурнал скоро появится...</p>
+        </main>
 
-</div>
-</main>
+        <!-- ЭКРАН ИГРЫ -->
+        <main class="screen" id="screen-game-play" style="padding: 0;">
+            <div class="game-header">
+                <button onclick="switchScreen('games', document.querySelector('.nav-item:nth-child(2)'))" class="back-btn">← Назад</button>
+                <div class="game-balance"><img src="coin.png" class="coin-icon" style="width:20px; height:20px;"> <span id="game-balance-val">100</span></div>
+            </div>
+            <canvas id="gameCanvas" style="width: 100%; height: calc(100vh - 120px); display: block; background: #001219;"></canvas>
+        </main>
 
-<!-- ЭКРАН КЕЙСОВ (Пока пустой) -->
-<main class="screen" id="screen-cases">
-<div class="section-heading">
-<span></span>
-<h1>Кейсы</h1>
-<span></span>
-</div>
-<div id="cases-container" style="width: 100%; height: 100%;">
-<!-- Сюда потом загрузятся кейсы -->
-<p style="text-align:center; color:#b89bd7; margin-top:50px;">Кейсы скоро появятся...</p>
-</div>
-</main>
+        <!-- МЕНЮ -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" onclick="switchScreen('home', this)"><span class="nav-icon">🏠</span><span>Главная</span></button>
+            <button class="nav-item" onclick="switchScreen('games', this)"><span class="nav-icon">🎮</span><span>Палуба</span></button>
+            <button class="nav-item" onclick="switchScreen('cases', this)"><span class="nav-icon">🎁</span><span>Сундуки</span></button>
+            <button class="nav-item" onclick="switchScreen('bonuses', this)"><span class="nav-icon">💰</span><span>Клад</span></button>
+            <button class="nav-item" onclick="switchScreen('profile', this)"><span class="nav-icon">📖</span><span>Бортжурнал</span></button>
+        </nav>
+    </div>
 
-<!-- НИЖНЕЕ МЕНЮ -->
-<nav class="bottom-nav">
-<button class="nav-item active" onclick="switchScreen('home', this)">
-<span class="nav-icon">🏠</span>
-<span>Главная</span>
-</button>
-<button class="nav-item" onclick="switchScreen('games', this)">
-<span class="nav-icon">🎮</span>
-<span>Игры</span>
-</button>
-<button class="nav-item" onclick="switchScreen('cases', this)">
-<span class="nav-icon">🎁</span>
-<span>Кейсы</span>
-</button>
-</nav>
-</div>
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
 
-<!-- ПОДКЛЮЧАЕМ ЛОГИКУ -->
+        function switchScreen(screenId, btn) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+            
+            const target = document.getElementById('screen-' + screenId);
+            if (target) target.classList.add('active');
+            if (btn) btn.classList.add('active');
+        }
 
-<script>
-// Подключаем Telegram
-const tg = window.Telegram.WebApp;
-tg.expand();
+        function openGame(gameName) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('screen-game-play').classList.add('active');
+            setTimeout(startGame, 100);
+        }
 
-// Функция переключения экранов
-function switchScreen(screenId, btn) {
-document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+        // --- ЛОГИКА ИГРЫ ---
+        let canvas, ctx, gameLoopId;
+        let player = { x: 2, y: 7 };
+        let ballY = 0;
+        const LANES = 5, ROWS = 8;
 
-const target = document.getElementById('screen-' + screenId);
-if (target) target.classList.add('active');
+        function startGame() {
+            canvas = document.getElementById('gameCanvas');
+            ctx = canvas.getContext('2d');
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            
+            player = { x: 2, y: 7 };
+            ballY = 0;
+            
+            if (gameLoopId) cancelAnimationFrame(gameLoopId);
+            gameLoop();
+        }
 
-if (btn) btn.classList.add('active');
-}
+        function resizeCanvas() {
+            if (!canvas) return;
+            canvas.width = canvas.clientWidth;
+            canvas.height = canvas.clientHeight;
+        }
 
-// Функция открытия игры
-function openGame(gameName) {
-document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        function gameLoop() {
+            if (!canvas || !canvas.clientWidth) return;
+            
+            const w = canvas.width, h = canvas.height;
+            const lw = w / LANES, rh = h / ROWS;
 
-const gameScreen = document.getElementById('screen-game-play');
-if (gameScreen) {
-gameScreen.classList.add('active');
-} else {
-tg.showAlert("Игра загружается...");
-}
-}
+            // Дорога (палуба)
+            ctx.fillStyle = "#001219";
+            ctx.fillRect(0, 0, w, h);
+            
+            ctx.strokeStyle = "#005f73";
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([10, 10]);
+            for (let i = 1; i < LANES; i++) {
+                ctx.beginPath();
+                ctx.moveTo(i * lw, 0);
+                ctx.lineTo(i * lw, h);
+                ctx.stroke();
+            }
+            ctx.setLineDash([]);
 
-// Устанавливаем баланс при загрузке
-document.addEventListener('DOMContentLoaded', () => {
-document.getElementById('balance-val').innerText = '100';
-document.getElementById('welcome-bal').innerText = '100';
-});
-</script>
+            // Заяц
+            const px = (player.x + 0.5) * lw;
+            const py = (player.y + 0.5) * rh;
+            ctx.font = "40px Arial";
+            ctx.textAlign = "center";
+            ctx.fillText("🐇", px, py + 15);
 
+            // Шар (торпеда)
+            ballY += 0.001; 
+            const ballPixelY = h - (ballY * h);
+            
+            if (ballPixelY > py + 20) {
+                cancelAnimationFrame(gameLoopId);
+                alert("Торпеда догнала зайца!");
+                switchScreen('games', document.querySelector('.nav-item:nth-child(2)'));
+                return;
+            }
 
+            ctx.fillStyle = "#333";
+            ctx.beginPath();
+            ctx.arc(w / 2, ballPixelY, 30, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = "#00b4d8";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            gameLoopId = requestAnimationFrame(gameLoop);
+        }
+
+        // Управление свайпами
+        document.getElementById('gameCanvas').addEventListener('touchstart', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const touchX = e.changedTouches[0].clientX - rect.left;
+            
+            if (touchX > player.x * (canvas.width / LANES) + (canvas.width / LANES) / 2) player.x++;
+            else player.x--;
+            
+            if (player.x < 0) player.x = 0;
+            if (player.x >= LANES) player.x = LANES - 1;
+        });
+
+    </script>
 </body>
 </html>
