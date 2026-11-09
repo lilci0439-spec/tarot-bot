@@ -547,6 +547,30 @@ function mclick(i,b){
 /* ====== ЗАГРУЗКА ====== */
 const get=(u,o)=>Promise.race([fetch(u,o).then(r=>r.json()),new Promise((_,j)=>setTimeout(j,4000))]);
 const loadOnline=()=>get('/api/online').then(d=>{if(d&&d.online!=null){$('#online').textContent=d.online;$('#onp').style.display=''}}).catch(()=>{});
+// Функции пополнения
+        function openDeposit() {
+            document.getElementById('deposit-modal').style.display = 'flex';
+        }
+
+        function buyStars(amount) {
+            // Здесь в будущем будет вызов реальной оплаты
+            let addedCoins = amount * 1.5;
+            setBal(balance + addedCoins);
+            saveBalanceToServer(balance); // Сохраняем на сервере
+            toast(`+${addedCoins} Бурса Коинов зачислено!`);
+            document.getElementById('deposit-modal').style.display = 'none';
+        }
+
+        // Сохранение баланса на сервере (когда тратишь/получаешь)
+        async function saveBalanceToServer(newBalance) {
+            try {
+                await fetch('/api/update_balance', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': tg.initData },
+                    body: JSON.stringify({ coins: newBalance })
+                });
+            } catch (e) { console.log("Ошибка сохранения:", e); }
+        }
 (async function(){
   const u=tg.initDataUnsafe&&tg.initDataUnsafe.user;
   if(u&&u.first_name)$('#uname').textContent='Бортжурнал: '+u.first_name;
