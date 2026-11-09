@@ -89,9 +89,6 @@ h2{margin:6px 0 12px;font-family:var(--serif);font-size:22px;font-weight:700;col
 .chips{display:flex;gap:8px;margin-bottom:10px}
 .chips button{flex:1;padding:10px 0;font-family:var(--serif);font-weight:700;background:rgba(6,18,31,.9);border:1px solid var(--line);border-radius:12px}
 .chips button.on{color:#fff3c4;background:linear-gradient(180deg,#c28a3f,#7a4a1c);border-color:var(--brass)}
-.chips button:disabled{opacity:.35}
-.chips.wrap{flex-wrap:wrap}
-.chips.wrap button{flex:1 0 20%}
 .bet{display:flex;gap:6px;margin-bottom:14px}
 .bet button{min-width:40px;padding:10px 0;font-family:var(--serif);font-weight:700;background:rgba(6,18,31,.9);border:1px solid var(--line);border-radius:12px}
 .bet #bmax{flex:1.2}
@@ -170,14 +167,19 @@ nav svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.8;st
 #up.on{display:block}
 .upb{max-width:380px;margin:0 auto}
 #uptl{margin:6px 0;text-align:center;font-family:var(--serif);font-size:20px;font-weight:700;color:var(--teal2)}
-.dial{position:relative;width:min(62vw,230px);aspect-ratio:1;margin:8px auto}
+.dial{position:relative;width:min(58vw,210px);aspect-ratio:1;margin:8px auto}
 .dial svg{position:absolute;inset:0;width:100%;height:100%}
 .needle{position:absolute;inset:0}
 .needle::before{content:"";position:absolute;left:50%;top:0;margin-left:-8px;border:8px solid transparent;border-top:16px solid var(--gold);filter:drop-shadow(0 0 6px var(--gold))}
 .uim{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
-.upc{text-align:center;font-family:var(--serif);font-size:42px;font-weight:700;color:var(--teal2);text-shadow:0 0 18px rgba(79,195,221,.5)}
-.upm{margin-bottom:6px;text-align:center;font-size:15px;color:var(--mu)}
-input[type=range]{width:100%;margin:10px 0;accent-color:#e8c06a}
+.upc{text-align:center;font-family:var(--serif);font-size:40px;font-weight:700;color:var(--teal2);text-shadow:0 0 18px rgba(79,195,221,.5)}
+.upm{margin-bottom:4px;text-align:center;font-size:15px;color:var(--mu)}
+.tgts{display:flex;gap:8px;margin-bottom:6px}
+.tgt{flex:1;min-width:0;padding:8px 4px;text-align:center;font-size:12px;font-weight:700;background:rgba(6,18,31,.95);border:1px solid var(--line);border-bottom:3px solid var(--rc);border-radius:12px}
+.tgt.on{border-color:var(--brass);border-bottom-color:var(--rc);box-shadow:0 0 14px rgba(232,192,106,.45)}
+.tgt img{display:block;margin:0 auto 4px}
+.tgt small{display:block;color:var(--mu);font-weight:600;font-size:12px}
+input[type=range]{width:100%;margin:6px 0 10px;accent-color:#e8c06a}
 /* регистрация */
 #reg{position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(3,10,18,.92)}
 #reg.on{display:flex}
@@ -322,14 +324,16 @@ input[type=range]{width:100%;margin:10px 0;accent-color:#e8c06a}
   <div class="upb">
     <div id="uptl">Апгрейдер</div>
     <div class="dial">
-      <svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="80" fill="none" stroke="#16283a" stroke-width="16"/><circle id="uarc" cx="100" cy="100" r="80" pathLength="100" fill="none" stroke="#34d399" stroke-width="16" stroke-dasharray="50 50" transform="rotate(-90 100 100)"/></svg>
+      <svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="80" fill="none" stroke="#16283a" stroke-width="16"/><circle id="uarc" cx="100" cy="100" r="80" pathLength="100" fill="none" stroke="#34d399" stroke-width="16" stroke-dasharray="40 60" transform="rotate(-90 100 100)"/></svg>
       <div class="needle" id="needle"></div>
       <div class="uim" id="uim"></div>
     </div>
-    <div class="upc" id="upc">50%</div>
+    <div class="upc" id="upc">40%</div>
     <div class="upm" id="upm"></div>
-    <input type="range" id="ups" min="0" max="100" step="0.1" value="50">
-    <div class="chips wrap" id="upchips"></div>
+    <div class="lb2">Цель апгрейда</div>
+    <div class="tgts" id="tgts"></div>
+    <div class="lb2" id="addl">Докинуть коинов</div>
+    <input type="range" id="upadd" min="0" max="0" step="1" value="0">
     <div class="res" id="upr"></div>
     <div class="row"><button class="btn sec" id="upx">Закрыть</button><button class="btn" id="upgo">Апгрейд</button></div>
   </div>
@@ -365,33 +369,37 @@ const RUB_PER_COIN=2;        /* курс-заглушка: рублей за 1 �
 const USD_PER_COIN=0.02;     /* курс-заглушка: USDT за 1 коин (поставь свой) */
 const WIN_AT=3;              /* Мины: сколько кристаллов открыть для победы (6 = все) */
 const BS_MULT=1.8;           /* Морской бой: множитель победы */
-const UP_RTP=95;             /* Апгрейдер: возврат игроку в процентах */
-const UP_MAX=50000;          /* Апгрейдер: максимальный приз в коинах */
+const UP_RTP=80;             /* Апгрейдер: шанс = цена предмета x это число / цена цели (в процентах) */
+const UP_MAXC=75;            /* Апгрейдер: максимальный шанс, который можно набрать, % */
 const RANKS=[{n:'Матрос',min:0},{n:'Боцман',min:2000},{n:'Штурман',min:10000},{n:'Капитан',min:50000},{n:'Адмирал',min:250000}]; /* min = сумма ставок */
 
 /* ====== КАРТИНКИ ====== */
 const COINFB='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="#f5d061" stroke="#a87920" stroke-width="6"/><circle cx="50" cy="50" r="34" fill="none" stroke="#a87920" stroke-width="3"/><text x="50" y="68" font-size="50" font-weight="700" text-anchor="middle" fill="#a87920" font-family="Georgia,serif">B</text></svg>');
 const cn=s=>`<img class="cn" src="${COIN}" width="${s}" height="${s}" style="width:${s}px;height:${s}px" alt="" draggable="false" onerror="this.onerror=null;this.src=COINFB">`;
-const fb=c=>'data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50 8 88 40 50 92 12 40Z" fill="'+c+'"/><path d="M50 8 88 40H12Z" fill="#fff" opacity=".35"/></svg>');
-const B='https://raw.githubusercontent.com/TelegramMessenger/telegram-ios/master/Telegram/Telegram-iOS/Resources/Assets.xcassets/Gifts/';
+/* подарки нарисованы прямо в коде. Чтобы поставить свою PNG, впиши путь в поле u у подарка */
+const X='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">';
+const ART={
+  bear:X+'<circle cx="25" cy="27" r="11" fill="#b36f33"/><circle cx="75" cy="27" r="11" fill="#b36f33"/><circle cx="25" cy="27" r="5.5" fill="#f0b98a"/><circle cx="75" cy="27" r="5.5" fill="#f0b98a"/><circle cx="50" cy="50" r="30" fill="#c98543"/><ellipse cx="50" cy="61" rx="14" ry="11" fill="#f3d3a8"/><ellipse cx="50" cy="56" rx="5.5" ry="4" fill="#3b2314"/><circle cx="37" cy="45" r="3.8" fill="#2a1608"/><circle cx="63" cy="45" r="3.8" fill="#2a1608"/><circle cx="38.3" cy="43.8" r="1.2" fill="#fff"/><circle cx="64.3" cy="43.8" r="1.2" fill="#fff"/><path d="M50 60v4M44 66q6 5 12 0" stroke="#3b2314" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M50 82 38 76v14zM50 82 62 76v14z" fill="#e11d48"/><circle cx="50" cy="83" r="4" fill="#be123c"/></svg>',
+  rose:X+'<path d="M50 49v44" stroke="#15803d" stroke-width="5" stroke-linecap="round"/><path d="M50 72c-12-2-18-9-18-16 10 0 18 5 18 16z" fill="#16a34a"/><path d="M50 82c10-1 17-7 17-14-9 0-17 4-17 14z" fill="#22c55e"/><path d="M50 14c-10 0-18 8-18 18s8 17 18 17 18-7 18-17-8-18-18-18z" fill="#e11d48"/><path d="M50 22c-6 0-11 5-11 10s5 10 11 10 11-4 11-10-5-10-11-10z" fill="#9f1239"/><path d="M43 31c3-5 11-5 14 0" stroke="#fda4af" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M36 24c4-6 12-9 19-7" stroke="#fb7185" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>',
+  bouquet:X+'<path d="M50 56 30 38M50 56 70 38M50 56V30" stroke="#15803d" stroke-width="4" stroke-linecap="round"/><ellipse cx="24" cy="48" rx="9" ry="5" fill="#22c55e" transform="rotate(-30 24 48)"/><ellipse cx="76" cy="48" rx="9" ry="5" fill="#22c55e" transform="rotate(30 76 48)"/><circle cx="30" cy="34" r="13" fill="#f472b6"/><circle cx="30" cy="34" r="5" fill="#fde047"/><circle cx="70" cy="34" r="13" fill="#fb923c"/><circle cx="70" cy="34" r="5" fill="#fde047"/><circle cx="50" cy="23" r="14" fill="#e11d48"/><circle cx="50" cy="23" r="5.5" fill="#fde047"/><path d="M22 52h56L50 94z" fill="#fde68a" stroke="#f59e0b" stroke-width="2" stroke-linejoin="round"/><path d="M36 70h28" stroke="#e11d48" stroke-width="4" stroke-linecap="round"/></svg>',
+  diamond:X+'<path d="M28 14h44l18 24H10z" fill="#67e8f9"/><path d="M10 38h80L50 90z" fill="#22d3ee"/><path d="M38 38l12-24 12 24M38 38l12 52 12-52M10 38h80" fill="none" stroke="#ecfeff" stroke-opacity=".75" stroke-width="2" stroke-linejoin="round"/><path d="M28 14l10 24M72 14 62 38" stroke="#ecfeff" stroke-opacity=".6" stroke-width="2" fill="none"/></svg>'
+};
+const art=id=>'data:image/svg+xml,'+encodeURIComponent(ART[id]);
 const G={
-  bear:{n:'Мишка',p:30,c:'#f472b6',r:0,u:B+'Bear.imageset/Bear.png'},
-  rose:{n:'Роза',p:50,c:'#ef4444',r:0,u:B+'Rose.imageset/Rose.png'},
-  heart:{n:'Сердце',p:100,c:'#ec4899',r:1,u:B+'Heart.imageset/Heart.png'},
-  cake:{n:'Торт',p:200,c:'#f59e0b',r:2,u:B+'Cake.imageset/Cake.png'},
-  rocket:{n:'Ракета',p:500,c:'#38bdf8',r:2,u:B+'Rocket.imageset/Rocket.png'},
-  diamond:{n:'Алмаз',p:1000,c:'#22d3ee',r:3,u:B+'Diamond.imageset/Diamond.png'}
+  bear:{n:'Мишка',p:30,c:'#d9904f',r:0,u:''},
+  rose:{n:'Роза',p:60,c:'#ef4444',r:1,u:''},
+  bouquet:{n:'Букет',p:150,c:'#f472b6',r:2,u:''},
+  diamond:{n:'Алмаз',p:600,c:'#22d3ee',r:3,u:''}
 };
 const RAR=[['Обычный','#94a3b8'],['Редкий','#38bdf8'],['Эпический','#a78bfa'],['Легендарный','#fbbf24']];
 const CASES=[
-  {n:'Мишка',price:50,c:'#f472b6',icon:'bear',drops:{bear:50,rose:30,heart:15,cake:5}},
-  {n:'Роза',price:100,c:'#ef4444',icon:'rose',drops:{rose:40,heart:30,bear:20,cake:10}},
-  {n:'Сердце',price:200,c:'#ec4899',icon:'heart',drops:{heart:40,cake:30,rocket:20,rose:10}},
-  {n:'Торт',price:400,c:'#f59e0b',icon:'cake',drops:{cake:45,rocket:35,heart:15,diamond:5}},
-  {n:'Алмаз',price:1000,c:'#22d3ee',icon:'diamond',drops:{rocket:45,diamond:35,cake:20}}
+  {n:'Мишка',price:50,c:'#d9904f',icon:'bear',drops:{bear:70,rose:25,bouquet:4.5,diamond:.5}},
+  {n:'Роза',price:100,c:'#ef4444',icon:'rose',drops:{bear:30,rose:45,bouquet:22,diamond:3}},
+  {n:'Букет',price:250,c:'#f472b6',icon:'bouquet',drops:{bear:2,rose:25,bouquet:55,diamond:18}},
+  {n:'Алмаз',price:500,c:'#22d3ee',icon:'diamond',drops:{rose:2,bouquet:33,diamond:65}}
 ];
-const FREE={n:'Бесплатный',price:0,c:'#34d399',icon:'bear',drops:{bear:55,rose:30,heart:12,cake:3}};
-const img=(id,s,cls)=>`<img ${cls?`class="${cls}" `:''}src="${G[id].u}" width="${s}" height="${s}" style="width:${s}px;height:${s}px;object-fit:contain" alt="${G[id].n}" draggable="false" onerror="this.onerror=null;this.src=fb('${G[id].c}')">`;
+const FREE={n:'Бесплатный',price:0,c:'#34d399',icon:'bear',drops:{bear:70,rose:25,bouquet:5}};
+const img=(id,s,cls)=>`<img ${cls?`class="${cls}" `:''}src="${G[id].u||art(id)}" width="${s}" height="${s}" style="width:${s}px;height:${s}px;object-fit:contain" alt="${G[id].n}" draggable="false" onerror="this.onerror=null;this.src=art('${id}')">`;
 
 /* штурвал */
 const helmSVG=u=>{
@@ -408,9 +416,10 @@ $('#helm').onclick=()=>{ha+=720+rr(0,180);$('#helm').style.transform=`rotate(${h
 
 /* ====== СОСТОЯНИЕ И СОХРАНЕНИЕ ====== */
 const SAVE='magic_v2';
+const MIG={heart:'rose',cake:'bouquet',rocket:'diamond'}; /* старые предметы превращаются в новые */
 const S=ls.get(SAVE,null)||{bal:0,reg:0,wag:0,opened:ls.get('st',{opened:0}).opened||0,inv:ls.get('inv',[]),free:0,sb:null};
 let balance=+S.bal||0,reg=!!S.reg,wag=+S.wag||0,opened=+S.opened||0,freeNext=+S.free||0;
-let inv=(S.inv||[]).filter(id=>G[id]);
+let inv=(S.inv||[]).map(id=>MIG[id]||id).filter(id=>G[id]);
 let srvOk=false,srvBal=(S.sb==null?null:+S.sb),pend=0,bet=50,pb=0,busy=0;
 const save=()=>ls.set(SAVE,{bal:balance,reg:reg?1:0,wag,opened,inv,free:freeNext,sb:srvBal});
 
@@ -558,38 +567,54 @@ function renderInv(){
   $$('#inv [data-u]').forEach(b=>b.onclick=()=>openUp(+b.dataset.u));
 }
 
-/* ====== АПГРЕЙДЕР ====== */
-let upI=-1,upC=50,upMinC=.1,upBusy=0,uA=0;
-const upMin=g=>Math.max(.1,Math.ceil(g.p*UP_RTP/UP_MAX*100)/100);
+/* ====== АПГРЕЙДЕР: предмет в предмет ====== */
+let upI=-1,upT=null,upAdd=0,upBusy=0,uA=0;
 const fmtC=c=>c>=10?c.toFixed(1).replace(/\.0$/,''):c.toFixed(2).replace(/0+$/,'').replace(/\.$/,'');
-const fromS=(v,min)=>{let c=min*Math.pow(90/min,v/100);c=c<10?Math.round(c*100)/100:Math.round(c*10)/10;return Math.max(min,Math.min(90,c))};
-const toS=(c,min)=>100*Math.log(c/min)/Math.log(90/min);
+const upSrc=()=>G[inv[upI]];
+const upCh=(add,t)=>Math.min(UP_MAXC,(upSrc().p+add)*UP_RTP/G[t].p);
+const upMaxAdd=()=>Math.max(0,Math.min(Math.floor(balance),Math.floor(G[upT].p*UP_MAXC/UP_RTP-upSrc().p)));
 function upUpd(){
-  const g=G[inv[upI]],prize=Math.floor(g.p*UP_RTP/upC),m=UP_RTP/upC,d=Math.max(upC,.35);
-  $('#upc').textContent=fmtC(upC)+'%';
-  $('#upm').innerHTML=`x${m.toFixed(2)} · приз ${prize} ${cn(16)}`;
+  const c=upCh(upAdd,upT),d=Math.max(c,.35);
+  $('#upc').textContent=fmtC(c)+'%';
+  $('#upm').innerHTML=`${upSrc().n} → ${G[upT].n}`+(upAdd?` · докинуто ${upAdd} ${cn(14)}`:'');
   $('#uarc').setAttribute('stroke-dasharray',`${d} ${100-d}`);
+  $$('#tgts .tgt').forEach(b=>{b.classList.toggle('on',b.dataset.t===upT);b.querySelector('small').textContent=fmtC(upCh(upAdd,b.dataset.t))+'%'});
+  $('#addl').innerHTML=`Докинуть коинов: ${upAdd} ${cn(14)} (шанс выше)`;
 }
-function setUpC(c){upC=Math.max(upMinC,Math.min(90,c));$('#ups').value=toS(upC,upMinC);upUpd()}
+function setUpT(t){
+  upT=t;const m=upMaxAdd();
+  $('#upadd').max=m;upAdd=Math.min(upAdd,m);$('#upadd').value=upAdd;
+  upUpd();
+}
 function openUp(i){
   const id=inv[i],g=G[id];if(!g)return;
-  upI=i;upMinC=upMin(g);upBusy=0;
+  upI=i;upBusy=0;upAdd=0;upT=null;
   const nd=$('#needle');nd.style.transition='none';uA=0;nd.style.transform='rotate(0deg)';nd.getBoundingClientRect();
   $('#uptl').innerHTML=`${g.n} · ${g.p} ${cn(16)}`;
-  $('#uim').innerHTML=img(id,76);
+  $('#uim').innerHTML=img(id,70);
   $('#upr').textContent='';$('#upr').className='res';
-  $('#upgo').style.display='';$('#upgo').disabled=false;$('#upx').disabled=false;$('#ups').disabled=false;
-  $('#upchips').innerHTML=[90,75,50,25,10,5,1,.5].map(c=>`<button data-c="${c}" ${c<upMinC?'disabled':''}>${c}%</button>`).join('');
-  $$('#upchips button').forEach(b=>b.onclick=()=>{if(!upBusy)setUpC(+b.dataset.c)});
-  setUpC(50);
+  const ts=Object.keys(G).filter(t=>G[t].p>g.p).sort((a,b)=>G[a].p-G[b].p);
+  $('#tgts').innerHTML=ts.map(t=>`<button class="tgt" data-t="${t}" style="--rc:${RAR[G[t].r][1]}">${img(t,44)}<div>${G[t].n}</div><small></small></button>`).join('');
+  $('#upgo').style.display=ts.length?'':'none';$('#upgo').disabled=false;$('#upx').disabled=false;$('#upadd').disabled=!ts.length;
   $('#up').className='on';
+  if(!ts.length){
+    $('#upr').textContent='Выше этого предмета ничего нет';
+    $('#upc').textContent='—';$('#upm').textContent='';$('#addl').textContent='';
+    $('#uarc').setAttribute('stroke-dasharray','0 100');
+    return;
+  }
+  $$('#tgts .tgt').forEach(b=>b.onclick=()=>{if(!upBusy){hap('sel');setUpT(b.dataset.t)}});
+  setUpT(ts[0]);
 }
-$('#ups').oninput=e=>{if(upBusy)return;upC=fromS(+e.target.value,upMinC);upUpd()};
+$('#upadd').oninput=e=>{if(upBusy)return;upAdd=+e.target.value;upUpd()};
 $('#upx').onclick=()=>{if(upBusy)return;$('#up').className='';renderInv()};
 $('#upgo').onclick=()=>{
-  if(upBusy)return;upBusy=1;
-  $('#upgo').disabled=true;$('#upx').disabled=true;$('#ups').disabled=true;
-  const id=inv[upI],g=G[id],c=upC,prize=Math.floor(g.p*UP_RTP/c);
+  if(upBusy||!upT)return;
+  if(upAdd>balance){toast('Не хватает коинов');return}
+  upBusy=1;
+  $('#upgo').disabled=true;$('#upx').disabled=true;$('#upadd').disabled=true;
+  const t=upT,add=upAdd,c=upCh(add,t);
+  if(add){wag+=add;setBal(balance-add);setRank()}
   inv.splice(upI,1);save();
   const r=Math.random()*100,win=r<c;
   uA=uA-(uA%360)+360*5+r*3.6;
@@ -600,8 +625,14 @@ $('#upgo').onclick=()=>{
   setTimeout(()=>{
     clearInterval(tk);
     const el=$('#upr');
-    if(win){setBal(balance+prize);el.className='res ok';el.innerHTML=`Успех! +${prize} ${cn(18)}`;hap('notification','success');boom('#34d399')}
-    else{el.className='res bad';el.textContent='Не повезло, предмет сгорел';hap('notification','error')}
+    if(win){
+      inv.push(t);save();
+      $('#uim').innerHTML=img(t,70);
+      el.className='res ok';el.textContent='Успех! Ты получил: '+G[t].n;
+      hap('notification','success');boom(G[t].c);
+    }else{
+      el.className='res bad';el.textContent='Не повезло, предмет сгорел';hap('notification','error');
+    }
     $('#upgo').style.display='none';$('#upx').disabled=false;upBusy=0;renderInv();
   },4200);
 };
