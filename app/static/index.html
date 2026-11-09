@@ -235,6 +235,21 @@ nav svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.8;st
     <button data-t="earn"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M14.5 9a3 3 0 0 0-5 1.5c0 3 5 1.5 5 4.5a3 3 0 0 1-5 1.5M12 6.5v1.5M12 16v1.5"/></svg>Клад</button>
     <button data-t="profile"><svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2zM4 21V5M9 7h6"/></svg>Бортжурнал</button>
   </nav>
+  <!-- ЭКРАН ПОПОЛНЕНИЯ -->
+        <div id="deposit-modal" class="modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:100; justify-content:center; align-items:center; padding:20px;">
+            <div style="background:#0c2238; border:1px solid #2f6f8f; border-radius:20px; padding:25px; width:100%; max-width:340px; text-align:center;">
+                <h2 style="color:#9be4f5; margin-bottom:15px;">Пополнение</h2>
+                <p style="color:#8fb4c4; font-size:14px; margin-bottom:20px;">Курс: 100 ⭐ = 150 Бурса Коинов</p>
+                
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                    <button class="btn" onclick="buyStars(100)">Купить 100 ⭐ за рубли</button>
+                    <button class="btn" onclick="buyStars(100)">Купить 100 ⭐ за TON</button>
+                    <button class="btn" onclick="buyStars(100)">Купить 100 ⭐ (Stars)</button>
+                </div>
+                
+                <button class="btn sec" style="margin-top:15px;" onclick="document.getElementById('deposit-modal').style.display='none'">Закрыть</button>
+            </div>
+        </div>
 </div>
 <div id="ov"><div id="ot"></div><div class="rw" id="rw"><div class="reel" id="reel"></div></div><div id="win"></div></div>
 <div id="toast"></div>
