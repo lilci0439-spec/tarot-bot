@@ -15,6 +15,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 img{-webkit-user-drag:none}
 input,select{-webkit-user-select:text;user-select:text}
 .cn{display:inline-block;vertical-align:middle;object-fit:contain}
+.em{display:inline-flex;align-items:center;justify-content:center;line-height:1;font-style:normal}
 /* ===== фон: море сверху, палуба снизу ===== */
 #bg{position:fixed;inset:0;z-index:-1;overflow:hidden}
 .sea{position:absolute;left:0;right:0;top:0;height:46%;background:linear-gradient(180deg,#040c16,#0a2b47 70%,#0f4466)}
@@ -75,13 +76,13 @@ h2{margin:6px 0 12px;font-family:var(--serif);font-size:22px;font-weight:700;col
 .case{position:relative;overflow:hidden;padding:16px 10px 12px;text-align:center;background:linear-gradient(180deg,rgba(18,50,80,.96),rgba(8,26,44,.98));border:1px solid var(--line);border-bottom:3px solid var(--c);border-radius:20px;box-shadow:inset 0 0 0 1px rgba(232,192,106,.14),0 8px 20px rgba(0,0,0,.45);transition:transform .15s}
 .case:active{transform:scale(.96)}
 .case::before{content:"";position:absolute;left:50%;top:80px;width:170px;height:170px;margin:-85px 0 0 -85px;background:radial-gradient(circle,var(--c),transparent 66%);opacity:.5}
-.case img.m{position:relative;display:block;margin:0 auto 10px;filter:drop-shadow(0 8px 16px var(--c));animation:fl 3.6s ease-in-out infinite}
+.case .em.m{display:flex;position:relative;margin:0 auto 10px;filter:drop-shadow(0 8px 16px var(--c));animation:fl 3.6s ease-in-out infinite}
 @keyframes fl{50%{transform:translateY(-5px)}}
 .case .n{position:relative;font-family:var(--serif);font-size:17px;font-weight:700}
-.mini{position:relative;display:flex;justify-content:center;gap:2px;margin:6px 0 10px;opacity:.9}
+.mini{position:relative;display:flex;flex-wrap:wrap;justify-content:center;gap:2px;margin:6px 0 10px;opacity:.95}
 .price{position:relative;padding:9px;font-family:var(--serif);font-size:15px;font-weight:700;color:#fff3c4;background:linear-gradient(180deg,#a2713a,#5f3a1a);border:1px solid var(--brass);border-radius:12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
 .fimg{display:flex;justify-content:center;margin-bottom:6px}
-.fimg img{filter:drop-shadow(0 8px 16px #34d399);animation:fl 3.6s ease-in-out infinite}
+.fimg .em{filter:drop-shadow(0 8px 16px #34d399);animation:fl 3.6s ease-in-out infinite}
 .gm{display:flex;align-items:center;gap:14px;width:100%;margin-bottom:12px;padding:16px;text-align:left;background:linear-gradient(180deg,rgba(18,50,80,.96),rgba(8,26,44,.98));border:1px solid var(--line);border-radius:20px;box-shadow:inset 0 0 0 1px rgba(232,192,106,.14),0 8px 20px rgba(0,0,0,.45)}
 .gm svg{flex:0 0 46px;width:46px;height:46px;padding:10px;border-radius:14px;background:rgba(232,192,106,.14);stroke:var(--brass);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .gm b{display:block;font-family:var(--serif);font-size:17px}
@@ -89,6 +90,7 @@ h2{margin:6px 0 12px;font-family:var(--serif);font-size:22px;font-weight:700;col
 .chips{display:flex;gap:8px;margin-bottom:10px}
 .chips button{flex:1;padding:10px 0;font-family:var(--serif);font-weight:700;background:rgba(6,18,31,.9);border:1px solid var(--line);border-radius:12px}
 .chips button.on{color:#fff3c4;background:linear-gradient(180deg,#c28a3f,#7a4a1c);border-color:var(--brass)}
+.chips button:disabled{opacity:.35}
 .bet{display:flex;gap:6px;margin-bottom:14px}
 .bet button{min-width:40px;padding:10px 0;font-family:var(--serif);font-weight:700;background:rgba(6,18,31,.9);border:1px solid var(--line);border-radius:12px}
 .bet #bmax{flex:1.2}
@@ -135,7 +137,7 @@ input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-
 .lbl{text-align:center;color:var(--teal2);font-size:13px;font-weight:700;text-shadow:0 2px 6px #000}
 .list{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .inv{padding:10px 4px;text-align:center;font-size:12px;font-weight:600;background:rgba(6,18,31,.95);border:1px solid var(--line);border-bottom:3px solid var(--rc);border-radius:14px}
-.inv img{display:block;margin:0 auto 4px}
+.inv .em,.pk .em,.tgt .em{display:flex;margin:0 auto 4px}
 .inv button{width:92%;margin-top:6px;padding:6px 4px;font-size:11px;background:var(--c2);border-radius:8px}
 .inv .up2{color:#fff3c4;background:linear-gradient(180deg,#a2713a,#5f3a1a);border:1px solid var(--brass)}
 .empty{grid-column:1/-1;padding:12px;color:var(--tx);font-size:14px;background:rgba(6,18,31,.9);border:1px solid var(--line);border-radius:12px}
@@ -159,26 +161,27 @@ nav svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.8;st
 #ov.done .rw,#ov.done #ot{display:none}
 #win{display:none;width:100%;max-width:360px;padding:22px 18px;text-align:center;background:linear-gradient(180deg,#123250,#081a2c);border:1px solid var(--c);border-radius:24px;box-shadow:0 0 70px var(--c)}
 #win.on{display:block;animation:pop .35s}
-#win img.g{display:block;margin:6px auto 8px;filter:drop-shadow(0 10px 24px var(--c))}
+#win .em.g{display:flex;margin:6px auto 8px;filter:drop-shadow(0 10px 24px var(--c))}
 #win h3{margin-bottom:16px;font-family:var(--serif);font-size:24px}
 .rb{font-size:13px;font-weight:800}
 /* апгрейдер */
 #up{position:fixed;inset:0;z-index:60;display:none;overflow-y:auto;padding:16px;background:rgba(3,10,18,.97)}
 #up.on{display:block}
 .upb{max-width:380px;margin:0 auto}
-#uptl{margin:6px 0;text-align:center;font-family:var(--serif);font-size:20px;font-weight:700;color:var(--teal2)}
-.dial{position:relative;width:min(58vw,210px);aspect-ratio:1;margin:8px auto}
+#uptl{margin:6px 0;text-align:center;font-family:var(--serif);font-size:18px;font-weight:700;color:var(--teal2)}
+.dial{position:relative;width:min(54vw,200px);aspect-ratio:1;margin:8px auto}
 .dial svg{position:absolute;inset:0;width:100%;height:100%}
 .needle{position:absolute;inset:0}
 .needle::before{content:"";position:absolute;left:50%;top:0;margin-left:-8px;border:8px solid transparent;border-top:16px solid var(--gold);filter:drop-shadow(0 0 6px var(--gold))}
 .uim{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
-.upc{text-align:center;font-family:var(--serif);font-size:40px;font-weight:700;color:var(--teal2);text-shadow:0 0 18px rgba(79,195,221,.5)}
+.stk{display:flex;align-items:center;gap:2px}
+.stk b{font-size:18px;color:var(--gold)}
+.upc{text-align:center;font-family:var(--serif);font-size:38px;font-weight:700;color:var(--teal2);text-shadow:0 0 18px rgba(79,195,221,.5)}
 .upm{margin-bottom:4px;text-align:center;font-size:15px;color:var(--mu)}
-.tgts{display:flex;gap:8px;margin-bottom:6px}
-.tgt{flex:1;min-width:0;padding:8px 4px;text-align:center;font-size:12px;font-weight:700;background:rgba(6,18,31,.95);border:1px solid var(--line);border-bottom:3px solid var(--rc);border-radius:12px}
-.tgt.on{border-color:var(--brass);border-bottom-color:var(--rc);box-shadow:0 0 14px rgba(232,192,106,.45)}
-.tgt img{display:block;margin:0 auto 4px}
-.tgt small{display:block;color:var(--mu);font-weight:600;font-size:12px}
+.rowx{display:flex;gap:8px;overflow-x:auto;padding:2px 0 8px;-webkit-overflow-scrolling:touch}
+.pk,.tgt{flex:0 0 70px;padding:6px 2px;text-align:center;font-size:12px;font-weight:700;background:rgba(6,18,31,.95);border:1px solid var(--line);border-bottom:3px solid var(--rc);border-radius:12px}
+.pk.on,.tgt.on{border-color:var(--brass);border-bottom-color:var(--rc);box-shadow:0 0 14px rgba(232,192,106,.5);background:rgba(60,40,10,.55)}
+.pk small,.tgt small{display:block;color:var(--mu);font-weight:600;font-size:11px}
 input[type=range]{width:100%;margin:6px 0 10px;accent-color:#e8c06a}
 /* регистрация */
 #reg{position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(3,10,18,.92)}
@@ -200,7 +203,7 @@ input[type=range]{width:100%;margin:6px 0 10px;accent-color:#e8c06a}
 #ball.go{transform:translateX(120vw)}
 .ls{animation-duration:3s}
 #ball.go .ls{animation-duration:.8s}
-@media(prefers-reduced-motion:reduce){.ls,.hin,.wv,.ship,.case img.m,.fimg img{animation:none}}
+@media(prefers-reduced-motion:reduce){.ls,.hin,.wv,.ship,.case .em.m,.fimg .em{animation:none}}
 </style>
 </head>
 <body>
@@ -284,7 +287,7 @@ input[type=range]{width:100%;margin:6px 0 10px;accent-color:#e8c06a}
         <input class="in" id="dpi" type="number" inputmode="numeric" min="1" value="500" autocomplete="off">
         <div class="quote" id="dpq"></div>
         <button class="btn" id="dpgo">Пополнить</button>
-        <p style="margin:10px 0 0">1 коин = 1 звезда.</p>
+        <p style="margin:10px 0 0">1 коин = 1 звезда. Коины зачисляются сразу после оплаты.</p>
       </div>
       <div class="box" id="w-wd" style="display:none">
         <div class="quote" id="wdinfo"></div>
@@ -324,16 +327,19 @@ input[type=range]{width:100%;margin:6px 0 10px;accent-color:#e8c06a}
   <div class="upb">
     <div id="uptl">Апгрейдер</div>
     <div class="dial">
-      <svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="80" fill="none" stroke="#16283a" stroke-width="16"/><circle id="uarc" cx="100" cy="100" r="80" pathLength="100" fill="none" stroke="#34d399" stroke-width="16" stroke-dasharray="40 60" transform="rotate(-90 100 100)"/></svg>
+      <svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="80" fill="none" stroke="#16283a" stroke-width="16"/><circle id="uarc" cx="100" cy="100" r="80" pathLength="100" fill="none" stroke="#34d399" stroke-width="16" stroke-dasharray="0 100" transform="rotate(-90 100 100)"/></svg>
       <div class="needle" id="needle"></div>
       <div class="uim" id="uim"></div>
     </div>
-    <div class="upc" id="upc">40%</div>
+    <div class="upc" id="upc">—</div>
     <div class="upm" id="upm"></div>
+    <div class="lb2">Твои предметы (можно выбрать несколько)</div>
+    <div class="rowx" id="upinv"></div>
     <div class="lb2">Цель апгрейда</div>
-    <div class="tgts" id="tgts"></div>
-    <div class="lb2" id="addl">Докинуть коинов</div>
+    <div class="rowx" id="tgts"></div>
+    <div class="lb2" id="addl"></div>
     <input type="range" id="upadd" min="0" max="0" step="1" value="0">
+    <div class="chips" id="upchips"></div>
     <div class="res" id="upr"></div>
     <div class="row"><button class="btn sec" id="upx">Закрыть</button><button class="btn" id="upgo">Апгрейд</button></div>
   </div>
@@ -360,46 +366,44 @@ const ls={get(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch(e){re
 const hap=(t,v)=>{try{t==='sel'?tg.HapticFeedback.selectionChanged():tg.HapticFeedback[t+'Occurred'](v)}catch(e){}};
 
 /* ====== НАСТРОЙКИ ====== */
-const COIN='coin.png';       /* путь к твоей монете: 'coin.png', полная https-ссылка или data:image/png;base64,... */
-const REG_BONUS=100;         /* бонус за регистрацию, выдаётся один раз */
+const COIN='coin.png';       /* путь к монете: файл лежит рядом с index.html (в папке public) */
+const REG_BONUS=100;         /* бонус за регистрацию, один раз */
 const FREE_CD=24*3600*1000;  /* перезарядка бесплатного сундука, мс */
 const MIN_DEP=50;            /* минимальное пополнение, коинов */
-const MIN_WD=1000;           /* вывод доступен от этого баланса и суммы */
-const RUB_PER_COIN=2;        /* курс-заглушка: рублей за 1 коин (поставь свой) */
-const USD_PER_COIN=0.02;     /* курс-заглушка: USDT за 1 коин (поставь свой) */
+const MIN_WD=1000;           /* вывод доступен от этой суммы */
+const RUB_PER_COIN=2;        /* должно совпадать с RUB_PER_COIN на сервере */
+const USD_PER_COIN=0.02;     /* должно совпадать с USD_PER_COIN на сервере */
 const WIN_AT=3;              /* Мины: сколько кристаллов открыть для победы (6 = все) */
 const BS_MULT=1.8;           /* Морской бой: множитель победы */
-const UP_RTP=80;             /* Апгрейдер: шанс = цена предмета x это число / цена цели (в процентах) */
-const UP_MAXC=75;            /* Апгрейдер: максимальный шанс, который можно набрать, % */
+const UP_RTP=80;             /* Апгрейдер: шанс = ставка x это число / цена цели (в процентах) */
+const UP_MAXC=75;            /* Апгрейдер: максимальный шанс, % */
 const RANKS=[{n:'Матрос',min:0},{n:'Боцман',min:2000},{n:'Штурман',min:10000},{n:'Капитан',min:50000},{n:'Адмирал',min:250000}]; /* min = сумма ставок */
 
-/* ====== КАРТИНКИ ====== */
+/* ====== ПОДАРКИ (эмодзи) ====== */
 const COINFB='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="#f5d061" stroke="#a87920" stroke-width="6"/><circle cx="50" cy="50" r="34" fill="none" stroke="#a87920" stroke-width="3"/><text x="50" y="68" font-size="50" font-weight="700" text-anchor="middle" fill="#a87920" font-family="Georgia,serif">B</text></svg>');
 const cn=s=>`<img class="cn" src="${COIN}" width="${s}" height="${s}" style="width:${s}px;height:${s}px" alt="" draggable="false" onerror="this.onerror=null;this.src=COINFB">`;
-/* подарки нарисованы прямо в коде. Чтобы поставить свою PNG, впиши путь в поле u у подарка */
-const X='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">';
-const ART={
-  bear:X+'<circle cx="25" cy="27" r="11" fill="#b36f33"/><circle cx="75" cy="27" r="11" fill="#b36f33"/><circle cx="25" cy="27" r="5.5" fill="#f0b98a"/><circle cx="75" cy="27" r="5.5" fill="#f0b98a"/><circle cx="50" cy="50" r="30" fill="#c98543"/><ellipse cx="50" cy="61" rx="14" ry="11" fill="#f3d3a8"/><ellipse cx="50" cy="56" rx="5.5" ry="4" fill="#3b2314"/><circle cx="37" cy="45" r="3.8" fill="#2a1608"/><circle cx="63" cy="45" r="3.8" fill="#2a1608"/><circle cx="38.3" cy="43.8" r="1.2" fill="#fff"/><circle cx="64.3" cy="43.8" r="1.2" fill="#fff"/><path d="M50 60v4M44 66q6 5 12 0" stroke="#3b2314" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M50 82 38 76v14zM50 82 62 76v14z" fill="#e11d48"/><circle cx="50" cy="83" r="4" fill="#be123c"/></svg>',
-  rose:X+'<path d="M50 49v44" stroke="#15803d" stroke-width="5" stroke-linecap="round"/><path d="M50 72c-12-2-18-9-18-16 10 0 18 5 18 16z" fill="#16a34a"/><path d="M50 82c10-1 17-7 17-14-9 0-17 4-17 14z" fill="#22c55e"/><path d="M50 14c-10 0-18 8-18 18s8 17 18 17 18-7 18-17-8-18-18-18z" fill="#e11d48"/><path d="M50 22c-6 0-11 5-11 10s5 10 11 10 11-4 11-10-5-10-11-10z" fill="#9f1239"/><path d="M43 31c3-5 11-5 14 0" stroke="#fda4af" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M36 24c4-6 12-9 19-7" stroke="#fb7185" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>',
-  bouquet:X+'<path d="M50 56 30 38M50 56 70 38M50 56V30" stroke="#15803d" stroke-width="4" stroke-linecap="round"/><ellipse cx="24" cy="48" rx="9" ry="5" fill="#22c55e" transform="rotate(-30 24 48)"/><ellipse cx="76" cy="48" rx="9" ry="5" fill="#22c55e" transform="rotate(30 76 48)"/><circle cx="30" cy="34" r="13" fill="#f472b6"/><circle cx="30" cy="34" r="5" fill="#fde047"/><circle cx="70" cy="34" r="13" fill="#fb923c"/><circle cx="70" cy="34" r="5" fill="#fde047"/><circle cx="50" cy="23" r="14" fill="#e11d48"/><circle cx="50" cy="23" r="5.5" fill="#fde047"/><path d="M22 52h56L50 94z" fill="#fde68a" stroke="#f59e0b" stroke-width="2" stroke-linejoin="round"/><path d="M36 70h28" stroke="#e11d48" stroke-width="4" stroke-linecap="round"/></svg>',
-  diamond:X+'<path d="M28 14h44l18 24H10z" fill="#67e8f9"/><path d="M10 38h80L50 90z" fill="#22d3ee"/><path d="M38 38l12-24 12 24M38 38l12 52 12-52M10 38h80" fill="none" stroke="#ecfeff" stroke-opacity=".75" stroke-width="2" stroke-linejoin="round"/><path d="M28 14l10 24M72 14 62 38" stroke="#ecfeff" stroke-opacity=".6" stroke-width="2" fill="none"/></svg>'
-};
-const art=id=>'data:image/svg+xml,'+encodeURIComponent(ART[id]);
 const G={
-  bear:{n:'Мишка',p:30,c:'#d9904f',r:0,u:''},
-  rose:{n:'Роза',p:60,c:'#ef4444',r:1,u:''},
-  bouquet:{n:'Букет',p:150,c:'#f472b6',r:2,u:''},
-  diamond:{n:'Алмаз',p:600,c:'#22d3ee',r:3,u:''}
+  jelly:{n:'Медуза',e:'🪼',p:15,c:'#a78bfa',r:0},
+  anchor:{n:'Якорь',e:'⚓',p:25,c:'#7aa2c4',r:0},
+  bear:{n:'Мишка',e:'🧸',p:30,c:'#d9904f',r:0},
+  crab:{n:'Рак',e:'🦀',p:50,c:'#ef5b3a',r:1},
+  rose:{n:'Роза',e:'🌹',p:60,c:'#ef4444',r:1},
+  gift:{n:'Подарок',e:'🎁',p:80,c:'#f59e0b',r:1},
+  shell:{n:'Ракушка',e:'🐚',p:100,c:'#f0a8b8',r:1},
+  heart:{n:'Сердце',e:'💝',p:120,c:'#ec4899',r:2},
+  bouquet:{n:'Букет',e:'💐',p:150,c:'#f472b6',r:2},
+  diamond:{n:'Алмаз',e:'💎',p:600,c:'#22d3ee',r:3}
 };
 const RAR=[['Обычный','#94a3b8'],['Редкий','#38bdf8'],['Эпический','#a78bfa'],['Легендарный','#fbbf24']];
 const CASES=[
-  {n:'Мишка',price:50,c:'#d9904f',icon:'bear',drops:{bear:70,rose:25,bouquet:4.5,diamond:.5}},
-  {n:'Роза',price:100,c:'#ef4444',icon:'rose',drops:{bear:30,rose:45,bouquet:22,diamond:3}},
-  {n:'Букет',price:250,c:'#f472b6',icon:'bouquet',drops:{bear:2,rose:25,bouquet:55,diamond:18}},
-  {n:'Алмаз',price:500,c:'#22d3ee',icon:'diamond',drops:{rose:2,bouquet:33,diamond:65}}
+  {n:'Морской',price:40,c:'#4fc3dd',icon:'shell',drops:{jelly:40,anchor:30,crab:22,shell:8}},
+  {n:'Мишка',price:50,c:'#d9904f',icon:'bear',drops:{bear:32,anchor:22,crab:18,rose:14,gift:10,shell:4}},
+  {n:'Роза',price:100,c:'#ef4444',icon:'rose',drops:{rose:38,gift:25,shell:17,heart:12,bouquet:7,diamond:1}},
+  {n:'Букет',price:250,c:'#f472b6',icon:'bouquet',drops:{shell:15,heart:25,bouquet:42,diamond:18}},
+  {n:'Алмаз',price:500,c:'#22d3ee',icon:'diamond',drops:{heart:2,bouquet:33,diamond:65}}
 ];
-const FREE={n:'Бесплатный',price:0,c:'#34d399',icon:'bear',drops:{bear:70,rose:25,bouquet:5}};
-const img=(id,s,cls)=>`<img ${cls?`class="${cls}" `:''}src="${G[id].u||art(id)}" width="${s}" height="${s}" style="width:${s}px;height:${s}px;object-fit:contain" alt="${G[id].n}" draggable="false" onerror="this.onerror=null;this.src=art('${id}')">`;
+const FREE={n:'Бесплатный',price:0,c:'#34d399',icon:'gift',drops:{jelly:40,anchor:25,bear:20,crab:10,rose:5}};
+const img=(id,s,cls)=>`<span class="em${cls?' '+cls:''}" style="width:${s}px;height:${s}px;font-size:${Math.round(s*.82)}px">${G[id].e}</span>`;
 
 /* штурвал */
 const helmSVG=u=>{
@@ -409,48 +413,58 @@ const helmSVG=u=>{
 };
 $('#ball').innerHTML='<div class="ls">'+helmSVG('L')+'</div>';
 $('#hin').innerHTML=helmSVG('H');
-$('#fimg').innerHTML=img('bear',84);
+$('#fimg').innerHTML=img('gift',84);
 $$('[data-coin]').forEach(e=>e.innerHTML=cn(+e.dataset.coin));
 let ha=0;
 $('#helm').onclick=()=>{ha+=720+rr(0,180);$('#helm').style.transform=`rotate(${ha}deg)`;hap('impact','light')};
 
 /* ====== СОСТОЯНИЕ И СОХРАНЕНИЕ ====== */
 const SAVE='magic_v2';
-const MIG={heart:'rose',cake:'bouquet',rocket:'diamond'}; /* старые предметы превращаются в новые */
+const MIG={cake:'gift',rocket:'bouquet'}; /* старые предметы превращаются в новые */
 const S=ls.get(SAVE,null)||{bal:0,reg:0,wag:0,opened:ls.get('st',{opened:0}).opened||0,inv:ls.get('inv',[]),free:0,sb:null};
 let balance=+S.bal||0,reg=!!S.reg,wag=+S.wag||0,opened=+S.opened||0,freeNext=+S.free||0;
 let inv=(S.inv||[]).map(id=>MIG[id]||id).filter(id=>G[id]);
-let srvOk=false,srvBal=(S.sb==null?null:+S.sb),pend=0,bet=50,pb=0,busy=0;
+let srvOk=false,srvBal=(S.sb==null?null:+S.sb),pend=0,txOff=false,bet=50,pb=0,busy=0;
 const save=()=>ls.set(SAVE,{bal:balance,reg:reg?1:0,wag,opened,inv,free:freeNext,sb:srvBal});
 
 /* ====== СЕРВЕР ====== */
 async function srv(method,path,body){
   try{
-    const r=await Promise.race([fetch(path,{method,headers:{'Content-Type':'application/json',Authorization:tg.initData},body:body?JSON.stringify(body):undefined}),new Promise((_,j)=>setTimeout(j,6000))]);
+    const r=await Promise.race([fetch(path,{method,headers:{'Content-Type':'application/json',Authorization:tg.initData},body:body?JSON.stringify(body):undefined}),new Promise((_,j)=>setTimeout(j,8000))]);
     let j=null;try{j=await r.json()}catch(e){}
     if(r.ok)return j||{};
     return j&&(j.error||j.ok===false)?j:null;
   }catch(e){return null}
 }
-/* изменения баланса от игр отправляются на сервер как транзакции */
 async function pushTx(d){
-  if(srvBal==null)return;
+  if(srvBal==null||txOff)return;
   srvBal=Math.round((srvBal+d)*100)/100;pend++;
   const r=await srv('POST','/api/tx',{delta:d});
-  if(!r||r.ok===false)srvBal=Math.round((srvBal-d)*100)/100;
+  if(!r||r.ok===false){srvBal=Math.round((srvBal-d)*100)/100;txOff=true}
   pend--;save();
 }
-/* изменения баланса на сервере (пополнение, вывод) подтягиваются как разница */
+/* подтягивает изменения баланса на сервере (пополнение, вывод). true, если баланс вырос */
 async function refreshBal(){
-  if(!srvOk||pend>0)return;
+  if(!srvOk||pend>0)return false;
   const d=await srv('GET','/api/balance');
-  if(!d||pend>0)return;
+  if(!d||pend>0)return false;
+  let up=false;
   if(typeof d.balance==='number'){
-    if(srvBal!=null&&d.balance!==srvBal)setBal(balance+d.balance-srvBal,true);
+    if(srvBal!=null&&d.balance!==srvBal){
+      const diff=Math.round((d.balance-srvBal)*100)/100;
+      setBal(balance+diff,true);
+      if(diff>0){up=true;toast(`Баланс пополнен: +${diff} ${cn(14)}`);hap('notification','success')}
+    }
     srvBal=d.balance;
   }
+  if(typeof d.withdraw==='boolean'){wdOn=d.withdraw;wdUpd()}
   if(typeof d.freeNext==='number'){freeNext=d.freeNext;freeTick()}
-  save();
+  save();return up;
+}
+let wt=0;
+function watchDep(){
+  clearInterval(wt);let n=0;
+  wt=setInterval(async()=>{n++;if(await refreshBal()||n>60)clearInterval(wt)},3000);
 }
 
 /* ====== ОБЩИЕ ФУНКЦИИ ====== */
@@ -462,7 +476,7 @@ const setBal=(v,ext)=>{
   const d=Math.round((balance-old)*100)/100;
   if(!ext&&d&&srvOk)pushTx(d);
 };
-let tt;const toast=t=>{const e=$('#toast');e.innerHTML=t;e.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('on'),2000)};
+let tt;const toast=t=>{const e=$('#toast');e.innerHTML=t;e.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('on'),2200)};
 const pick=o=>{let s=0;for(const k in o)s+=o[k];let r=Math.random()*s;for(const k in o){if((r-=o[k])<0)return k}return Object.keys(o)[0]};
 function gate(){if(!reg){showReg();return false}return true}
 const take=()=>{
@@ -567,55 +581,75 @@ function renderInv(){
   $$('#inv [data-u]').forEach(b=>b.onclick=()=>openUp(+b.dataset.u));
 }
 
-/* ====== АПГРЕЙДЕР: предмет в предмет ====== */
-let upI=-1,upT=null,upAdd=0,upBusy=0,uA=0;
+/* ====== АПГРЕЙДЕР: несколько предметов в один ====== */
+let upSel=new Set(),upT=null,upAdd=0,upBusy=0,upDone=0,uA=0;
 const fmtC=c=>c>=10?c.toFixed(1).replace(/\.0$/,''):c.toFixed(2).replace(/0+$/,'').replace(/\.$/,'');
-const upSrc=()=>G[inv[upI]];
-const upCh=(add,t)=>Math.min(UP_MAXC,(upSrc().p+add)*UP_RTP/G[t].p);
-const upMaxAdd=()=>Math.max(0,Math.min(Math.floor(balance),Math.floor(G[upT].p*UP_MAXC/UP_RTP-upSrc().p)));
-function upUpd(){
-  const c=upCh(upAdd,upT),d=Math.max(c,.35);
-  $('#upc').textContent=fmtC(c)+'%';
-  $('#upm').innerHTML=`${upSrc().n} → ${G[upT].n}`+(upAdd?` · докинуто ${upAdd} ${cn(14)}`:'');
-  $('#uarc').setAttribute('stroke-dasharray',`${d} ${100-d}`);
-  $$('#tgts .tgt').forEach(b=>{b.classList.toggle('on',b.dataset.t===upT);b.querySelector('small').textContent=fmtC(upCh(upAdd,b.dataset.t))+'%'});
-  $('#addl').innerHTML=`Докинуть коинов: ${upAdd} ${cn(14)} (шанс выше)`;
+const upStake=()=>[...upSel].reduce((s,k)=>s+(G[inv[k]]?G[inv[k]].p:0),0);
+const upTargets=()=>Object.keys(G).filter(t=>G[t].p>upStake()).sort((a,b)=>G[a].p-G[b].p);
+const upCh=(add,t)=>Math.min(UP_MAXC,(upStake()+add)*UP_RTP/G[t].p);
+const upMaxAdd=()=>upT?Math.max(0,Math.min(Math.floor(balance),Math.floor(G[upT].p*UP_MAXC/UP_RTP-upStake()))):0;
+const upReset=()=>{const nd=$('#needle');nd.style.transition='none';uA=0;nd.style.transform='rotate(0deg)';nd.getBoundingClientRect()};
+function upPick(){
+  $('#upinv').innerHTML=inv.length?inv.map((id,k)=>`<button class="pk${upSel.has(k)?' on':''}" data-k="${k}" style="--rc:${RAR[G[id].r][1]}">${img(id,34)}<small>${G[id].p}</small></button>`).join(''):'<div class="mu">Трюм пуст</div>';
+  $$('#upinv .pk').forEach(b=>b.onclick=()=>{if(upBusy)return;const k=+b.dataset.k;upSel.has(k)?upSel.delete(k):upSel.add(k);hap('sel');upRender()});
 }
-function setUpT(t){
-  upT=t;const m=upMaxAdd();
-  $('#upadd').max=m;upAdd=Math.min(upAdd,m);$('#upadd').value=upAdd;
+function upRender(){
+  upPick();
+  const ts=upTargets();
+  if(!ts.includes(upT))upT=ts[0]||null;
+  $('#tgts').innerHTML=ts.map(t=>`<button class="tgt${t===upT?' on':''}" data-t="${t}" style="--rc:${RAR[G[t].r][1]}">${img(t,34)}<small></small></button>`).join('');
+  $$('#tgts .tgt').forEach(b=>b.onclick=()=>{if(upBusy)return;hap('sel');upT=b.dataset.t;upRender()});
+  const m=upMaxAdd();
+  $('#upadd').max=m;upAdd=Math.min(upAdd,m);$('#upadd').value=upAdd;$('#upadd').disabled=!upT||m<1||!!upBusy;
+  $('#upgo').style.display=(upT&&upSel.size)?'':'none';
   upUpd();
 }
-function openUp(i){
-  const id=inv[i],g=G[id];if(!g)return;
-  upI=i;upBusy=0;upAdd=0;upT=null;
-  const nd=$('#needle');nd.style.transition='none';uA=0;nd.style.transform='rotate(0deg)';nd.getBoundingClientRect();
-  $('#uptl').innerHTML=`${g.n} · ${g.p} ${cn(16)}`;
-  $('#uim').innerHTML=img(id,70);
-  $('#upr').textContent='';$('#upr').className='res';
-  const ts=Object.keys(G).filter(t=>G[t].p>g.p).sort((a,b)=>G[a].p-G[b].p);
-  $('#tgts').innerHTML=ts.map(t=>`<button class="tgt" data-t="${t}" style="--rc:${RAR[G[t].r][1]}">${img(t,44)}<div>${G[t].n}</div><small></small></button>`).join('');
-  $('#upgo').style.display=ts.length?'':'none';$('#upgo').disabled=false;$('#upx').disabled=false;$('#upadd').disabled=!ts.length;
-  $('#up').className='on';
-  if(!ts.length){
-    $('#upr').textContent='Выше этого предмета ничего нет';
-    $('#upc').textContent='—';$('#upm').textContent='';$('#addl').textContent='';
+function upUpd(){
+  const st=upStake(),ok=upT&&upSel.size,first=[...upSel][0];
+  $('#uptl').innerHTML=`Ставка: ${st} ${cn(16)} · предметов: ${upSel.size}`;
+  $('#uim').innerHTML=!upSel.size?'':upSel.size===1?img(inv[first],70):`<div class="stk">${img(inv[first],54)}<b>+${upSel.size-1}</b></div>`;
+  if(!ok){
+    $('#upc').textContent='—';
+    $('#upm').textContent=upSel.size?'Выше такой ставки подарков нет':'Выбери предметы для ставки';
     $('#uarc').setAttribute('stroke-dasharray','0 100');
+    $('#addl').textContent='';$('#upchips').innerHTML='';
     return;
   }
-  $$('#tgts .tgt').forEach(b=>b.onclick=()=>{if(!upBusy){hap('sel');setUpT(b.dataset.t)}});
-  setUpT(ts[0]);
+  const c=upCh(upAdd,upT),d=Math.max(c,.35),tot=st+upAdd;
+  $('#upc').textContent=fmtC(c)+'%';
+  $('#upm').innerHTML=`${G[upT].e} ${G[upT].n} · x${(G[upT].p/tot).toFixed(2)}`;
+  $('#uarc').setAttribute('stroke-dasharray',`${d} ${100-d}`);
+  $$('#tgts .tgt').forEach(b=>b.querySelector('small').textContent=fmtC(upCh(upAdd,b.dataset.t))+'%');
+  $('#addl').innerHTML=`Докинуть коинов: ${upAdd} ${cn(14)}`;
+  const mx=upMaxAdd();
+  $('#upchips').innerHTML=[10,25,50,75].map(ch=>{const need=Math.ceil(G[upT].p*ch/UP_RTP-st);return `<button data-n="${need}" ${need>0&&need<=mx?'':'disabled'}>до ${ch}%</button>`}).join('');
+  $$('#upchips button').forEach(b=>b.onclick=()=>{if(upBusy)return;upAdd=+b.dataset.n;$('#upadd').value=upAdd;upUpd()});
+}
+function openUp(i){
+  if(!G[inv[i]])return;
+  upSel=new Set([i]);upT=null;upAdd=0;upBusy=0;upDone=0;upReset();
+  $('#upr').textContent='';$('#upr').className='res';
+  $('#upgo').textContent='Апгрейд';$('#upgo').disabled=false;$('#upx').disabled=false;
+  $('#up').className='on';
+  upRender();
 }
 $('#upadd').oninput=e=>{if(upBusy)return;upAdd=+e.target.value;upUpd()};
 $('#upx').onclick=()=>{if(upBusy)return;$('#up').className='';renderInv()};
 $('#upgo').onclick=()=>{
-  if(upBusy||!upT)return;
+  if(upBusy)return;
+  if(upDone){
+    upDone=0;upSel=new Set();upT=null;upAdd=0;upReset();
+    $('#upr').textContent='';$('#upr').className='res';$('#upgo').textContent='Апгрейд';
+    upRender();return;
+  }
+  if(!upT||!upSel.size)return;
   if(upAdd>balance){toast('Не хватает коинов');return}
   upBusy=1;
   $('#upgo').disabled=true;$('#upx').disabled=true;$('#upadd').disabled=true;
   const t=upT,add=upAdd,c=upCh(add,t);
   if(add){wag+=add;setBal(balance-add);setRank()}
-  inv.splice(upI,1);save();
+  [...upSel].sort((a,b)=>b-a).forEach(k=>inv.splice(k,1));
+  upSel=new Set();save();
   const r=Math.random()*100,win=r<c;
   uA=uA-(uA%360)+360*5+r*3.6;
   const nd=$('#needle');
@@ -625,15 +659,13 @@ $('#upgo').onclick=()=>{
   setTimeout(()=>{
     clearInterval(tk);
     const el=$('#upr');
-    if(win){
-      inv.push(t);save();
-      $('#uim').innerHTML=img(t,70);
-      el.className='res ok';el.textContent='Успех! Ты получил: '+G[t].n;
-      hap('notification','success');boom(G[t].c);
-    }else{
-      el.className='res bad';el.textContent='Не повезло, предмет сгорел';hap('notification','error');
-    }
-    $('#upgo').style.display='none';$('#upx').disabled=false;upBusy=0;renderInv();
+    if(win){inv.push(t);save();el.className='res ok';el.textContent='Успех! Ты получил: '+G[t].e+' '+G[t].n;hap('notification','success');boom(G[t].c)}
+    else{el.className='res bad';el.textContent='Не повезло, ставка сгорела';hap('notification','error')}
+    upPick();
+    $('#uim').innerHTML=win?img(t,70):'';
+    upDone=1;upBusy=0;
+    $('#upgo').textContent='Ещё раз';$('#upgo').style.display='';$('#upgo').disabled=false;$('#upx').disabled=false;
+    renderInv();
   },4200);
 };
 
@@ -648,7 +680,7 @@ $('#fgo').onclick=async()=>{
   if(busy||!gate()||Date.now()<freeNext)return;
   busy=1;
   const r=await srv('POST','/api/free-case');
-  if(r&&r.ok===false){busy=0;if(typeof r.next==='number'){freeNext=r.next;save();freeTick()}toast('Ещё рано');return}
+  if(r&&r.ok===false){busy=0;if(typeof r.next==='number'){freeNext=r.next;save();freeTick()}toast(r.error||'Ещё рано');return}
   freeNext=(r&&typeof r.next==='number')?r.next:Date.now()+FREE_CD;
   save();freeTick();busy=0;
   openCaseObj(FREE,true);
@@ -659,7 +691,7 @@ $('#invite').onclick=()=>{
 };
 
 /* ====== КАЗНА: пополнение и вывод ====== */
-let dm='stars',wm='gift';
+let dm='stars',wm='gift',wdOn=false;
 const DM=[['stars','Звёзды'],['rub','Рубли'],['crypto','Крипта']];
 const WM=[['gift','Подарок'],['card','Карта'],['crypto','Крипта']];
 $('#dpm').innerHTML=DM.map(([k,t])=>`<button data-k="${k}" class="${k===dm?'on':''}">${t}</button>`).join('');
@@ -669,7 +701,7 @@ $$('#dpa button').forEach(b=>b.onclick=()=>{$('#dpi').value=b.dataset.v;quote()}
 $('#dpi').oninput=()=>quote();
 function quote(){
   const n=Math.floor(+$('#dpi').value)||0;
-  const t={stars:`${n} ⭐`,rub:`${Math.round(n*RUB_PER_COIN)} ₽`,crypto:`${(n*USD_PER_COIN).toFixed(2)} USDT`}[dm];
+  const t={stars:`${n} ⭐`,rub:`${Math.round(n*RUB_PER_COIN)} ₽`,crypto:`${(n*USD_PER_COIN).toFixed(2)} USD в крипте`}[dm];
   $('#dpq').innerHTML=`Ты получишь ${n} ${cn(16)} · к оплате ${t}`;
 }
 $$('#wseg button').forEach(b=>b.onclick=()=>{
@@ -681,29 +713,34 @@ $('#dpgo').onclick=async()=>{
   if(!gate())return;
   const n=Math.floor(+$('#dpi').value)||0;
   if(n<MIN_DEP){toast('Минимум '+MIN_DEP+' коинов');return}
-  $('#dpgo').disabled=true;
+  if(!srvOk){toast('Нет связи с сервером, оплата недоступна');return}
+  $('#dpgo').disabled=true;$('#dpgo').textContent='Создаём счёт...';
   const r=await srv('POST','/api/deposit/'+dm,{coins:n});
-  $('#dpgo').disabled=false;
+  $('#dpgo').disabled=false;$('#dpgo').textContent='Пополнить';
   const link=r&&(r.invoice||r.url);
-  if(!link){toast(r&&r.error?r.error:'Оплата пока недоступна');return}
-  if(dm==='stars'&&tg.openInvoice){
-    tg.openInvoice(link,s=>{if(s==='paid'){toast('Оплачено, зачисляем коины');setTimeout(refreshBal,1500)}else if(s==='failed')toast('Платёж не прошёл')});
+  if(!link){toast(r&&r.error?r.error:'Не удалось создать счёт, попробуй позже');return}
+  if(r.invoice&&tg.openInvoice){
+    tg.openInvoice(r.invoice,s=>{
+      if(s==='paid'){toast('Оплачено, зачисляем коины...');setTimeout(refreshBal,1200);watchDep()}
+      else if(s==='failed')toast('Платёж не прошёл');
+      else if(s==='cancelled')toast('Оплата отменена');
+    });
   }else{
     tg.openLink?tg.openLink(link):window.open(link,'_blank');
-    toast('После оплаты баланс обновится сам');
+    toast('Оплати счёт, баланс обновится сам');watchDep();
   }
 };
 $('#wdm').innerHTML=WM.map(([k,t])=>`<button data-k="${k}" class="${k===wm?'on':''}">${t}</button>`).join('');
 $$('#wdm button').forEach(b=>b.onclick=()=>{wm=b.dataset.k;$$('#wdm button').forEach(x=>x.classList.toggle('on',x===b));wmUpd()});
-$('#wdg').innerHTML=Object.keys(G).map(id=>`<option value="${id}">${G[id].n} · ${G[id].p} коинов</option>`).join('');
+$('#wdg').innerHTML=Object.keys(G).map(id=>`<option value="${id}">${G[id].e} ${G[id].n} · ${G[id].p} коинов</option>`).join('');
 function wmUpd(){
   ['gift','card','crypto'].forEach(k=>$('#wd'+k).style.display=wm===k?'':'none');
   $('#wdamt').style.display=wm==='gift'?'none':'';
 }
 wmUpd();
 function wdUpd(){
-  const ok=balance>=MIN_WD;
-  $('#wdinfo').innerHTML=ok?`Доступно к выводу: ${Math.floor(balance)} ${cn(16)}`:`Вывод откроется от ${MIN_WD} ${cn(16)}. Не хватает ${Math.ceil(MIN_WD-balance)}`;
+  const ok=wdOn&&balance>=MIN_WD;
+  $('#wdinfo').innerHTML=!wdOn?'Вывод пока отключён':balance>=MIN_WD?`Доступно к выводу: ${Math.floor(balance)} ${cn(16)}`:`Вывод откроется от ${MIN_WD} ${cn(16)}. Не хватает ${Math.ceil(MIN_WD-balance)}`;
   $('#wdgo').disabled=!ok;
 }
 $('#wdgo').onclick=async()=>{
@@ -937,6 +974,7 @@ const loadOnline=()=>srv('GET','/api/online').then(d=>{if(d&&d.online!=null){$('
     srvOk=true;
     if(typeof d.registered==='boolean')reg=d.registered;
     if(typeof d.freeNext==='number')freeNext=d.freeNext;
+    if(typeof d.withdraw==='boolean')wdOn=d.withdraw;
     if(typeof d.balance==='number'){
       if(srvBal==null)balance=d.balance;
       else balance=Math.round((balance+d.balance-srvBal)*100)/100;
