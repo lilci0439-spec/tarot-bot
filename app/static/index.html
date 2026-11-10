@@ -379,9 +379,10 @@ const UP_RTP=80;             /* Апгрейдер: шанс = ставка x э
 const UP_MAXC=75;            /* Апгрейдер: максимальный шанс, % */
 const RANKS=[{n:'Матрос',min:0},{n:'Боцман',min:2000},{n:'Штурман',min:10000},{n:'Капитан',min:50000},{n:'Адмирал',min:250000}]; /* min = сумма ставок */
 
-/* ====== ПОДАРКИ (эмодзи) ====== */
+/* ====== ПОДАРКИ ====== */
 const COINFB='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="#f5d061" stroke="#a87920" stroke-width="6"/><circle cx="50" cy="50" r="34" fill="none" stroke="#a87920" stroke-width="3"/><text x="50" y="68" font-size="50" font-weight="700" text-anchor="middle" fill="#a87920" font-family="Georgia,serif">B</text></svg>');
 const cn=s=>`<img class="cn" src="${COIN}" width="${s}" height="${s}" style="width:${s}px;height:${s}px" alt="" draggable="false" onerror="this.onerror=null;this.src=COINFB">`;
+/* e = эмодзи, u = картинка (если есть). Если картинка не загрузилась, показывается эмодзи */
 const G={
   jelly:{n:'Медуза',e:'🪼',p:15,c:'#a78bfa',r:0},
   anchor:{n:'Якорь',e:'⚓',p:25,c:'#7aa2c4',r:0},
@@ -392,18 +393,39 @@ const G={
   shell:{n:'Ракушка',e:'🐚',p:100,c:'#f0a8b8',r:1},
   heart:{n:'Сердце',e:'💝',p:120,c:'#ec4899',r:2},
   bouquet:{n:'Букет',e:'💐',p:150,c:'#f472b6',r:2},
-  diamond:{n:'Алмаз',e:'💎',p:600,c:'#22d3ee',r:3}
+  diamond:{n:'Алмаз',e:'💎',p:600,c:'#22d3ee',r:3},
+  /* NFT-подарки (редкие) */
+  agaric:{n:'Spy Agaric',e:'🍄',p:250,c:'#6fb08a',r:4,u:'gifts/agaric.png'},
+  pen:{n:'Fine Pen',e:'🖊️',p:300,c:'#d96a8f',r:4,u:'gifts/pen.png'},
+  ramen:{n:'Instant Ramen',e:'🍜',p:400,c:'#b0689a',r:4,u:'gifts/ramen.png'},
+  tama:{n:'Tama Gadget',e:'🐣',p:500,c:'#2aa5a3',r:4,u:'gifts/tama.png'},
+  locket:{n:'Lucky Locket',e:'🔷',p:800,c:'#3f7a4a',r:4,u:'gifts/locket.png'},
+  ring:{n:'Diamond Ring',e:'💍',p:1200,c:'#d4745a',r:4,u:'gifts/ring.png'}
 };
-const RAR=[['Обычный','#94a3b8'],['Редкий','#38bdf8'],['Эпический','#a78bfa'],['Легендарный','#fbbf24']];
+const RAR=[['Обычный','#94a3b8'],['Редкий','#38bdf8'],['Эпический','#a78bfa'],['Легендарный','#fbbf24'],['NFT','#ff6bd6']];
+/* NFT выпадают редко: t = суммарный шанс NFT в сундуке, %. Остальное делят обычные подарки */
+const NFT_W={agaric:30,pen:26,ramen:20,tama:14,locket:7,ring:3}; /* доли внутри NFT-пула */
+const mix=(base,t)=>{
+  const o={};let s=0,n=0;
+  for(const k in base)s+=base[k];
+  for(const k in base)o[k]=base[k]/s*(100-t);
+  for(const k in NFT_W)n+=NFT_W[k];
+  for(const k in NFT_W)o[k]=NFT_W[k]/n*t;
+  return o;
+};
 const CASES=[
-  {n:'Морской',price:40,c:'#4fc3dd',icon:'shell',drops:{jelly:40,anchor:30,crab:22,shell:8}},
-  {n:'Мишка',price:50,c:'#d9904f',icon:'bear',drops:{bear:32,anchor:22,crab:18,rose:14,gift:10,shell:4}},
-  {n:'Роза',price:100,c:'#ef4444',icon:'rose',drops:{rose:38,gift:25,shell:17,heart:12,bouquet:7,diamond:1}},
-  {n:'Букет',price:250,c:'#f472b6',icon:'bouquet',drops:{shell:15,heart:25,bouquet:42,diamond:18}},
-  {n:'Алмаз',price:500,c:'#22d3ee',icon:'diamond',drops:{heart:2,bouquet:33,diamond:65}}
+  {n:'Морской',price:40,c:'#4fc3dd',icon:'shell',nft:1,drops:mix({jelly:42,anchor:31,crab:20,shell:7},0.3)},
+  {n:'Мишка',price:50,c:'#d9904f',icon:'bear',nft:1,drops:mix({bear:34,anchor:22,crab:18,rose:13,gift:9,shell:4},0.5)},
+  {n:'Роза',price:100,c:'#ef4444',icon:'rose',nft:1,drops:mix({rose:40,gift:25,shell:17,heart:11,bouquet:6,diamond:1},1)},
+  {n:'Букет',price:250,c:'#f472b6',icon:'bouquet',nft:1,drops:mix({shell:16,heart:26,bouquet:42,diamond:16},1.5)},
+  {n:'Алмаз',price:500,c:'#22d3ee',icon:'diamond',nft:1,drops:mix({heart:2,bouquet:34,diamond:64},1.5)}
 ];
 const FREE={n:'Бесплатный',price:0,c:'#34d399',icon:'gift',drops:{jelly:40,anchor:25,bear:20,crab:10,rose:5}};
-const img=(id,s,cls)=>`<span class="em${cls?' '+cls:''}" style="width:${s}px;height:${s}px;font-size:${Math.round(s*.82)}px">${G[id].e}</span>`;
+const img=(id,s,cls)=>{
+  const g=G[id],c=cls?' '+cls:'',f=Math.round(s*.82);
+  if(!g.u)return `<span class="em${c}" style="width:${s}px;height:${s}px;font-size:${f}px">${g.e}</span>`;
+  return `<span class="em${c}" style="width:${s}px;height:${s}px"><img src="${g.u}" alt="" draggable="false" style="width:100%;height:100%;object-fit:contain" onerror="this.parentNode.style.fontSize='${f}px';this.parentNode.textContent='${g.e}'"></span>`;
+};
 
 /* штурвал */
 const helmSVG=u=>{
@@ -537,7 +559,7 @@ $$('[data-go]').forEach(b=>b.onclick=()=>tab(b.dataset.go));
 $('#bp').onclick=()=>{hap('impact','light');tab('wallet')};
 
 /* ====== СУНДУКИ ====== */
-$('#cases').innerHTML=CASES.map((c,i)=>`<button class="case" style="--c:${c.c}" data-i="${i}">${img(c.icon,84,'m')}<div class="n">${c.n}</div><div class="mini">${Object.keys(c.drops).map(k=>img(k,22)).join('')}</div><div class="price">${c.price} ${cn(16)}</div></button>`).join('');
+$('#cases').innerHTML=CASES.map((c,i)=>`<button class="case" style="--c:${c.c}" data-i="${i}">${img(c.icon,84,'m')}<div class="n">${c.n}</div><div class="mini">${Object.keys(c.drops).filter(k=>!NFT_W[k]).map(k=>img(k,22)).join('')}${c.nft?img('tama',22)+img('ring',22):''}</div><div class="price">${c.price} ${cn(16)}</div></button>`).join('');
 $$('.case').forEach(b=>b.onclick=()=>openCaseObj(CASES[+b.dataset.i],false));
 
 function openCaseObj(c,free){
@@ -617,7 +639,7 @@ function upUpd(){
   }
   const c=upCh(upAdd,upT),d=Math.max(c,.35),tot=st+upAdd;
   $('#upc').textContent=fmtC(c)+'%';
-  $('#upm').innerHTML=`${G[upT].e} ${G[upT].n} · x${(G[upT].p/tot).toFixed(2)}`;
+  $('#upm').innerHTML=`${G[upT].n} · x${(G[upT].p/tot).toFixed(2)}`;
   $('#uarc').setAttribute('stroke-dasharray',`${d} ${100-d}`);
   $$('#tgts .tgt').forEach(b=>b.querySelector('small').textContent=fmtC(upCh(upAdd,b.dataset.t))+'%');
   $('#addl').innerHTML=`Докинуть коинов: ${upAdd} ${cn(14)}`;
@@ -659,7 +681,7 @@ $('#upgo').onclick=()=>{
   setTimeout(()=>{
     clearInterval(tk);
     const el=$('#upr');
-    if(win){inv.push(t);save();el.className='res ok';el.textContent='Успех! Ты получил: '+G[t].e+' '+G[t].n;hap('notification','success');boom(G[t].c)}
+    if(win){inv.push(t);save();el.className='res ok';el.textContent='Успех! Ты получил: '+G[t].n;hap('notification','success');boom(G[t].c)}
     else{el.className='res bad';el.textContent='Не повезло, ставка сгорела';hap('notification','error')}
     upPick();
     $('#uim').innerHTML=win?img(t,70):'';
