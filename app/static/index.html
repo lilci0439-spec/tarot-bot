@@ -71,6 +71,7 @@ h2{margin:6px 0 12px;font-family:var(--serif);font-size:22px;font-weight:700;col
 .btn:disabled{opacity:.5}
 .btn.sec{color:var(--tx);background:linear-gradient(180deg,#1d4a69,#0d2a42);border-color:var(--line);text-shadow:none}
 .row{display:flex;gap:10px}
+.stack{display:flex;flex-direction:column;gap:10px}
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
 @media(min-width:540px){.grid{grid-template-columns:repeat(3,1fr)}}
 .case{position:relative;overflow:hidden;padding:16px 10px 12px;text-align:center;background:linear-gradient(180deg,rgba(18,50,80,.96),rgba(8,26,44,.98));border:1px solid var(--line);border-bottom:3px solid var(--c);border-radius:20px;box-shadow:inset 0 0 0 1px rgba(232,192,106,.14),0 8px 20px rgba(0,0,0,.45);transition:transform .15s}
@@ -102,6 +103,8 @@ input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-
 .seg{display:flex;gap:6px;margin-bottom:12px}
 .seg button{flex:1;padding:11px;font-family:var(--serif);font-weight:700;background:rgba(6,18,31,.9);border:1px solid var(--line);border-radius:12px}
 .seg button.on{color:#fff3c4;background:linear-gradient(180deg,#c28a3f,#7a4a1c);border-color:var(--brass)}
+.note{margin:8px 0 12px;padding:10px 12px;font-size:13px;color:var(--tx);background:rgba(6,18,31,.8);border:1px solid var(--line);border-radius:12px}
+.note.warn{color:var(--gold);border-color:#8a7330}
 .opt{margin-bottom:10px}
 .tg{flex:1;padding:10px 6px;font-family:var(--serif);font-size:14px;font-weight:700;background:rgba(6,18,31,.9);border:1px solid var(--line);border-radius:12px}
 .tg.on{color:#fff3c4;background:linear-gradient(180deg,#c28a3f,#7a4a1c);border-color:var(--brass)}
@@ -183,6 +186,15 @@ nav svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.8;st
 .pk.on,.tgt.on{border-color:var(--brass);border-bottom-color:var(--rc);box-shadow:0 0 14px rgba(232,192,106,.5);background:rgba(60,40,10,.55)}
 .pk small,.tgt small{display:block;color:var(--mu);font-weight:600;font-size:11px}
 input[type=range]{width:100%;margin:6px 0 10px;accent-color:#e8c06a}
+/* окна: казна и вывод */
+.mdl{position:fixed;inset:0;z-index:65;display:none;align-items:flex-end;justify-content:center;background:rgba(3,10,18,.88)}
+.mdl.on{display:flex}
+#wd{z-index:66}
+.mdb{width:100%;max-width:440px;max-height:92%;overflow-y:auto;padding:18px 16px calc(18px + env(safe-area-inset-bottom));background:linear-gradient(180deg,#123250,#081a2c);border:1px solid var(--brass);border-bottom:0;border-radius:24px 24px 0 0;box-shadow:0 -10px 40px rgba(0,0,0,.6);animation:mup .25s}
+@keyframes mup{from{transform:translateY(40px);opacity:0}}
+.mh{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.mh h2{margin:0}
+.mx{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.12);font-size:16px;line-height:1}
 /* регистрация */
 #reg{position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(3,10,18,.92)}
 #reg.on{display:flex}
@@ -195,7 +207,7 @@ input[type=range]{width:100%;margin:6px 0 10px;accent-color:#e8c06a}
 .chk input{flex:none;width:20px;height:20px;accent-color:#e8c06a}
 .cf{position:fixed;left:50%;top:45%;z-index:200;width:8px;height:12px;border-radius:2px;pointer-events:none;animation:cf 1.1s cubic-bezier(.1,.8,.3,1) forwards}
 @keyframes cf{to{transform:translate(var(--x),var(--y)) rotate(var(--r));opacity:0}}
-#toast{position:fixed;left:50%;bottom:100px;z-index:99;transform:translateX(-50%);padding:10px 16px;font-size:14px;font-weight:600;white-space:nowrap;background:#123250;border:1px solid var(--brass);border-radius:12px;opacity:0;pointer-events:none;transition:opacity .25s}
+#toast{position:fixed;left:50%;bottom:100px;z-index:99;max-width:92vw;transform:translateX(-50%);padding:10px 16px;font-size:14px;font-weight:600;text-align:center;background:#123250;border:1px solid var(--brass);border-radius:12px;opacity:0;pointer-events:none;transition:opacity .25s}
 #toast.on{opacity:1}
 #load{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#040c16,#0a2b47);transition:opacity .4s}
 #load.hide{opacity:0;pointer-events:none}
@@ -217,7 +229,7 @@ input[type=range]{width:100%;margin:6px 0 10px;accent-color:#e8c06a}
   <header>
     <div class="pill pf" id="pf"><div class="av"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.2"/><path d="M12 7.2V21M8 11h8M4.5 14c.5 4 3.8 7 7.5 7s7-3 7.5-7"/></svg></div><div style="min-width:0"><b id="rank">Юнга</b><span id="rsub">Нажми, чтобы зарегистрироваться</span></div></div>
     <div class="pill" id="onp" style="display:none"><i></i><span id="online">0</span></div>
-    <div class="pill pb" id="bp"><span data-coin="22"></span><span class="bal">0</span><span class="plus">+</span></div>
+    <div class="pill pb" id="bp"><span id="hbi"></span><span id="hb">0</span><span class="plus">+</span></div>
   </header>
   <main>
     <section class="tab" id="t-home">
@@ -274,31 +286,13 @@ input[type=range]{width:100%;margin:6px 0 10px;accent-color:#e8c06a}
         <div class="mu" id="ftxt"></div>
         <button class="btn" id="fgo" style="margin-top:12px">Открыть бесплатно</button>
       </div>
+      <div class="box">
+        <b>Вывод средств</b>
+        <p>Вывод доступен от 1000 коинов: подарком в Telegram, на карту или в крипте.</p>
+        <button class="btn" id="wdopen">Вывести средства</button>
+        <div class="note warn" id="wdmsg" style="display:none;margin-bottom:0"></div>
+      </div>
       <div class="box"><b>Позови команду</b><p>Отправь ссылку на Magic друзьям в Telegram.</p><button class="btn sec" id="invite">Поделиться</button></div>
-    </section>
-    <section class="tab" id="t-wallet">
-      <h2>Казна</h2>
-      <div class="seg" id="wseg"><button class="on" data-w="dep">Пополнить</button><button data-w="wd">Вывод</button></div>
-      <div class="box" id="w-dep">
-        <div class="lb2">Способ оплаты</div>
-        <div class="chips" id="dpm"></div>
-        <div class="lb2">Сколько коинов</div>
-        <div class="chips" id="dpa"></div>
-        <input class="in" id="dpi" type="number" inputmode="numeric" min="1" value="500" autocomplete="off">
-        <div class="quote" id="dpq"></div>
-        <button class="btn" id="dpgo">Пополнить</button>
-        <p style="margin:10px 0 0">1 коин = 1 звезда. Коины зачисляются сразу после оплаты.</p>
-      </div>
-      <div class="box" id="w-wd" style="display:none">
-        <div class="quote" id="wdinfo"></div>
-        <div class="lb2">Способ вывода</div>
-        <div class="chips" id="wdm"></div>
-        <div id="wdamt"><div class="lb2">Сумма в коинах</div><input class="in" id="wda" type="number" inputmode="numeric" placeholder="от 1000" autocomplete="off"></div>
-        <div id="wdgift"><div class="lb2">Подарок в Telegram</div><select class="in" id="wdg"></select></div>
-        <div id="wdcard"><div class="lb2">Номер карты</div><input class="in" id="wdc" type="tel" inputmode="numeric" autocomplete="off" placeholder="0000 0000 0000 0000"></div>
-        <div id="wdcrypto"><div class="lb2">Адрес кошелька (USDT, TRC20)</div><input class="in" id="wdk" type="text" autocomplete="off" placeholder="T..."></div>
-        <button class="btn" id="wdgo" style="margin-top:12px">Вывести</button>
-      </div>
     </section>
     <section class="tab" id="t-profile">
       <h2 id="uname">Бортжурнал</h2>
@@ -344,6 +338,64 @@ input[type=range]{width:100%;margin:6px 0 10px;accent-color:#e8c06a}
     <div class="row"><button class="btn sec" id="upx">Закрыть</button><button class="btn" id="upgo">Апгрейд</button></div>
   </div>
 </div>
+
+<!-- Окно «Казна»: пополнение и переключатель валют -->
+<div class="mdl" id="pay">
+  <div class="mdb">
+    <div class="mh"><h2>Казна</h2><button class="mx" id="pclose">✕</button></div>
+    <div class="seg" id="pcur"><button data-c="coins" class="on">Коины</button><button data-c="rub">Рубли</button><button data-c="crypto">Крипта</button></div>
+    <div class="box ctr" style="margin-bottom:10px"><div class="mu" id="pcl"></div><div class="big" id="pbal"></div></div>
+    <div id="pmain">
+      <div class="lb2">Пополнить баланс (1 звезда = 1 коин)</div>
+      <div class="stack">
+        <button class="btn" id="pst">Купить за Telegram Stars</button>
+        <button class="btn sec" id="prub">Купить за рубли</button>
+        <button class="btn sec" id="pcry">Купить за крипту</button>
+      </div>
+      <div class="note warn" id="pmsg" style="display:none"></div>
+      <button class="btn sec" id="pwd" style="margin-top:12px">Вывести средства</button>
+    </div>
+    <div id="pstars" style="display:none">
+      <div class="note warn" id="ptest">ТЕСТОВЫЙ РЕЖИМ: деньги не списываются, коины начисляются для проверки.</div>
+      <div class="lb2">Сколько коинов купить</div>
+      <div class="chips" id="psa"></div>
+      <input class="in" id="psi" type="number" inputmode="numeric" min="1" value="100" autocomplete="off">
+      <div class="quote" id="psq"></div>
+      <button class="btn" id="psgo">Оплатить Stars</button>
+      <button class="btn sec" id="psback" style="margin-top:10px">Назад</button>
+    </div>
+  </div>
+</div>
+
+<!-- Окно «Вывод средств» -->
+<div class="mdl" id="wd">
+  <div class="mdb">
+    <div class="mh"><h2>Вывод средств</h2><button class="mx" id="wdclose">✕</button></div>
+    <div id="wdmenu">
+      <div class="quote" id="wdbal"></div>
+      <div class="lb2">Выбери способ вывода</div>
+      <div class="stack">
+        <button class="btn" data-m="gift">Подарок в ТГ</button>
+        <button class="btn sec" data-m="card">На карту</button>
+        <button class="btn sec" data-m="crypto">В крипте</button>
+      </div>
+    </div>
+    <div id="wdgiftv" style="display:none">
+      <div class="note" id="wdins"></div>
+      <div id="wdtest">
+        <div class="note warn">ТЕСТ: выбери подарок и нажми кнопку, чтобы проверить зачисление его стоимости.</div>
+        <select class="in" id="wdtg"></select>
+        <button class="btn" id="wdtgo">Я отправил подарок (тест)</button>
+      </div>
+      <button class="btn sec wdb" style="margin-top:10px">Назад</button>
+    </div>
+    <div id="wdstub" style="display:none">
+      <div class="note warn" id="wdstxt"></div>
+      <button class="btn sec wdb">Назад</button>
+    </div>
+  </div>
+</div>
+
 <div id="reg">
   <div class="regb">
     <div class="av"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.2"/><path d="M12 7.2V21M8 11h8M4.5 14c.5 4 3.8 7 7.5 7s7-3 7.5-7"/></svg></div>
@@ -366,17 +418,18 @@ const ls={get(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch(e){re
 const hap=(t,v)=>{try{t==='sel'?tg.HapticFeedback.selectionChanged():tg.HapticFeedback[t+'Occurred'](v)}catch(e){}};
 
 /* ====== НАСТРОЙКИ ====== */
-const COIN='coin.png';       /* путь к монете: файл лежит рядом с index.html (в папке public) */
-const REG_BONUS=100;         /* бонус за регистрацию, один раз */
-const FREE_CD=24*3600*1000;  /* перезарядка бесплатного сундука, мс */
-const MIN_DEP=50;            /* минимальное пополнение, коинов */
-const MIN_WD=1000;           /* вывод доступен от этой суммы */
-const RUB_PER_COIN=2;        /* должно совпадать с RUB_PER_COIN на сервере */
-const USD_PER_COIN=0.02;     /* должно совпадать с USD_PER_COIN на сервере */
-const WIN_AT=3;              /* Мины: сколько кристаллов открыть для победы (6 = все) */
-const BS_MULT=1.8;           /* Морской бой: множитель победы */
-const UP_RTP=80;             /* Апгрейдер: шанс = ставка x это число / цена цели (в процентах) */
-const UP_MAXC=75;            /* Апгрейдер: максимальный шанс, % */
+const COIN='coin.png';              /* путь к монете: файл лежит рядом с index.html */
+const DEMO_PAY=true;                /* true = тестовая оплата Stars без списания денег. Перед запуском поставь false */
+const BOT_USERNAME='@название_бота';/* бот, которому отправляют подарки для зачисления */
+const REG_BONUS=100;                /* бонус за регистрацию, один раз */
+const FREE_CD=24*3600*1000;         /* перезарядка бесплатного сундука, мс */
+const MIN_DEP=10;                   /* минимальная покупка, коинов */
+const MAX_DEP=100000;               /* максимальная покупка, коинов */
+const MIN_WD=1000;                  /* минимальная сумма вывода, коинов */
+const WIN_AT=3;                     /* Мины: сколько кристаллов открыть для победы (6 = все) */
+const BS_MULT=1.8;                  /* Морской бой: множитель победы */
+const UP_RTP=80;                    /* Апгрейдер: шанс = ставка x это число / цена цели (в процентах) */
+const UP_MAXC=75;                   /* Апгрейдер: максимальный шанс, % */
 const RANKS=[{n:'Матрос',min:0},{n:'Боцман',min:2000},{n:'Штурман',min:10000},{n:'Капитан',min:50000},{n:'Адмирал',min:250000}]; /* min = сумма ставок */
 
 /* ====== ПОДАРКИ ====== */
@@ -440,16 +493,18 @@ $$('[data-coin]').forEach(e=>e.innerHTML=cn(+e.dataset.coin));
 let ha=0;
 $('#helm').onclick=()=>{ha+=720+rr(0,180);$('#helm').style.transform=`rotate(${ha}deg)`;hap('impact','light')};
 
-/* ====== СОСТОЯНИЕ И СОХРАНЕНИЕ ====== */
+/* ====== СОСТОЯНИЕ И СОХРАНЕНИЕ (localStorage) ====== */
 const SAVE='magic_v2';
 const MIG={cake:'gift',rocket:'bouquet'}; /* старые предметы превращаются в новые */
 const S=ls.get(SAVE,null)||{bal:0,reg:0,wag:0,opened:ls.get('st',{opened:0}).opened||0,inv:ls.get('inv',[]),free:0,sb:null};
 let balance=+S.bal||0,reg=!!S.reg,wag=+S.wag||0,opened=+S.opened||0,freeNext=+S.free||0;
+let cur=['coins','rub','crypto'].includes(S.cur)?S.cur:'coins';  /* выбранная валюта */
+let rubBal=+S.rub||0,cryBal=+S.cry||0;                           /* рубли и крипта: заглушки */
 let inv=(S.inv||[]).map(id=>MIG[id]||id).filter(id=>G[id]);
 let srvOk=false,srvBal=(S.sb==null?null:+S.sb),pend=0,txOff=false,bet=50,pb=0,busy=0;
-const save=()=>ls.set(SAVE,{bal:balance,reg:reg?1:0,wag,opened,inv,free:freeNext,sb:srvBal});
+const save=()=>ls.set(SAVE,{bal:balance,reg:reg?1:0,wag,opened,inv,free:freeNext,sb:srvBal,cur,rub:rubBal,cry:cryBal});
 
-/* ====== СЕРВЕР ====== */
+/* ====== СЕРВЕР (необязательно: без сервера всё работает на localStorage) ====== */
 async function srv(method,path,body){
   try{
     const r=await Promise.race([fetch(path,{method,headers:{'Content-Type':'application/json',Authorization:tg.initData},body:body?JSON.stringify(body):undefined}),new Promise((_,j)=>setTimeout(j,8000))]);
@@ -465,7 +520,7 @@ async function pushTx(d){
   if(!r||r.ok===false){srvBal=Math.round((srvBal-d)*100)/100;txOff=true}
   pend--;save();
 }
-/* подтягивает изменения баланса на сервере (пополнение, вывод). true, если баланс вырос */
+/* подтягивает изменения баланса на сервере. true, если баланс вырос */
 async function refreshBal(){
   if(!srvOk||pend>0)return false;
   const d=await srv('GET','/api/balance');
@@ -479,7 +534,6 @@ async function refreshBal(){
     }
     srvBal=d.balance;
   }
-  if(typeof d.withdraw==='boolean'){wdOn=d.withdraw;wdUpd()}
   if(typeof d.freeNext==='number'){freeNext=d.freeNext;freeTick()}
   save();return up;
 }
@@ -490,15 +544,28 @@ function watchDep(){
 }
 
 /* ====== ОБЩИЕ ФУНКЦИИ ====== */
+/* шапка показывает баланс выбранной валюты */
+function hdr(){
+  $('#hbi').innerHTML=cur==='coins'?cn(22):`<b>${cur==='rub'?'₽':'₮'}</b>`;
+  $('#hb').textContent=cur==='coins'?balance:cur==='rub'?rubBal:cryBal.toFixed(2);
+}
+/* баланс в окне «Казна» */
+function payBal(){
+  $$('#pcur button').forEach(b=>b.classList.toggle('on',b.dataset.c===cur));
+  if(cur==='coins'){$('#pcl').textContent='Баланс в коинах';$('#pbal').innerHTML=cn(40)+'<span>'+balance+'</span>'}
+  else if(cur==='rub'){$('#pcl').textContent='Баланс в рублях (скоро)';$('#pbal').innerHTML='<span>₽ '+rubBal+'</span>'}
+  else{$('#pcl').textContent='Баланс в крипте, USDT (скоро)';$('#pbal').innerHTML='<span>₮ '+cryBal.toFixed(2)+'</span>'}
+}
 const setBal=(v,ext)=>{
   const old=balance;balance=Math.round(v*100)/100;
   $$('.bal').forEach(e=>e.textContent=balance);
+  hdr();payBal();
   const p=$('#bp');p.classList.remove('bump');void p.offsetWidth;p.classList.add('bump');
-  wdUpd();save();
+  save();
   const d=Math.round((balance-old)*100)/100;
   if(!ext&&d&&srvOk)pushTx(d);
 };
-let tt;const toast=t=>{const e=$('#toast');e.innerHTML=t;e.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('on'),2200)};
+let tt;const toast=t=>{const e=$('#toast');e.innerHTML=t;e.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('on'),2400)};
 const pick=o=>{let s=0;for(const k in o)s+=o[k];let r=Math.random()*s;for(const k in o){if((r-=o[k])<0)return k}return Object.keys(o)[0]};
 function gate(){if(!reg){showReg();return false}return true}
 const take=()=>{
@@ -552,11 +619,9 @@ function tab(n){
   $$('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===n));
   if(n!=='games')stopAll();
   if(n==='profile')renderInv();
-  if(n==='wallet'){quote();wdUpd()}
 }
 $$('#nav button').forEach(b=>b.onclick=()=>{hap('impact','light');tab(b.dataset.t)});
 $$('[data-go]').forEach(b=>b.onclick=()=>tab(b.dataset.go));
-$('#bp').onclick=()=>{hap('impact','light');tab('wallet')};
 
 /* ====== СУНДУКИ ====== */
 $('#cases').innerHTML=CASES.map((c,i)=>`<button class="case" style="--c:${c.c}" data-i="${i}">${img(c.icon,84,'m')}<div class="n">${c.n}</div><div class="mini">${Object.keys(c.drops).filter(k=>!NFT_W[k]).map(k=>img(k,22)).join('')}${c.nft?img('tama',22)+img('ring',22):''}</div><div class="price">${c.price} ${cn(16)}</div></button>`).join('');
@@ -712,75 +777,109 @@ $('#invite').onclick=()=>{
   tg.openTelegramLink?tg.openTelegramLink(u):window.open(u,'_blank');
 };
 
-/* ====== КАЗНА: пополнение и вывод ====== */
-let dm='stars',wm='gift',wdOn=false;
-const DM=[['stars','Звёзды'],['rub','Рубли'],['crypto','Крипта']];
-const WM=[['gift','Подарок'],['card','Карта'],['crypto','Крипта']];
-$('#dpm').innerHTML=DM.map(([k,t])=>`<button data-k="${k}" class="${k===dm?'on':''}">${t}</button>`).join('');
-$$('#dpm button').forEach(b=>b.onclick=()=>{dm=b.dataset.k;$$('#dpm button').forEach(x=>x.classList.toggle('on',x===b));quote()});
-$('#dpa').innerHTML=[100,500,1000,5000].map(v=>`<button data-v="${v}">${v}</button>`).join('');
-$$('#dpa button').forEach(b=>b.onclick=()=>{$('#dpi').value=b.dataset.v;quote()});
-$('#dpi').oninput=()=>quote();
-function quote(){
-  const n=Math.floor(+$('#dpi').value)||0;
-  const t={stars:`${n} ⭐`,rub:`${Math.round(n*RUB_PER_COIN)} ₽`,crypto:`${(n*USD_PER_COIN).toFixed(2)} USD в крипте`}[dm];
-  $('#dpq').innerHTML=`Ты получишь ${n} ${cn(16)} · к оплате ${t}`;
+/* ====== КАЗНА: пополнение, переключатель валют ====== */
+const MSG_RUB='Оплата картой временно недоступна. Скоро!';
+const MSG_CRY='Оплата криптой временно недоступна. Скоро!';
+function payView(v){$('#pmain').style.display=v==='pmain'?'':'none';$('#pstars').style.display=v==='pstars'?'':'none'}
+function openPay(){payBal();payView('pmain');$('#pmsg').style.display='none';$('#pay').classList.add('on')}
+function closePay(){$('#pay').classList.remove('on')}
+function stub(t){const e=$('#pmsg');e.textContent=t;e.style.display='';toast(t);hap('notification','warning')}
+$('#bp').onclick=()=>{hap('impact','light');openPay()};
+$('#pclose').onclick=closePay;
+$('#pay').onclick=e=>{if(e.target.id==='pay')closePay()};
+$$('#pcur button').forEach(b=>b.onclick=()=>{cur=b.dataset.c;save();hdr();payBal();hap('sel')});
+$('#prub').onclick=()=>stub(MSG_RUB);
+$('#pcry').onclick=()=>stub(MSG_CRY);
+$('#pwd').onclick=()=>{closePay();$('#wdopen').click()};
+$('#ptest').style.display=DEMO_PAY?'':'none';
+
+/* покупка за Stars */
+$('#psa').innerHTML=[100,500,1000,5000].map(v=>`<button data-v="${v}">${v}</button>`).join('');
+$$('#psa button').forEach(b=>b.onclick=()=>{$('#psi').value=b.dataset.v;psq();hap('sel')});
+$('#psi').oninput=()=>psq();
+function psq(){
+  const n=Math.floor(+$('#psi').value)||0;
+  $$('#psa button').forEach(x=>x.classList.toggle('on',+x.dataset.v===n));
+  $('#psq').innerHTML=`К оплате: ${n} ⭐ · ты получишь ${n} ${cn(16)}`;
 }
-$$('#wseg button').forEach(b=>b.onclick=()=>{
-  $$('#wseg button').forEach(x=>x.classList.toggle('on',x===b));
-  $('#w-dep').style.display=b.dataset.w==='dep'?'':'none';
-  $('#w-wd').style.display=b.dataset.w==='wd'?'':'none';
-});
-$('#dpgo').onclick=async()=>{
-  if(!gate())return;
-  const n=Math.floor(+$('#dpi').value)||0;
-  if(n<MIN_DEP){toast('Минимум '+MIN_DEP+' коинов');return}
-  if(!srvOk){toast('Нет связи с сервером, оплата недоступна');return}
-  $('#dpgo').disabled=true;$('#dpgo').textContent='Создаём счёт...';
-  const r=await srv('POST','/api/deposit/'+dm,{coins:n});
-  $('#dpgo').disabled=false;$('#dpgo').textContent='Пополнить';
-  const link=r&&(r.invoice||r.url);
-  if(!link){toast(r&&r.error?r.error:'Не удалось создать счёт, попробуй позже');return}
-  if(r.invoice&&tg.openInvoice){
-    tg.openInvoice(r.invoice,s=>{
-      if(s==='paid'){toast('Оплачено, зачисляем коины...');setTimeout(refreshBal,1200);watchDep()}
-      else if(s==='failed')toast('Платёж не прошёл');
-      else if(s==='cancelled')toast('Оплата отменена');
-    });
-  }else{
-    tg.openLink?tg.openLink(link):window.open(link,'_blank');
-    toast('Оплати счёт, баланс обновится сам');watchDep();
+$('#pst').onclick=()=>{if(!gate())return;psq();payView('pstars')};
+$('#psback').onclick=()=>payView('pmain');
+/* начисление коинов после оплаты */
+function creditCoins(n){
+  setBal(balance+n);
+  toast(`+${n} ${cn(14)} Баланс пополнен`);
+  boom('#f5d061');hap('notification','success');
+  payView('pmain');
+}
+/* нативное подтверждение Telegram (showPopup), если доступно */
+function askPay(n,cb){
+  const msg=`Оплатить ${n} ⭐ и получить ${n} коинов? Тест: деньги не списываются.`;
+  if(tg.showPopup){
+    try{
+      tg.showPopup({title:'Оплата Stars',message:msg,buttons:[{id:'pay',type:'default',text:`Оплатить ${n} ⭐`},{type:'cancel'}]},id=>{if(id==='pay')cb()});
+      return;
+    }catch(e){}
   }
-};
-$('#wdm').innerHTML=WM.map(([k,t])=>`<button data-k="${k}" class="${k===wm?'on':''}">${t}</button>`).join('');
-$$('#wdm button').forEach(b=>b.onclick=()=>{wm=b.dataset.k;$$('#wdm button').forEach(x=>x.classList.toggle('on',x===b));wmUpd()});
-$('#wdg').innerHTML=Object.keys(G).map(id=>`<option value="${id}">${G[id].e} ${G[id].n} · ${G[id].p} коинов</option>`).join('');
-function wmUpd(){
-  ['gift','card','crypto'].forEach(k=>$('#wd'+k).style.display=wm===k?'':'none');
-  $('#wdamt').style.display=wm==='gift'?'none':'';
+  if(confirm(msg))cb();
 }
-wmUpd();
-function wdUpd(){
-  const ok=wdOn&&balance>=MIN_WD;
-  $('#wdinfo').innerHTML=!wdOn?'Вывод пока отключён':balance>=MIN_WD?`Доступно к выводу: ${Math.floor(balance)} ${cn(16)}`:`Вывод откроется от ${MIN_WD} ${cn(16)}. Не хватает ${Math.ceil(MIN_WD-balance)}`;
-  $('#wdgo').disabled=!ok;
-}
-$('#wdgo').onclick=async()=>{
+$('#psgo').onclick=async()=>{
   if(!gate())return;
-  if(balance<MIN_WD){toast('Вывод от '+MIN_WD+' коинов');return}
-  let coins,det;
-  if(wm==='gift'){const id=$('#wdg').value;coins=G[id].p;det=id}
-  else{coins=Math.floor(+$('#wda').value)||0;det=(wm==='card'?$('#wdc').value:$('#wdk').value).trim()}
-  if(wm!=='gift'&&coins<MIN_WD){toast('Минимальная сумма '+MIN_WD);return}
-  if(coins>balance){toast('Не хватает коинов');return}
-  if(!det){toast('Укажи реквизиты');return}
-  $('#wdgo').disabled=true;
-  const r=await srv('POST','/api/withdraw',{method:wm,coins,details:det});
-  wdUpd();
-  if(!r||r.ok===false){toast(r&&r.error?r.error:'Вывод пока недоступен');return}
-  toast('Заявка на вывод создана');
-  $('#wdc').value='';$('#wdk').value='';$('#wda').value='';
-  setTimeout(refreshBal,800);
+  const n=Math.floor(+$('#psi').value)||0;
+  if(n<MIN_DEP){toast(`Минимум ${MIN_DEP} коинов`);return}
+  if(n>MAX_DEP){toast(`Максимум ${MAX_DEP} коинов за раз`);return}
+  if(DEMO_PAY){askPay(n,()=>creditCoins(n));return}   /* тестовая оплата: имитация успеха */
+  /* боевой режим: счёт создаёт сервер (server.js) и открывается нативная оплата Stars */
+  if(!srvOk){toast('Нет связи с сервером, оплата недоступна');return}
+  $('#psgo').disabled=true;
+  const r=await srv('POST','/api/deposit/stars',{coins:n});
+  $('#psgo').disabled=false;
+  const link=r&&r.invoice;
+  if(!link){toast(r&&r.error?r.error:'Не удалось создать счёт, попробуй позже');return}
+  if(!tg.openInvoice){toast('Обнови Telegram, чтобы оплатить Stars');return}
+  tg.openInvoice(link,s=>{
+    if(s==='paid'){toast('Оплачено, зачисляем коины...');setTimeout(refreshBal,1200);watchDep();payView('pmain')}
+    else if(s==='failed')toast('Платёж не прошёл');
+    else if(s==='cancelled')toast('Оплата отменена');
+  });
+};
+
+/* ====== ВЫВОД СРЕДСТВ ====== */
+function wdView(v){['wdmenu','wdgiftv','wdstub'].forEach(k=>$('#'+k).style.display=k===v?'':'none')}
+function openWd(){
+  $('#wdbal').innerHTML=`Доступно к выводу: ${Math.floor(balance)} ${cn(16)}`;
+  wdView('wdmenu');$('#wd').classList.add('on');
+}
+$('#wdopen').onclick=()=>{
+  if(!gate())return;
+  const m=$('#wdmsg');
+  if(balance<MIN_WD){
+    const t=`Минимальная сумма вывода — ${MIN_WD} коинов`;
+    m.textContent=t;m.style.display='';toast(t);hap('notification','warning');
+    return;
+  }
+  m.style.display='none';openWd();
+};
+$('#wdclose').onclick=()=>$('#wd').classList.remove('on');
+$('#wd').onclick=e=>{if(e.target.id==='wd')$('#wd').classList.remove('on')};
+$$('#wdmenu [data-m]').forEach(b=>b.onclick=()=>{
+  const m=b.dataset.m;
+  if(m==='gift'){
+    $('#wdins').textContent=`Отправь подарок боту ${BOT_USERNAME}, и мы зачислим его стоимость на баланс.`;
+    $('#wdtest').style.display=DEMO_PAY?'':'none';
+    wdView('wdgiftv');
+  }else{
+    $('#wdstxt').textContent=m==='card'?'Вывод на карту пока недоступен. Скоро!':'Вывод в крипте пока недоступен. Скоро!';
+    wdView('wdstub');
+  }
+});
+$$('.wdb').forEach(b=>b.onclick=()=>wdView('wdmenu'));
+$('#wdtg').innerHTML=Object.keys(G).map(id=>`<option value="${id}">${G[id].e} ${G[id].n} · ${G[id].p} коинов</option>`).join('');
+$('#wdtgo').onclick=()=>{
+  if(!gate())return;
+  const id=$('#wdtg').value,g=G[id];
+  setBal(balance+g.p);
+  toast(`Подарок «${g.n}» получен: +${g.p} ${cn(14)}`);boom(g.c);hap('notification','success');
+  $('#wdbal').innerHTML=`Доступно к выводу: ${Math.floor(balance)} ${cn(16)}`;
 };
 
 /* ====== ПАЛУБА: меню и ставка ====== */
@@ -996,14 +1095,13 @@ const loadOnline=()=>srv('GET','/api/online').then(d=>{if(d&&d.online!=null){$('
     srvOk=true;
     if(typeof d.registered==='boolean')reg=d.registered;
     if(typeof d.freeNext==='number')freeNext=d.freeNext;
-    if(typeof d.withdraw==='boolean')wdOn=d.withdraw;
     if(typeof d.balance==='number'){
       if(srvBal==null)balance=d.balance;
       else balance=Math.round((balance+d.balance-srvBal)*100)/100;
       srvBal=d.balance;
     }
   }
-  setBal(balance,true);setRank();freeTick();save();
+  setBal(balance,true);setRank();freeTick();psq();save();
   tab('home');
   setTimeout(()=>{
     $('#ball').classList.add('go');
